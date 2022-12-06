@@ -1,0 +1,34 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /pages/profile/my-profile-side-menu-mixin
+  - const d = { selection: 'change-profile-settings' }
+  +sideNavigation(d)
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h1: 'Nastavitve računa', description: 'Tukaj lahko spremenite nekatere nastavitve, vezane na posameznega uporabnika.', buttons: [{ type: 'disabled', content: 'Shrani', form: 'profileForm' }] }
+  +mainHeader(c)
+
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2.pe-5
+      form#profileForm.needs-validation(method="post" novalidate)
+        div
+          .subject-name
+            label.input-name-txt(for="number-of-results") ŠTEVILO ZADETKOV NA STRANI
+          .row
+            .col-sm-6.align-items-center
+              select#numberOfHits.form-control.d-inline(name="numberOfHits")
+                each hit in hitsPerPageArr
+                  option(value=hit selected=hit === hitsForUser)= hit
+
+              .invalid-feedback 
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+  include /common/footer

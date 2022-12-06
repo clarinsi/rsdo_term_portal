@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="3.96875mm"
+   height="3.96875mm"
+   viewBox="0 0 3.96875 3.96875"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="drawing.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="6.2907895"
+     inkscape:cx="23.214287"
+     inkscape:cy="-9.6428502"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1375"
+     inkscape:window-height="882"
+     inkscape:window-x="297"
+     inkscape:window-y="142"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-81.926339,-116.61086)">
+    <g
+       style="fill:none"
+       id="g826"
+       transform="matrix(0.26458333,0,0,0.26458333,81.529464,116.21399)">
+      <path
+         id="path815"
+         d="M 1.5,3.75 C 1.5,2.50736 2.50736,1.5 3.75,1.5 h 10.5 c 1.2426,0 2.25,1.00736 2.25,2.25 v 10.5 c 0,1.2426 -1.0074,2.25 -2.25,2.25 H 3.75 C 2.50736,16.5 1.5,15.4926 1.5,14.25 Z"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#006cb7;fill-rule:evenodd" />
+    </g>
+    <g
+       style="fill:none"
+       id="g839"
+       transform="matrix(0.26458333,0,0,0.26458333,83.116964,118.33065)">
+      <rect
+         id="rect828"
+         rx="1"
+         height="2"
+         width="6"
+         x="0"
+         y="0"
+         style="fill:#ffffff" />
+    </g>
+  </g>
+</svg>

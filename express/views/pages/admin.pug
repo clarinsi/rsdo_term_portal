@@ -1,0 +1,21 @@
+extends ../layout
+
+//- TODO check if deprecated
+block body
+  section
+    include ../common/main-navigation
+    +main-navigation(true)
+  section
+    .root-container
+      include ../components/admin/admin-navigation
+      section.content-hold-prerequisites.ps-5.pe-5.mt-4
+        .d-block.w-100
+          include ../components/main-panel/implementations/one-button
+          hr.me-2.mt-0
+        .d-flex.flex-row.w-100.mb-4
+          include ../components/search-and-filter/inline-search
+          include ../utilities/pager
+          +pager(1,2,3,1,3,true)
+        .d-block.w-100
+          div
+            include ../utilities/table-wrapper

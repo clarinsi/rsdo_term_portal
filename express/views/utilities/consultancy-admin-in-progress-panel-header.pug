@@ -1,0 +1,46 @@
+mixin topHeaderContent(headerContent)
+  .row.w-100.g-0
+    #chevrons-left.d-flex
+      if (headerContent.noSidebar)
+        a.btn-chevrons-left.text-decoration-none(
+          type="link"
+          href=headerContent.hrefurl
+        )
+          img.align-middle(src="/images/chevrons-left.svg")
+          span.ms-2.text-header-description-gray.fw-700 Nazaj
+  .row.w-100.mx-0
+    .col-sm-8.g-0
+      .header-container-divider-left.pt-1
+        h2#site-header-title= headerContent.h2
+        h1#site-heading= headerContent.h1
+        span#text-description.page-description.pe-0= headerContent.description
+          if (headerContent.helpLink)
+            a.ms-2.page-description(href=headerContent.helpLink.linkHref)= headerContent.helpLink.linkText
+    .col-sm-4.align-items-end.d-flex.justify-content-end.g-0
+      .header-consultancy-divider-right.d-flex.align-items-center.justify-content-end.pe-0.ps-3
+        .fit-content
+          if (headerContent.buttons && headerContent.buttons.length)
+            each el in headerContent.buttons
+              if el.type === 'button'
+                button#opt1.w-100.height-46p(
+                  class=el.classAtr || 'btn btn-primary'
+                  form=el.form
+                  disabled=el.contentDisabled
+                )= el.content
+              else if el.type === 'link'
+                a.w-100.height-46p(class=classAtr || 'btn btn-primary' href=el.url)= el.content
+              else if el.type === 'cancel'
+                a.w-100.height-46p(class=classAtr || 'btn btn-secondary' href=el.url)= el.content
+
+mixin mainHeader(headerContent, footerIncluded = true)
+  - const checkForSpecificRights = headerContent.specificRights
+  #offset-padding.header-section-root.no-side-menu.consultancy-padding-admin.flex-grow-0.nav-bg.px-0
+    .d-flex.justify-content-between.flex-wrap.flex-row.row.mx-0
+      .header-container-left-side.col.px-0
+        +topHeaderContent(headerContent)
+
+    .header-consultancy-content.w-100
+      form#consultancy-form.needs-validation.mt-3.w-100
+        .header-consultancy-divider.d-flex.d-column.w-100.row.ms-0
+
+      hr#header-row.mt-1.ms-0.mb-0

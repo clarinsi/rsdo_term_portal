@@ -1,0 +1,91 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width,initial-scale=1")
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+
+    //- General stylesheets
+    //-  TODO remove weight 300 if not required, for test purposes
+
+    link(
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    )
+    link(
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    )
+    link(
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+      integrity="sha256-zaSoHBhwFdle0scfGEFUCwggPN7F+ip9XRglo8IWb4w="
+      crossorigin="anonymous"
+    )
+    link(
+      href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css"
+      rel="stylesheet"
+      integrity="sha256-oA6D/yIi0I8ZwAwp6HmdjN7OoIOJ/6k+1SISncrEBQA="
+      crossorigin="anonymous"
+    )
+    link(href="/stylesheets/style.css" rel="stylesheet")
+
+    //- General javascripts
+    //- TODO Consider deferring these scripts.
+    //- DOMPurify and TT default policy are used to circumvent jQuery using sink functions (innerHTML).
+    //- If they ever remove them, you migth also remove the circumventing code.
+    //- UPDATE: removed TT and sanitation; reasons explained in helmet config file.
+    //- script(
+    //-   nonce=cspNonce
+    //-   src="https://cdn.jsdelivr.net/npm/dompurify@2.3.1/dist/purify.min.js"
+    //-   integrity="sha256-KdvRHbUkGfNAhivKG07QTVYUPMza4mpYMPAUBnO04Zo="
+    //-   crossorigin="anonymous"
+    //- )
+    //- script(nonce=cspNonce src="/javascripts/trusted-types-default-policy.js")
+    script(
+      nonce=cspNonce
+      src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+      integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+      crossorigin="anonymous"
+    )
+    script(
+      nonce=cspNonce
+      src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+      integrity="sha256-9yRP/2EFlblE92vzCA10469Ctd0jT48HnmmMw5rJZrA="
+      crossorigin="anonymous"
+    )
+    script(
+      nonce=cspNonce
+      src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"
+      integrity="sha256-5N4FHlS7bWyb2LyIzO+TQ3eHNvb/vfEEjcdADdIvVTY="
+      crossorigin="anonymous"
+    )
+    script(
+      nonce=cspNonce
+      src="https://unpkg.com/validator@13.7.0/validator.min.js"
+      integrity="sha256-G2eKVjphYDdRziYpTse4cPxCDF1PhdTa03++dMKIjiI="
+      crossorigin="anonymous"
+    )
+
+    block include-styles
+    title= title ? `${portalCode} | ${title}` : 'Terminološki portal'
+  body
+    include /components/login-signup/login-signup
+    block body
+    script(
+      nonce=cspNonce
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+    )
+    script(
+      nonce=cspNonce
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    )
+    script(nonce=cspNonce src="/javascripts/globals.js")
+    script(nonce=cspNonce src="/javascripts/scripts.js")
+    script(nonce=cspNonce src="/javascripts/main-sreach-utils.js")
+    block pageSpecificScipts

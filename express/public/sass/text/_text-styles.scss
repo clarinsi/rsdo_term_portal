@@ -1,0 +1,183 @@
+@use "../variables/variables" as v;
+
+.page-description {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 0.875rem;
+  line-height: 150%;
+  color: v.$header-description-gray;
+}
+
+.gray-info {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 0.875rem;
+  line-height: 150%;
+  color: v.$header-title-gray;
+}
+
+.bold-weight-black {
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 21px;
+  color: v.$header-description-gray;
+}
+
+.normal-gray {
+  font: Roboto;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 19px;
+  color: v.$header-description-gray;
+}
+
+.smaller-gray-uppercase {
+  font-size: 0.75rem;
+  line-height: 14px;
+  /* identical to box height */
+  text-transform: uppercase;
+  color: v.$header-title-gray;
+}
+
+.smaller-black-uppercase {
+  font-size: 0.875rem;
+  line-height: 14px;
+  color: v.$header-description-gray;
+  text-transform: uppercase;
+}
+
+.smaller-gray-info {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 0.875rem;
+  line-height: 150%;
+  color: v.$header-title-gray;
+}
+
+.smaller-blue-subheading {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 1.125rem;
+  line-height: 21px;
+  color: v.$navigation-maincolor;
+}
+
+.normal-gray-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1rem;
+  line-height: 19px;
+  color: v.$header-description-gray;
+}
+
+.table-left-header {
+  font-size: 1.125rem;
+  line-height: 27px;
+  font-weight: 400;
+}
+
+.side-menu-heading {
+  font-weight: 300;
+  font-size: 1.5rem;
+  line-height: 28px;
+  color: #848c91;
+  margin-top: 50px;
+}
+
+.small-blue-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1rem;
+  line-height: 19px;
+  color: v.$navigation-maincolor;
+}
+
+.bold-blue-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 19px;
+  color: v.$navigation-maincolor;
+}
+
+.heavy-black-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 16px;
+  color: #3a464e;
+}
+
+.modal-title-blue {
+  font-size: 1.5rem;
+  line-height: 28px;
+  color: v.$navigation-maincolor;
+}
+
+.bold-blue-subheading {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: v.$navigation-maincolor;
+}
+
+.smaller-black-info {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #3a464e;
+}
+
+.normal-red-note {
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 21px;
+  color: #d12525;
+}
+
+.heavy-gray-text {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 24px;
+  color: #46535b;
+}
+
+.no-text-decoration {
+  text-decoration: none;
+}
+
+.text-p625rem {
+  font-size: 0.625rem !important;
+}
+
+.text-p875rem {
+  font-size: 0.875rem !important;
+}
+
+/*
+.text-1p1rem {
+  font-size: 1.1rem !important;
+}
+*/
+
+.text-1p125rem {
+  font-size: 1.125rem !important;
+}
+
+.text-1p3rem {
+  font-size: 1.3rem !important;
+}
+
+.text-1p5rem {
+  /* font size 24 in initial screen*/
+  font-size: 1.5rem !important;
+}
+
+.gray1-text {
+  color: v.$gray-1;
+}

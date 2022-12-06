@@ -1,0 +1,17 @@
+mixin consultancyItem(entry)
+  a.consultancy-anchor(href=`/svetovanje/vprasanje/${entry.id}`)
+    .consultancy-question-item.position-relative
+      .row.mt-4.mb-2
+        .col.d-flex.justify-content-start
+          //- 9. 11. 2021  --> questionDateDMYformat
+          span.question-asked-time.text-p875rem= `Vprašanje poslano: ${entry.formattedTimeCreated}`
+      .row.mb-2
+        .col
+          h5-pb-0.navigation-text-color
+            b= entry.title
+      .row
+        //- span.consultancy-description-text
+        span.text-p875rem!= `<b>Opis terminološkega problema:</b> ${entry.question}`
+        //- span.consultancy-description-text
+        span.text-p875rem!= `<b>Odgovor:</b> ${entry.answerSummary}`
+      .hovered.position-absolute

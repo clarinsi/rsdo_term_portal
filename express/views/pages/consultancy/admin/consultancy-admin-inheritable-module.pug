@@ -1,0 +1,64 @@
+extends /layout
+
+mixin sideMenu(meta)
+  include /common/side-menu-mixin-consultancy
+  +sideNavigation(meta)
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/tooltip-helper.js")
+  script(nonce=cspNonce src="/javascripts/consultancy.js")
+  script(nonce=cspNonce src="/javascripts/consultancy-search-mechanism.js")
+
+block body
+  - const specificUserRights = user && (user.hasRole('consultant') || user.hasRole('consultancy admin'))
+  //- .consultancy-padding-admin.consultancy-container-unique
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  block config
+    - const pageTypeObject = { new: true }
+    - const subHeading = 'Novo'
+    - const description = 'Seznam vprašanj, ki so jih poslali uporabniki, in še niso bila dodeljena moderatorjem.'
+
+  +sideMenu(pageTypeObject)
+
+  //-- modals
+  include dialogs/share
+  include dialogs/assign
+  +consultancyAdminShareModal
+  +consultancyAdminAssignModal
+
+  if specificUserRights
+    include /utilities/consultancy-admin-panel-header
+    //- const c = { h1: 'Terminološko svetovanje', description: 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj, pa strokovnjaki čutijo potrebo po sistemskem poenotenju oz. izbiri najprimernejše rešitve.', buttons: [{ type: 'link', content: 'Zastavi novo vprašanje', url: '/svetovanje/vprasanje/novo' }] }
+    // - 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj.'
+    - const c = { specificRights: specificUserRights, exportButtonPresent: false, h1: subHeading, h2: 'Administratorska konzola', description: description }
+    +mainHeader(c)
+    .content-hold-prerequisites
+      #offset-main.main-container
+        include /components/consultancy/admin/consultancy-item-admin
+        block consultancyContainer
+          - const section = pageTypeObject
+        .consultancy-container
+          if pageTypeObject.new
+            each entry in entries
+              +consultancyItem(entry, section)
+          else
+            //- - const moderatorList = entries.filter(a => a.isModerator)
+            each entry in entries
+              //- -
+                entry.sharedAuthors = entries.filter(a => {
+                return !a.isModerator && entry.id === a.id
+                }).map(a => a.name = `${a.firstName} ${a.lastName}`)
+              +consultancyItem(entry, section)
+
+  else
+    include /utilities/empty-main-panel-header
+    +mainHeader
+    .content-hold-prerequisites.ps-4.pe-4
+      #offset-main.ps-2.pe-2
+        p Nimate ustreznih pravic
+
+  include ../../../utilities/modal-alert-mixin
+  +alertModal("deleteModal","Izbriši" ,"Prekliči" , "del-btn", "cancel-btn")
+  include /common/footer

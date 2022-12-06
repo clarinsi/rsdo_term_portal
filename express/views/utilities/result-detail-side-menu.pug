@@ -1,0 +1,57 @@
+mixin result_detail(data)
+  .admin-nav
+    .admin-nav-mobile
+      button#nav-button.nav-button
+        img#burger-menu-img(
+          src="/images/burger-menu-button-icon.svg"
+          alt="Meni"
+        )
+      span#nav-title.nav-title(class=data.termId ? 'd-none-on-big' : '')= data.termId ? '' : 'O slovarju'
+    nav
+      ul.rdsm.ps-2rem.pt-0.slidable.pt-3(
+        class=data.termId ? 'termin-offset-up-wide' : ''
+      )
+        if data.termId
+          a.d-flex.link-back.mb-3.text-decoration-none(href="/")
+            img(src="/images/chevrons-left.svg")
+            span.nav-title.ms-2.text-header-description-gray.fw-700 Nazaj na zadetke
+        if data.termId
+          li.text-gray-1.fw-500 Slovar
+            -
+              //const prevHref=data.termId || data.dictHref
+              const prevHref=data.dictHref
+
+            //- a(
+              href=data.termId ? `${data.dictHref}${data.dictHref.includes('?') ? '&' : '?'}prevHref=${encodeURIComponent('/termin/${data.termId}')}` : '#'
+              )
+            a(
+              target="_blank"
+              href=data.termId ? `${data.dictHref}${data.dictHref.includes('?') ? '&' : '?'}prevHref=${encodeURIComponent(prevHref)}` : '#'
+            )
+              .fw-400.dict-name= data.dictName
+        if data.fullAuthorName
+          li.text-gray-1.fw-500= data.authorLabel
+            .text-header-description-gray.fw-400.author-full-name= data.fullAuthorName
+        if data.areas
+          li.text-gray-1.fw-500 Področje
+            .text-header-description-gray.fw-400.csv-areas= data.areas
+        if data.subareas
+          li.text-gray-1.fw-500 Podpodročje
+            .text-header-description-gray.fw-400.specific-csv-areas= data.subareas
+        if !data.termId
+          if data.languages
+            li.text-gray-1.fw-500 Jeziki
+              .text-header-description-gray.fw-400= data.languages
+          if data.time_modified
+            li.text-gray-1.fw-500 Spremenjen
+              .text-header-description-gray.fw-400= data.time_modified
+          if data.count_entries
+            li.text-gray-1.fw-500 Število slovarskih sestavkov
+              .text-header-description-gray.fw-400= data.count_entries
+          if data.issn
+            li.text-gray-1.fw-500 ISSN
+              .text-header-description-gray.fw-400= data.issn
+        li.text-gray-1.fw-500 Vir
+          .portal-info
+            //- span.portal-code= data.portalCode
+            span.text-header-description-gray.fw-400= data.portalName

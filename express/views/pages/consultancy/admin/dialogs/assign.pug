@@ -1,0 +1,51 @@
+//- assign has only one entry
+
+mixin consultancyAdminAssignBody
+  .assign-dialog-window.w-100
+    .assign-search-container.mb-3
+      select#assign-sel.assign-search-consultants.csq(name="assign")
+        option(value="NONE_SELECTED_PLACEHOLDER")
+        each user in userList
+          option(value=user.id)  #{ user.first_name } #{ user.last_name } (#{ user.username })
+      .position-relative
+        .search-icon-assign 
+          img(src="/images/search_blue.svg" alt="")
+
+mixin consultancyAdminAssignModal
+  //- button.btn.btn-primary(
+    type="button"
+    data-bs-toggle="modal"
+    data-bs-target="#consultancyModalAssign"
+    )
+    | Launch static backdrop modal
+  // Modal
+  #consultancyModalAssign.modal.fade(
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="consultancyModalLabel"
+    aria-hidden="true"
+  )
+    .modal-dialog
+      .modal-content
+        .modal-header.mb-0.pb-0
+          h5.pt-3.navigation-text-color Dodeli
+          button.btn-close(
+            type="button"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          )
+        .modal-body
+          +consultancyAdminAssignBody
+        .modal-footer
+          .row.button-modal-size
+            .col.d-flex.justify-content-start.mb-2
+              button.btn.btn-secondary.height50(
+                type="button"
+                data-bs-dismiss="modal"
+              ) Zapri
+            .col.d-flex.justify-content-end.mb-2
+              button#assign-btn.btn.btn-primary.height50(
+                type="button"
+                data-bs-dismiss="modal"
+              ) Uporabi

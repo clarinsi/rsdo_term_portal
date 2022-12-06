@@ -1,0 +1,59 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/extraction.js")
+  script(nonce=cspNonce src="/javascripts/extraction-files-edit.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-fake
+  +sideNavigationFake
+  include /utilities/dictionaries-main-panel-header
+  - const c = { noSidebar: false, hrefurl: '.', h2: 'Luščenje | dodaj opravilo', h1: 'Seznam neželenih terminov', description: 'Seznam terminoloških kandidatov bo natančnejši, če boste dodali tudi seznam neželenih besed, ki naj jih luščilnik izloči iz seznama. Seznam lahko vsebuje splošne termine, npr. tabela, kazalnik, ali pogoste slovnične besede, zlasti veznike, pomožne glagole.', buttons: [{ type: 'cancel', content: 'Nazaj', classAtr: 'btn btn-secondary header-btn-secondary link-back' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites.mt-2
+    #offset-main
+      .table-tasks
+        .table-responsive
+          table.styled-table
+            thead
+              tr
+                th= 'ID'
+                th= 'IME DATOTEKE'
+                th= 'VELIKOST'
+                th= 'DATUM'
+                th= ''
+            tbody#files-list
+              each document, index in stopTermsFiles
+                tr
+                  td= index + 1
+                  td.filename= document.filename
+                  td= document.size
+                  td= new Date(document.timeModified).toLocaleDateString('sl-SL')
+                  td
+                    button.p-0.delete-file.delete-btn-table(type="button")
+                      img(src="/images/red-trash-icon.svg" alt="Izbriši")
+                      span.ms-2 Briši
+      .row.ms-2.me-2.align-items-center.mt-4
+        form#upload-files.col-sm-5.upload-a-file-field.p-2.align-items-center.d-flex(
+          method="post"
+          enctype="multipart/form-data"
+        )
+          input(type="hidden" name="extractionId" value=id)
+          .col-sm-5.upload-inner-border.w-100.justify-content-center.d-sm-flex.p-3.drag-area
+            div
+              button.btn.btn-primary(type="button") Dodaj datoteko
+              input#upload(
+                type="file"
+                name="extractionFile"
+                accept=".txt"
+                multiple
+                hidden
+              )
+        .col.d-flex.align-items-center.ms-md-3
+          span.gray-info Dodate lahko seznam besed, ki jih v seznam terminoloških kandidatov ne želite vključiti. Seznam naj bo shranjen v formatu .txt. Na koncu morate spremembe shraniti. #[a.smaller-gray-info(href="/pomoc#help-stop-lists") Več...]
+  include /utilities/modal-spinner
+  include /utilities/modal-alert
+  include /common/footer

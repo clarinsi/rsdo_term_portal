@@ -1,0 +1,105 @@
+mixin mainHeader(headerContent)
+  if (headerContent.sideMenu)
+    #offset-padding.offset-padding.header-section-root
+      .d-flex.justify-content-between.flex-wrap.flex-md-nowrap
+        .header-container-left-side.d-flex
+          #chevrons-left.d-flex.align-items-start.justify-content-start
+            if (headerContent.noSidebar)
+              a.btn-chevrons-left(type="link" href=headerContent.hrefurl)
+                img(src="/images/chevrons-left.svg") 
+          .header-container-divider-left
+            h2#site-header-title= headerContent.h2
+            h1#site-heading= headerContent.h1
+            span#text-description.pe-xl-5.page-description= headerContent.description
+              if (headerContent.helpLink)
+                a.ms-2.page-description(href=headerContent.helpLink.linkHref)= headerContent.helpLink.linkText
+        .header-container-divider-right
+          if (headerContent.buttons && headerContent.buttons.length)
+            each el in headerContent.buttons
+              if el.type === 'button'
+                button.me-0(
+                  class=el.classAtr || 'btn btn-primary header-btn'
+                  form=el.form
+                )= el.content
+              else if el.type=== 'disabled'
+                button#disabled-submit-btn.me-0(
+                  class=el.classAtr || 'btn btn-primary header-btn'
+                  form=el.form
+                  disabled
+                )= el.content
+              else if el.type === 'link'
+                a.me-0(class=classAtr || 'btn btn-primary header-btn' href=el.url)= el.content
+              else if el.type === 'cancel'
+                a.me-0(
+                  class=classAtr || 'btn btn-secondary header-btn-secondary'
+                  href=el.url
+                )= el.content
+      if (headerContent.noSidebar)
+        hr#header-row.mt-1.ms-xl-4.mb-0
+      else
+        hr#header-row.mt-1.ms-0.mb-0
+  else
+    #offset-padding.header-section-root.no-side-menu
+      .d-flex.justify-content-between.flex-md-nowrap.flex-wrap
+        .header-container-left-side.d-flex
+          #chevrons-left.d-flex
+            if (headerContent.noSidebar)
+              a#btn-chevrons.btn-chevrons-left(
+                type="link"
+                href=headerContent.hrefurl
+              )
+                img(src="/images/chevrons-left.svg") 
+          .header-container-divider-left
+            h2#site-header-title= headerContent.h2
+            h1#site-heading= headerContent.h1
+            span#text-description.pe-xl-5.page-description= headerContent.description
+              if (headerContent.helpLink)
+                a.ms-2.page-description(href=headerContent.helpLink.linkHref)= headerContent.helpLink.linkText
+        if (headerContent.noSidebar)
+          .header-container-divider-right.ms-4
+            if (headerContent.buttons && headerContent.buttons.length)
+              each el in headerContent.buttons
+                if el.type === 'button'
+                  button(
+                    class=el.classAtr || 'btn btn-primary header-btn'
+                    form=el.form
+                  )= el.content
+                else if el.type=== 'disabled'
+                  button#disabled-submit-btn(
+                    class=el.classAtr || 'btn btn-primary header-btn'
+                    form=el.form
+                    disabled
+                  )= el.content
+                else if el.type === 'link'
+                  a(class=el.classAtr || 'btn btn-primary header-btn' href=el.url)= el.content
+                else if el.type === 'cancel'
+                  a(
+                    class=el.classAtr || 'btn btn-secondary header-btn-secondary'
+                    href=el.url
+                  )= el.content
+        else
+          .header-container-divider-right
+            if (headerContent.buttons && headerContent.buttons.length)
+              each el in headerContent.buttons
+                if el.type === 'button'
+                  button#mpbtn(
+                    class=el.classAtr || 'btn btn-primary header-btn'
+                    form=el.form
+                  )= el.content
+                else if el.type=== 'disabled'
+                  button#disabled-submit-btn(
+                    class=el.classAtr || 'btn btn-primary header-btn'
+                    form=el.form
+                    disabled
+                  )= el.content
+                else if el.type === 'link'
+                  a(class=classAtr || 'btn btn-primary header-btn' href=el.url)= el.content
+                else if el.type === 'cancel'
+                  a(
+                    class=el.classAtr || 'btn btn-secondary header-btn-secondary'
+                    href=el.url
+                  )= el.content
+      if (headerContent.noSidebar)
+        hr#header-row.mt-1.ms-xl-4.mb-0
+      else
+        hr#header-row.mt-1.ms-0.mb-0

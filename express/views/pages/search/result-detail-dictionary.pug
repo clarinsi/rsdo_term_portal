@@ -1,0 +1,44 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/search-results.js")
+  script(nonce=cspNonce src="/javascripts/search-results-content.js")
+  script(nonce=cspNonce src="/javascripts/comments.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /utilities/result-detail-side-menu
+
+  // +result_detail({prevWindowTitle: "Nazaj", prevHref: absolutePrevPath?prevHref:`/termin/${prevHref}`, portalCode: "TE", portalName: "Terminološki portal", dictName: "Naslov slovarja ki je lahko tudi zelo zelo dolgi in se kar ne konča", fullAuthorName: "Janko Novak", areas: "Paleografija, bibliologija, epigrafika, papirusologija", subareas: "alpinizem, aerobika, atletika", dictHref: `/slovarji/${dictId}/o-slovarju?absolutePrevPath=true`})
+  +result_detail(finalData)
+  //- include /utilities/dictionaries-main-panel-header
+
+  include /utilities/dictionary-info-panel
+  - const c = { sideMenu: true, h2: '', h1: finalData.dictName, description: '', buttons: [{ type: 'link', url: `/iskanje?q=*&d=${dictId}`, content: 'Išči po slovarju' }] }
+  +mainHeader(c)
+
+  //- empty header for code to work
+  //- #offset-padding.offset-padding.header-section-root 
+
+  .content-hold-prerequisites.mt-4
+    #offset-main.main-container.mt-2
+      .d-flex.mb-4.w-100
+        .result-detail-main.w-100
+          .row
+            //- .col-md-1
+              .results-item-language.d-flex.pe-3.flex-shrink-1
+                //- span SL
+            //- .col-md-9
+            .col
+              span!= finalData.description ? finalData.description : 'Ta slovar nima opisa'
+
+            //- .col-md-2
+
+      .result-comment-section
+        .comments-content.col-12.col-md-12.py-md-3.bd-content
+          #offset-main
+            include /utilities/comments-with-pager
+
+  include /common/footer

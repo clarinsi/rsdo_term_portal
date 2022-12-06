@@ -1,0 +1,38 @@
+mixin table(lstt= [{name: "Terminološki slovar fizike in astronomije", area: "Bibliotekarstvo in informacijska znanost"}, {name: "Terminološki slovar fizike in astronomije", area: "Bibliotekarstvo in informacijska znanost"}, {name: "Terminološki slovar fizike in astronomije", area: "Bibliotekarstvo in informacijska znanost"}, {name: "Terminološki slovar fizike in astronomije", area: "Bibliotekarstvo in informacijska znanost"}], isHeadline=false)
+  #dictlist.w-100.table-dict-list
+    if (isHeadline)
+      .th.row.pb-2.g-0
+        .col-11
+          .row.g-0
+            .col-8.d-flex.justify-content-start.ps-4
+              button#sortByDictName.no-bg.no-border.text-decoration-none.navigation-text-color
+                span Ime
+                img#dictNameImg.invisible(src="images/arrow_drop_down.svg")
+            .col-4.d-flex.justify-content-start
+              button#sortByDomainName.no-bg.no-border.text-decoration-none.navigation-text-color
+                span Področje
+                img#domainNameImg.invisible(src="images/arrow_drop_down.svg")
+        .col-1.row.d-flex.justify-content-end.g-0
+          //- .col-4.d-flex.justify-content-center Vir
+          //- .col-4.d-flex.justify-content-center Opis
+          .col.d-flex.justify-content-center
+            .no-bg.no-border.text-decoration-none.navigation-text-color.fw-400 Iskanje
+    each val in lstt
+      .row.table-dict-content.py-2.g-0(id=val.id)
+        .col-11.row.g-0
+          .col-sm-8.d-flex.justify-content-start.text-p875rem.ps-4.fw-500
+            a.d-flex.flex-row.text-decoration-none(
+              href=`/slovarji/${val.id}/o-slovarju?sentFromEntryId=dictsList`
+            ) 
+              img.mt-1.d-flex.i16x16(src="/images/book.svg" alt="")
+              span.px-3.d-flex.flex-grow-1= val.dictionarysl
+          .col-sm-4.pe-3.d-flex.justify-content-start.text-p875rem.dpr= val.domain_primary
+        .col-1.row.d-flex.justify-content-end.g-0
+          //- .col-4.d-flex.justify-content-center.align-items-center
+            span= val.portalcode
+          //- .col-4.d-flex.justify-content-center.align-items-center
+            a(href=`/slovarji/${val.id}/o-slovarju?sentFromEntryId=dictsList`)
+              img.i16x16(src="/images/book.svg" alt="")
+          .col.d-flex.justify-content-center.align-items-top
+            a(href=`/iskanje?q=*&d=${val.id}`)
+              img.i16x16(src="/images/search.svg" alt="")

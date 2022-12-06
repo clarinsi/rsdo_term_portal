@@ -1,0 +1,81 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'settings', activeLvl2: 'consultancy' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Osnovne nastavitve', h1: 'Svetovalnica', description: 'Portal lahko povežete s Terminološko svetovalnico ZRC SAZU in tako prikazujete terminološke odgovore na svojem portalu, lahko pa vklopite lastno svetovalnico. V tem primeru morate med registriranimi uporabniki izbrati svetovalce in urednika svetovalnice, ki  bodo odgovarjali na terminološka vprašanja uporabnikov.', buttons: [{ form: 'admin-settings-consult', type: 'disabled', content: 'Shrani' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      form#admin-settings-consult(method="post") 
+        .btn-group.d-flex.flex-column(role="group")
+          if consultancy.consultancyType === 'own'
+            .button-type
+              input#own-consultancy.form-check-input(
+                type="radio"
+                name="consultancyType"
+                value="own"
+                checked
+              )
+              label.normal-gray.ms-2(for="own-consultancy") Lastna svetovalnica
+            .mt-3
+              input#zrc-consultancy.form-check-input(
+                type="radio"
+                name="consultancyType"
+                value="ZRC"
+              )
+              label.normal-gray.ms-2(for="zrc-consultancy") Terminološka svetovalnica ZRC SAZU
+          else
+            .button-type
+              input#own-consultancy.form-check-input(
+                type="radio"
+                name="consultancyType"
+                value="own"
+              )
+              label.normal-gray.ms-2(for="own-consultancy") Lastna svetovalnica
+            .mt-3
+              input#zrc-consultancy.form-check-input(
+                type="radio"
+                name="consultancyType"
+                value="ZRC"
+                checked
+              )
+              label.normal-gray.ms-2(for="zrc-consultancy") Terminološka svetovalnica ZRC SAZU
+
+        .mt-4
+          .subject-name
+            label.smaller-black-uppercase(for="zrc-email") E-NASLOV
+          .row
+            .col-sm-5
+              input#zrc-email.name-input.form-control.autocomplete.d-inline(
+                type="email"
+                name="zrcEmail"
+                value=consultancy.zrcEmail
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Vnesite e-naslov, ki ga za obveščanje o novih terminoloških vprašanjih uporabljajo terminološki svetovalci.
+
+        .mt-3
+          .subject-name
+            label.smaller-black-uppercase(for="zrc-url") POVEZAVA
+          .row
+            .col-sm-5
+              input#zrc-url.name-input.form-control.autocomplete.d-inline(
+                type="url"
+                name="zrcURL"
+                value=consultancy.zrcURL
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Vnesite naslov spletnega mesta, kjer so zbrani vsi odgovori terminološke svetovalnice.
+  include /utilities/modal-alert-mixin
+  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
+  include /common/footer

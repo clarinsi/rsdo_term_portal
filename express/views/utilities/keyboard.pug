@@ -1,0 +1,12 @@
+mixin keyboard(width=null, height=null, offsetX=null, offsetY=null, keys= ["č", "š", "ž", "ć", "đ", "ä", "ö", "ü", "ß", "ç", "ñ"])
+  .justify-content-center.d-none-weak.kbd-root
+    .d-flex.flex-row.flex-wrap.keyboard-popup.kbd.w-100(
+      style=`${width?"width:".concat(width).concat("px;"):""}
+      ${height?"height:".concat(height).concat("px;"):""}
+      ${offsetX?"left:".concat(offsetX).concat("px;"):""}
+      ${offsetY?"top:".concat(offsetY).concat("px;"):""}`
+    )
+      each key in keys 
+        span.m-1.d-flex.align-content-
+          button.kbd-key= key
+  //- script(nonce=cspNonce src="/javascripts/keyboard.js") // added in the layout.pug

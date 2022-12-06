@@ -1,0 +1,13 @@
+REVOKE ALL ON schema public FROM public;
+
+\set pwd_express `echo $POSTGRES_EXPRESS_PASSWORD`
+CREATE USER express WITH ENCRYPTED PASSWORD :'pwd_express';
+-- GRANT ALL PRIVILEGES ON DATABASE term_portal TO express;
+GRANT ALL ON schema public TO express;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO express;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO express;
+-- GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO express;
+
+\set pwd_concordancer `echo $POSTGRES_CONCORDANCER_PASSWORD`
+CREATE USER concordancer WITH ENCRYPTED PASSWORD :'pwd_concordancer';
+ALTER ROLE concordancer WITH CREATEDB;

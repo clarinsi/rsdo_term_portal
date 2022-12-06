@@ -1,0 +1,26 @@
+extends /layout
+
+block pageSpecificScipts
+  //- the only reason to include the bottom script is to calibrate the padding of the content
+
+block body
+  - const specificUserRights = user && (user.hasRole('consultant') || user.hasRole('consultancy admin'))
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(true)
+
+  #offset-padding.offset-padding.header-section-root 
+
+  include /utilities/empty-main-panel-header
+  +mainHeader
+  .content-hold-prerequisites
+    #offset-main.ps-2.pe-2.mt-4.ps-sm-3.errc
+      .ps-lg-5.pe-lg-4
+        .p-squeeze-lg.text-center
+          img.mx-auto(src="/images/search-error.svg" alt="Search Error")
+          h1.text-blue-info-title Ni zadetkov
+          p.pb-5.mt-5.px-10-large.text-center Vaše iskanje ni bilo uspešno. Vpišite novo iskalno poizvedbo in poizkusite znova.
+          //- p.mt-5.px-20-large.h-41
+            button.btn.btn-secondary.d-inline-block.h-41.mx-2 Opcija A
+            button.btn.btn-primary.d-inline-block.h-41.mx-2 Opcija B
+  include /common/footer

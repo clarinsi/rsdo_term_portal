@@ -1,0 +1,44 @@
+h1 Luščenje
+
+form(method="post")
+  input(type="hidden" name="extractionType" value="own")
+  p Luščenje iz lastnih besedil
+    = ' '
+    button Dodaj
+
+form(method="post")
+  input(type="hidden" name="extractionType" value="oss")
+  p Luščenje iz OSS besedil
+    = ' '
+    button Dodaj
+
+h2 Seznam obstoječih luščenj
+ul#extraction-list
+  each e in extractions
+    li(data-id=e.id)
+      | #{ e.name } (STATUS: #[span.extraction-status= e.status]) (
+      if e.status === 'new'
+        a(href=`poc/${e.id}`) Uredi
+      if e.status !== 'in progress'
+        button.btn-delete Izbriši
+      if e.canBegin
+        button.btn-begin Začni
+      if e.status === 'finished' || e.status === 'failed'
+        button.btn-duplicate Podvoji
+      if e.status === 'finished'
+        a(href=`poc/${e.id}/kandidati`) Terminološki kandidati [#{ e.termCandidatesCount }]
+      if e.status === 'finished' && e.corpusId
+        a(href=`poc/korpus/${e.corpusId}` target="_blank") Uporabniški korpus
+      if e.status === 'finished' && e.ossParams
+        a(
+          href="https://www.clarin.si/noske/run.cgi/corp_info?corpname=oss&struct_attr_stats=1"
+          target="_blank"
+        ) Korpus KAS+
+      | ) (ZAČETEK: #[span.extraction-time-started= e.timeStarted ? e.timeStarted.toLocaleString('sl-SI') : 'ni še bilo začeto'],
+      | KONEC: #[span.extraction-time-finished= e.timeFinished ? e.timeFinished.toLocaleString('sl-SI') : 'ni še bilo končano'])
+
+script(
+  nonce=cspNonce
+  src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+)
+script(nonce=cspNonce src="/javascripts/extraction-poc-list.js")

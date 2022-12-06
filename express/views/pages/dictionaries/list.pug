@@ -1,0 +1,81 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-fake
+  +sideNavigationFake
+  include /utilities/dictionaries-main-panel-header
+  if user
+    - const c = { sideMenu: false, h2: 'Urejanje', h1: 'Moji slovarji', description: 'Nabor vseh slovarjev, ki jih uporabnik lahko ureja kot glavni urednik ali pa ima dodeljeno pravico urejanja, pregledovanja, popravljanja ipd.', buttons: [{ type: 'link', content: 'Nov slovar', url: '/slovarji/nov' }] }
+    +mainHeader(c)
+    .content-hold-prerequisites
+      #offset-main.ps-3.pe-3
+        if dictionaries.length
+          -
+            const localeOptions = {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            }
+          each dictionary, index in dictionaries
+            div(
+              class=index ? 'container-fluid dictionary-content mt-4 pb-2 pt-1' : 'container-fluid dictionary-content mt-3 pb-2 pt-1'
+            )
+              p.dictionary-title.mb-2.mt-2.ms-2= dictionary.nameSl
+              hr.me-2.mt-0.ms-2.mb-4
+              .container-fluid
+                .d-sm-flex
+                  .d-lg-flex
+                    .d-sm-flex.mt-2
+                      span.dictionary-attributes.me-3.text-nowrap Število terminov
+                      span.dictionary-value.me-5= dictionary.countEntries
+                    .d-sm-flex.mt-2
+                      span.dictionary-attributes.me-3.ms-xl-5.text-nowrap Zadnja sprememba
+                      span.dictionary-value.me-md-5.me-2.d-block= dictionary.timeModified.toLocaleDateString('sl-SL', localeOptions)
+                  .d-lg-flex
+                    .d-sm-flex.mt-2
+                      span.dictionary-attributes.me-3.ms-xl-5.d-inline Status
+                      span.dictionary-value.me-5= dictionary.status === 'closed' ? 'zaprt' : dictionary.status === 'reviewed' ? 'v predogledu' : 'odprt'
+                    .d-sm-flex.mt-2
+                      span.dictionary-attributes.me-3.ms-lg-0.ms-xl-5.d-inline Komentarji
+                      span.dictionary-value.me-5= dictionary.countComments
+                .container-fluid.d-md-flex.p-0.mt-3.justify-content-between
+                  .d-xl-flex.justify-content-between
+                    a.btn.btn-secondary.mb-2.mt-2.w-100.w-sm-none(
+                      href=`/slovarji/${dictionary.id}/podatki`
+                    )
+                      img.d-inline(src="/images/vector.svg" alt="")
+                      span.ms-1.text-nowrap Uredi lastnosti
+                    a.btn.btn-secondary.mb-2.mt-2.ms-xl-4.w-100.w-sm-none(
+                      href=`/slovarji/${dictionary.id}/vsebina`
+                    )
+                      img.d-inline(src="/images/book-colorized.svg" alt="")
+                      span.ms-1.text-nowrap Uredi vsebino
+                  .ms-md-4.ms-xl-auto.d-xl-flex.justify-content-between
+                    a.btn.btn-secondary.mb-2.mt-2.me-4.w-100.w-sm-none(
+                      href=`/slovarji/${dictionary.id}/uvoz/datoteka`
+                    )
+                      img.d-inline(src="/images/fi_upload.svg" alt="")
+                      span.ms-1 Uvoz
+                    a.btn.btn-secondary.mb-2.mt-2.w-100.w-sm-none(
+                      href=`/slovarji/${dictionary.id}/izvoz`
+                    )
+                      img.d-inline(src="/images/fi_download.svg" alt="")
+                      span.ms-1 Izvoz
+        else
+          .d-flex.justify-content-center.mt-5
+            p Nimate slovarjev za urejanje.
+  else
+    - const c = { sideMenu: false, h2: 'Urejanje', h1: 'Moji slovarji', description: 'Nabor vseh slovarjev, ki jih uporabnik lahko ureja kot glavni urednik ali pa ima dodeljeno pravico urejanja, pregledovanja, popravljanja ipd.' }
+    +mainHeader(c)
+    .content-hold-prerequisites.pe-md-5.ps-4.pe-2
+      #offset-main.pe-3.ps-2
+        .d-flex.justify-content-center.mt-5
+          p Za urejanje slovarjev morate biti prijavljeni.
+
+  include /common/footer

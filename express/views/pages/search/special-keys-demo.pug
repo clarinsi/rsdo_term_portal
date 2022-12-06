@@ -1,0 +1,22 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/results-index.js")
+
+block body
+  section#fixed-top-section.fixed-top
+    include /common/main-navigation
+    +main-navigation(true)
+    include /components/search-and-filter/small-device-search
+    +mini-searchbar
+    include /utilities/keyboard
+    +keyboard(586, 200, 473, 50)
+
+  include /components/search-and-filter/search-filter-navigation
+
+  .content-hold-prerequisites.ps-4.pe-4.mt-4
+    #offset-main.main-container.ps-1.mt-2
+      .d-flex.mb-4.w-100
+        include /components/search-and-filter/result-panel
+
+  include /common/footer

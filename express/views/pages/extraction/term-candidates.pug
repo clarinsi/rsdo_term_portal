@@ -1,0 +1,110 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/extraction.js")
+  script(nonce=cspNonce src="/javascripts/extraction-term-candidates.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+
+  include /common/side-menu-fake
+  +sideNavigationFake
+  include /utilities/dictionaries-main-panel-header
+  - const c = { noSidebar: false, hrefurl: '.', h2: 'Luščenje', h1: 'Terminološki kandidati', description: 'Seznam terminoloških kandidatov, ki so rezultat izbranega luščenja.', buttons: [{ type: 'cancel', url: '/luscenje', content: 'Nazaj', classAtr: 'btn btn-secondary header-btn-secondary' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites.me-2
+    #offset-main.mt-3
+      .d-flex.w-100.justify-content-between.mb-4
+        .d-flex
+          include /components/search-and-filter/inline-search
+        .d-flex
+          include /utilities/pager
+          +pager
+
+      .table-responsive
+        table.styled-table
+          thead
+            tr
+              th= '#'
+              th= 'KANONIČNA OBLIKA'
+              th= 'RANKING'
+              th= 'POGOSTOST OBJAVLJANJA'
+          tbody#page-results
+            each termCandidate, index in firstPageOfTermCandidates
+              tr
+                td= index + 1
+                td= termCandidate.kanonicnaoblika
+                td= termCandidate.ranking
+                td= termCandidate.pogostostpojavljanja
+
+      form(action=`/api/v1/extraction/${extractionId}/term-candidates-export`)
+        .row.mt-4
+          .me-0.pe-0.d-flex.align-items-center
+            span.radio-button-labels Izvozi termine od številke
+            input.without-arrows.form-control.terminology-input.ms-1(
+              type="number"
+              name="from"
+              maxlength="5"
+              min="0"
+            )
+            span.radio-button-labels.ms-1 do številke
+            input.without-arrows.form-control.terminology-input.ms-1(
+              type="number"
+              name="to"
+              maxlength="5"
+              min="0"
+            )
+
+        //- .file-type.mt-4
+        //-   span.new-user-info FORMAT ZAPISA
+        //-   #file-type-selection.file-types.ms-2.ps-1
+        //-     .row
+        //-       .col-sm-6
+        //-         .form-check.radio-button.ms-0.ps-3
+        //-           input#file-format-xml.form-check-input(
+        //-             type="radio"
+        //-             name="importFileFormat"
+        //-             value="xml"
+        //-             checked
+        //-           )
+        //-           label.form-check-label.ms-0(for="file-format-xml")
+        //-             | XML
+        //-         .form-check.radio-button.ms-3
+        //-           input#file-format-csv.form-check-input(
+        //-             type="radio"
+        //-             name="importFileFormat"
+        //-             value="csv"
+        //-           )
+        //-           label.form-check-label.ms-0(for="file-format-csv")
+        //-             | CSV
+        //-         .form-check.radio-button.ms-3
+        //-           input#file-format-tsv.form-check-input(
+        //-             type="radio"
+        //-             name="importFileFormat"
+        //-             value="tsv"
+        //-           )
+        //-           label.form-check-label.ms-0(for="file-format-tsv")
+        //-             | TSV
+        //-         .form-check.radio-button.ms-3
+        //-           input#file-format-txt.form-check-input(
+        //-             type="radio"
+        //-             name="importFileFormat"
+        //-             value="txt"
+        //-           )
+        //-           label.form-check-label.ms-0(for="file-format-txt")
+        //-             | TXT
+        //-       .col.ms-4
+        //-         span.name-info-txt.ms-5 Navodilo k posamičnemu polju. Anim duis ullamco Lorem reprehenderit.
+        .d-sm-flex.mt-4
+          button.btn.btn-primary.me-2
+            | Izvozi
+
+  include /common/footer
+
+  script#variables-transport-script(nonce=cspNonce).
+    const termCandidates = !{ termCandidatesJson }.terminoloski_kandidati;
+    const hitsPerPage = #{ hitsPerPage };
+    const numberOfAllPages = #{ numberOfAllPages };
+    document.getElementById('variables-transport-script').remove();

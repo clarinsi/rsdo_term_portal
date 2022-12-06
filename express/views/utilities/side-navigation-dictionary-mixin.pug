@@ -1,0 +1,43 @@
+mixin sideNavigation(sideNavigationData)
+  .admin-nav
+    .admin-nav-mobile
+      button.nav-button(onclick="toggleNav('admin-nav-content')")
+        img#burger-menu-img(
+          src="/images/burger-menu-button-icon.svg"
+          alt="Meni"
+        )
+      span.nav-title
+    ul.admin-nav-content.slidable
+      block admin-nav-content
+      p.side-nav-title Urejanje
+      li.admin-nav-item
+        a(href="#")
+          img(src="/images/book.svg" alt="")
+          p Moji slovarji
+      li.admin-nav-item.focused-menu
+        a.menu-selected(href="#")
+          img(src="/images/areas.svg" alt="")
+          p Lastnosti
+        ul.sub-links
+          li
+            a(href="#" class=sideNavigationData.classNameImeOpis) Ime in opis
+          li
+            a(href="#" class=sideNavigationData.classNameUporabniki) Uporabniki
+          li
+            a(href="#" class=sideNavigationData.classNameStruktura) Struktura
+          li
+            a(href="#" class=sideNavigationData.classNameNapredno) Napredno
+          li
+            a(href="#" class=sideNavigationData.classNameKomentarji) Komentarji
+      li.admin-nav-item
+        a(href="#")
+          img(src="/images/book.svg" alt="")
+          p Vsebina
+      li.admin-nav-item
+        a(href="#")
+          img(src="/images/fi_download.svg" alt="")
+          p Izvoz
+      li.admin-nav-item
+        a(href="#")
+          img(src="/images/fi_upload.svg" alt="")
+          p Uvoz

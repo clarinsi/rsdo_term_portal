@@ -1,0 +1,156 @@
+extends /layout
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+block include-styles
+  link(rel="stylesheet" href="/stylesheets/pages/admin.css")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'dictionaries', activeLvl2: 'fileImport' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Uvoz iz datoteke', description: 'Slovar lahko uvozite s svojega računalnika in nadaljujete z urejanjem na terminološkem portalu.', buttons: [] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container
+      form#file-import-form.container.mt-3.ms-2.ps-0(
+        method="post"
+        enctype="multipart/form-data"
+      )
+        .file-type
+          span.new-user-info DATOTEKA
+        .row
+          .col-md-6.ms-2.white-border-background.p-4.d-flex.align-items-center.justify-content-between
+            .align-items-center.d-flex
+              span#chosen-file.info-text-for-button Izberi datoteko
+            div
+              label(for="upload") 
+                button#button-import.btn.btn-primary(type="button") IZBERI
+              input#upload(
+                type="file"
+                name="dictionaryImportFile"
+                accept=".xml"
+              )
+
+          .col-md.d-flex.align-items-center
+            span.name-info-txt Izberite slovarske podatke, ki ste jih shranili na svojem računalniku.
+        .file-type.mt-4
+          span.new-user-info NAČIN UVOZA
+          .row
+            .col-sm-6.ms-2
+              .checkbox
+                input#flexCheckDefault.form-check-input(
+                  type="checkbox"
+                  name="deleteExistingEntries"
+                )
+                label.form-check-label(for="flexCheckDefault")
+                  span.user-email Izbriši obstoječe slovarske sestavke.
+            .col
+              span.name-info-txt Če izberete to možnost, se bodo vsi doslejšnji slovarski sestavki ob uvozu nove datoteke izbrisali.
+        .file-type.mt-4
+          span.new-user-info FAZA UREJANJA
+          #file-type-selection.file-types
+            .row
+              .col-sm-6.ms-2
+                .form-check.radio-button.ms-0.ps-3
+                  input#in-edit-radio.form-check-input(
+                    type="radio"
+                    name="entryStatus"
+                    value="inEdit"
+                    checked
+                  )
+                  label.form-check-label.ms-0(for="in-edit-radio")
+                    | V urejanju
+                #complete-radio.form-check.radio-button.ms-3
+                  input#complete-radio.form-check-input(
+                    type="radio"
+                    name="entryStatus"
+                    value="complete"
+                  )
+                  label.form-check-label.ms-0(for="complete-radio")
+                    | Urejeno
+              .col 
+                span.name-info-txt Z izbiro te možnosti boste pobrisali samo slovarske sestavke, ki so v določeni fazi urejanja.
+        .file-type.mt-4
+          span.new-user-info FORMAT ZAPISA
+          #file-type-selection.file-types
+            .row
+              .col-sm-6.ms-2.text-nowrap
+                .form-check.radio-button.ms-0.ps-3
+                  input#file-format-xml.form-check-input(
+                    type="radio"
+                    name="importFileFormat"
+                    value="xml"
+                    checked
+                  )
+                  label.form-check-label.ms-0(for="file-format-xml")
+                    | XML
+                .form-check.radio-button.ms-3
+                  input#file-format-csv.form-check-input(
+                    type="radio"
+                    name="importFileFormat"
+                    value="csv"
+                  )
+                  label.form-check-label.ms-0(for="file-format-csv")
+                    | CSV
+                .form-check.radio-button.ms-3
+                  input#file-format-tsv.form-check-input(
+                    type="radio"
+                    name="importFileFormat"
+                    value="tsv"
+                  )
+                  label.form-check-label.ms-0(for="file-format-tsv")
+                    | TSV
+                .form-check.radio-button.ms-3
+                  input#file-format-txt.form-check-input(
+                    type="radio"
+                    name="importFileFormat"
+                    value="txt"
+                  )
+                  label.form-check-label.ms-0(for="file-format-txt")
+                    | TXT
+              .col
+                span.name-info-txt Izberite format datoteke, v kateri je slovar shranjen na vašem računalniku.
+      .file-type.mt-4
+        button.btn.btn-primary.mt-4 UVOZI
+        .latest-uploads.mt-4
+          .d-flex.w-100.justify-content-between
+            .d-flex
+              span.info-text-for-button Zadnji uvozi
+            .d-flex
+              include /utilities/pager
+              +pager
+
+          if imports.length
+            .table-responsive
+              table.styled-table
+                thead
+                  tr
+                    th= 'DATUM'
+                    th= 'VRSTA'
+                    th= 'ŠT. GESEL'
+                    th= 'STATUS'
+                    th= ''
+                    -
+                      const localeOptions = {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                      }  
+                    each element in imports
+                      tr
+                        td= element.timeStarted.toLocaleDateString('sl-SL', localeOptions)
+                        td= element.fileFormat
+                        td= element.countValidEntries
+                        td= element.status
+          else
+            p Ni še dodanih uvozov.
+
+  include /common/footer

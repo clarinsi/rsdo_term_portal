@@ -1,0 +1,49 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/search-results.js")
+  script(nonce=cspNonce src="/javascripts/search-results-content.js")
+  script(nonce=cspNonce src="/javascripts/comments.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(true)
+  include /utilities/result-detail-side-menu
+
+  +result_detail(finalData)
+  //- include /utilities/dictionaries-main-panel-header
+
+  //- empty header for code to work
+  #offset-padding.offset-padding.header-section-root 
+
+  .content-hold-prerequisites.mt-4
+    #offset-main.main-container.ps-1.mt-2
+      #chevrons-left.d-flex
+        .header-container-divider-left
+          h1#site-heading O terminu
+
+      hr#disposable-break.mt-0
+      .d-flex.mb-4.w-100.flex-column
+        .result-detail-main.w-100 
+          .row.g-0
+            //-   .col-md-1
+                .results-item-language.d-flex.pe-3.flex-shrink-1
+                span SL
+              .col-md-9
+                h2 Kajakaški
+                h5.mt-3 pridevnik, splošni <br> kajakaški, kajakaškega, kajakaškemu
+                h6.mt-5 Definicija
+
+                span Nostrud quis minim reprehenderit ex ea quis dolor in magna adipisicing ut dolore. Id esse eiusmod ex anim anim ad anim consequat. Ipsum pariatur aute minim consectetur. Non deserunt reprehenderit laborum pariatur. Sint deserunt nulla officia et nostrud laborum nulla aliqua consequat.
+
+              .col-md-2
+            include /utilities/entry-preview-mixin
+            +entryPreview
+
+      .result-comment-section
+        .comments-content.col-12.col-md-12.py-md-3.bd-content
+          #offset-main
+            include /utilities/comments-with-pager
+
+  include /common/footer

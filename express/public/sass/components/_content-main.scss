@@ -1,0 +1,15 @@
+@use "../variables/variables" as v;
+
+.profile-menu-button {
+  display: block;
+  background: none;
+  border: none;
+  div {
+    div {
+      span {
+        min-width: 80px;
+        text-align: left;
+      }
+    }
+  }
+}

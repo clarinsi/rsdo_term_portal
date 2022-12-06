@@ -1,0 +1,282 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'dictionaries', activeLvl2: 'users' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: 'Uporabniki', description: 'V tem razdelku lahko določite fazo urejanja slovarja, dodajate uporabnike in jim določate uporabniške pravice pri urejanju slovarja.', buttons: [{ type: 'disabled', content: 'Shrani', form: 'admin-dictionary-users' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-1
+      form#admin-dictionary-users.container-xxl.ms-0.ps-0(method="post")
+        span.users-subtitle-txt.ms-0 Faze urejanja
+        .row.align-items-center.mt-2
+          .col-sm-6
+            .switch-forms-and-key-word.d-md-flex.mt-2
+              .switch-forms
+                .form-check.form-switch.d-flex
+                  input#preposition.form-check-input(
+                    type="checkbox"
+                    disabled
+                    checked
+                  )
+                  label.form-check-label(for="preposition") Predlog
+
+          .col-sm
+            span.name-info-txt V slovarju so samo terminološki kandidati. Slovarja ne morete objaviti.
+
+        .row.align-items-center
+          .col-sm-6
+            .switch-forms-and-key-word.d-md-flex
+              .switch-forms
+                .form-check.form-switch.d-flex
+                  input#editing.form-check-input(
+                    type="checkbox"
+                    disabled
+                    checked
+                  )
+                  label.form-check-label(for="editing") V urejanju
+
+          .col-sm
+            span.name-info-txt Slovarski sestavek je v fazi, ko se dodajajo in oblikujejo elementi, ki ste jih izbrali v strukturi slovarskega sestavka.
+            a.ms-1.name-info-txt(href="/pomoc#help-users-dict" target="_blank") Več...
+
+        .row.align-items-center
+          .col-sm-6
+            .switch-forms-and-key-word.d-md-flex
+              .switch-forms
+                .form-check.form-switch.d-flex
+                  input#edited.form-check-input(
+                    type="checkbox"
+                    disabled
+                    checked
+                  )
+                  label.form-check-label(for="edited") Urejeno
+          .col-sm
+            span.name-info-txt Slovarski sestavek je pregledan in dokončan.
+
+        .row.align-items-center.mt-2
+          .col-sm-6
+            .switch-forms-and-key-word.d-md-flex
+              .switch-forms
+                if dictionary.terminologyReviewFlag
+                  .form-check.form-switch.d-flex
+                    input#terminology_review.form-check-input(
+                      type="checkbox"
+                      name="hasTerminologyReview"
+                      checked
+                    )
+                    label.form-check-label(for="terminology_review") Strokovno pregledano
+                else
+                  .form-check.form-switch.d-flex
+                    input#terminology_review.form-check-input(
+                      type="checkbox"
+                      name="hasTerminologyReview"
+                    )
+                    label.form-check-label(for="terminology_review") Strokovno pregledano
+          .col-sm
+            span.name-info-txt Slovar je pregledal področni strokovnjak.
+
+        .row.align-items-center.mt-2
+          .col-sm-6
+            .switch-forms-and-key-word.d-md-flex
+              .switch-forms
+                if dictionary.languageReviewFlag
+                  .form-check.form-switch.d-flex
+                    input#language_review.form-check-input(
+                      type="checkbox"
+                      name="hasLanguageReview"
+                      checked
+                    )
+                    label.form-check-label(for="language_review") Jezikovno pregledano
+                else
+                  .form-check.form-switch.d-flex
+                    input#language_review.form-check-input(
+                      type="checkbox"
+                      name="hasLanguageReview"
+                    )
+                    label.form-check-label(for="language_review") Jezikovno pregledano
+
+          .col-sm
+            span.name-info-txt Slovar je pregledal jezikoslovec.
+
+        .container-xl.mt-4.ms-0.ps-0
+          span.users-subtitle-txt.ms-0.mt-3 Uporabniške pravice/vloge
+            table#user-roles-table.table-users.table-borderless.align-middle.mt-3
+              thead
+                tr
+                  th.col-2
+                    span.user-rights-column-title Uporabnik
+                  th.col-2
+                    span.user-rights-column-title Administracija
+                  th.col-2.text-center
+                    span.user-rights-column-title Urejanje
+                  th.col-2
+                    span#txt-term-rev.user-rights-column-title Strokovni pregled
+                  th.col-2
+                    span#txt-lang-rev.user-rights-column-title Jezikovni pregled
+                  th.col-1.justify-content-center
+                    span.hidden-text Izbriši polje
+
+              if userRights
+                each el in userRights
+                  tbody.user-data.pb-xl-2
+                    tr
+                      input.hidden-user-id(type="hidden" value=el.id)
+                      td.d-grid.justify-content-left.justify-content-xl-center.mb-0.align-items-center(
+                        scope="row"
+                        data-label=""
+                      ) 
+                        span.user-name-last-name= el.userName
+                        span.user-email= el.email
+
+                      td.pt-1.pb-1(data-label="Administrator")
+                        .form-check.d-flex.justify-content-left.justify-content-xl-center.mb-0.align-items-center
+                          if el.hasAdministration
+                            input.administration-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isAdministration]`
+                              checked
+                            )
+                          else
+                            input.administration-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isAdministration]`
+                            )
+
+                      td.pt-1.pb-1(data-label="Urejanje")
+                        .form-check.d-flex.justify-content-left.justify-content-xl-center.mb-0.align-items-center
+                          if el.hasEditing
+                            input.edit-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isEditing]`
+                              checked
+                            )
+                          else
+                            input.edit-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isEditing]`
+                            )
+
+                      td.pt-1.pb-1(data-label="Strokovni pregled")
+                        .form-check.d-flex.justify-content-left.justify-content-xl-center.mb-0.align-items-center
+                          if el.hasTerminologyReview
+                            input.terminology-review-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isTerminologyReview]`
+                              checked
+                            )
+                          else
+                            input.terminology-review-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isTerminologyReview]`
+                            )
+
+                      td.pt-1.pb-1(data-label="Jezikovni pregled")
+                        .form-check.d-flex.justify-content-left.justify-content-xl-center.mb-0.align-items-center
+                          if el.hasLanguageReview
+                            input.language-review-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isLanguageReview]`
+                              checked
+                            )
+                          else
+                            input.language-review-cb.form-check-input(
+                              type="checkbox"
+                              name=`rightsPerUser['${el.id}'][isLanguageReview]`
+                            )
+
+                      td.delete-user-btn.pt-3.delete-row(
+                        value=`${el.id}`
+                        data-bs-target="#alert-modal"
+                        data-bs-toggle="modal"
+                      )
+                        img.icon-trash-delete(
+                          src="/images/red-trash-icon.svg"
+                          alt="Delete"
+                        )
+
+      form#form-add-user.container-xl.new-user-input.mt-4.ps-0.ms-0(
+        action="/api/v1/users/addUser"
+      )
+        span.new-user-info NOV UPORABNIK
+        .row.d-flex.justify-content-lg-start.align-items-center.mt-2.ms-0.ps-0
+          .col-lg-6.ms-0.ps-0.me-2
+            input.name-input.d-inline.form-control.ms-0.ps-0(
+              type="text"
+              name="userNameEmail"
+              autocomplete="off"
+            )
+          .col.ms-xl-4.ms-0.ps-0.d-flex.justify-content-start.mt-2.mt-lg-0
+            button.btn.btn-primary Dodaj
+
+      - const minEntriesNum = parseInt(minEntries)
+      - const countEntries = parseInt(entriesCount)
+      .container-xxl.ms-0.ps-0
+        .row.align-items-center
+          .col-sm-6.mt-4
+            .switch-forms-and-key-word.d-md-flex
+              .form-check.form-switch.d-flex
+                if publishApproval === 'F'
+                  if dictionary.status === 'closed'
+                    input#publish-switch.form-check-input(
+                      type="checkbox"
+                      name="isPublished"
+                      form="admin-dictionary-users"
+                      disabled=countEntries < minEntriesNum ? true : false
+                    )
+                  if dictionary.status === 'published'
+                    input#publish-switch.form-check-input(
+                      type="checkbox"
+                      name="isPublished"
+                      form="admin-dictionary-users"
+                      checked
+                    )
+                else
+                  if dictionary.status === 'closed'
+                    input#publish-switch.form-check-input(
+                      type="checkbox"
+                      name="isPublished"
+                      form="admin-dictionary-users"
+                      disabled=countEntries < minEntriesNum ? true : false
+                    )
+                  if dictionary.status === 'reviewed'
+                    input#publish-switch.form-check-input(
+                      type="checkbox"
+                      name="isPublished"
+                      form="admin-dictionary-users"
+                      checked
+                      disabled
+                    )
+                  if dictionary.status === 'published'
+                    input#publish-switch.form-check-input(
+                      type="checkbox"
+                      name="isPublished"
+                      form="admin-dictionary-users"
+                      checked
+                    )
+                label.form-check-label(for="publish-switch") Slovar odprt
+
+          .col-sm
+            span.name-info-txt Slovar je pregledal jezikoslovec.
+        if dictionary.status === 'published' && countEntries < minEntriesNum
+          .col-sm-6
+            span.mt-3.normal-red-note Število slovarskih sestavkov je manjše od zahtevanega števila - povečajte število slovarskih sestavkov, sicer ga skrbnik slovarjev lahko zapre
+        if publishApproval === 'T' && dictionary.status === 'reviewed'
+          .col-sm-6
+            span.mt-3.normal-red-note Slovar je v odpiranju - čaka na potrditev skrbnika slovarjev
+
+    include /utilities/modal-alert
+    include /utilities/modal-response
+    +responseModal
+  include /utilities/modal-alert-mixin
+  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
+  include /common/footer

@@ -1,0 +1,117 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'settings', activeLvl2: 'portals' }
+  +sideNavigation(d)
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Osnovne nastavitve', h1: 'Portal', description: 'Administratorski del portala je namenjen skupini oseb, ki vsebinsko in tehnično ureja portal, odpira slovarske vire, daje pooblastila posameznim uporabnikom in skrbi za vsebinsko in tehnično urejenost portala. Izberite module, ki jih boste ponudili na terminološkem portalu in na kratko opišite, kaj ponuja vaš portal.', buttons: [{ type: 'disabled', form: 'admin-portal-settings', content: 'Shrani' }] }
+  +mainHeader(c)
+
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      form#admin-portal-settings(method="post")
+        .port-name
+          .subject-name
+            label.smaller-black-uppercase(for="portal-name") IME PORTALA
+          .row
+            .col-sm-5
+              input#portal-name.name-input.form-control.autocomplete.d-inline(
+                type="text"
+                name="portalName"
+                value=portal.name
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Polno ime terminološkega portala.
+
+        .mt-3
+          .subject-name
+            label.smaller-black-uppercase(for="dictionary-label") OZNAKA PORTALA *
+          .row
+            .col-sm-5
+              input#dictionary-label.name-input.form-control.autocomplete.d-inline.w-25(
+                type="text"
+                maxlength="2"
+                name="portalCode"
+                value=portal.code
+                required
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Dvočrkovna oznaka terminološkega portala.
+
+        #text-editor.mt-sm-3
+        .subject-name
+          span.smaller-black-uppercase OPIS PORTALA
+        div
+          textarea.summernote(
+            name="portalDescription"
+            value=portal.description
+          )
+            p= portal.description
+
+        .moduls.mt-3
+          .subject-name
+            label.smaller-black-uppercase(for="dictionary-label") MODULI
+          .d-grid
+            .ms-1.d-sm-flex.mt-2.row
+              .form-check.form-switch.d-flex.align-items-center.col-sm-5
+                if portal.isExtractionEnabled
+                  if portal.isExtractionEnabled === 'T'
+                    input#extraction.form-check-input(
+                      type="checkbox"
+                      checked
+                      name="isExtractionEnabled"
+                    )
+                  else
+                    input#extraction.form-check-input(
+                      type="checkbox"
+                      name="isExtractionEnabled"
+                    )
+                label.form-check-label.normal-gray-label(for="extraction") Luščenje
+              .col-sm.d-flex.align-items-center
+                span.d-md-inline.d-block.smaller-gray-info Modul za luščenje terminoloških kandidatov iz besedil.
+
+            .ms-1.d-sm-flex.mt-4.row
+              .form-check.form-switch.d-flex.align-items-center.col-sm-5
+                if portal.isDictionariesEnabled
+                  if portal.isDictionariesEnabled === 'T'
+                    input#edit.form-check-input(
+                      type="checkbox"
+                      checked
+                      name="isDictionariesEnabled"
+                    )
+                  else
+                    input#edit.form-check-input(
+                      type="checkbox"
+                      name="isDictionariesEnabled"
+                    )
+                label.form-check-label.normal-gray-label(for="edit") Urejanje
+              .col-sm.d-flex.align-items-center
+                span.d-md-inline.d-block.smaller-gray-info Modul za urejanje terminoloških slovarjev.
+
+            .ms-1.d-sm-flex.mt-4.row
+              .form-check.form-switch.d-flex.align-items-center.col-sm-5
+                if portal.isConsultancyEnabled
+                  if portal.isConsultancyEnabled === 'T'
+                    input#consulting.form-check-input(
+                      type="checkbox"
+                      checked
+                      name="isConsultancyEnabled"
+                    )
+                  else
+                    input#consulting.form-check-input(
+                      type="checkbox"
+                      name="isConsultancyEnabled"
+                    )
+                label.form-check-label.normal-gray-label(for="consulting") Svetovanje
+              .col-sm.d-flex.align-items-center
+                span.d-md-inline.d-block.smaller-gray-info Modul za svetovanje pri terminoloških zagatah.
+  include /utilities/modal-alert-mixin
+  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
+  include /common/footer

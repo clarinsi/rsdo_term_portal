@@ -1,0 +1,112 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+  script(nonce=cspNonce src="/javascripts/admin-portals.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'connections', activeLvl2: 'list' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Povezave s portali', description: 'Svoj terminološki portal lahko povežete še z drugimi terminološkimi portali in med iskalnimi prikazujete tudi njihove zadetke.', buttons: [{ type: 'link', content: 'Dodaj povezavo', url: '/admin/povezave/nova' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      if allLinkedPortals
+        if allLinkedPortals.length
+          each link in allLinkedPortals
+            if !link.isLinked
+              .container-fluid.task.task-declined.p-3.mb-4
+                .d-sm-flex.justify-content-sm-between.d-grid
+                  .d-grid
+                    .d-inline
+                      span.bold-weight-black= `${link.code} - ${link.name}`
+                    if link.indexURL
+                      span.link-url.normal-gray.mt-2.mb-2= link.indexURL
+                  .d-flex.align-items-center.justify-content-sm-end
+                    button.link-portal-btn.btn.btn-secondary.align-items-center.d-flex(
+                      type="button"
+                      data-link-id=link.id
+                    )
+                      img(src="/images/external-link.svg")
+                      span.ms-1 Pošlji
+                hr.mt-2.mb-3
+                .d-sm-flex.justify-content-between
+                  .d-sm-flex.align-items-center.mb-0
+                    img(src="/images/x-circle-red.svg")
+                    span.normal-gray.ms-1 ZAVRJEN
+                  .d-flex.align-content-center.mb-0.me-3.mt-2.mt-sm-0
+                    a.btn.p-0.image-link(
+                      type="link"
+                      href=`/admin/povezava/${link.id}/urejanje`
+                    )
+                      img(src="/images/u_edit-alt.svg" alt="Uredi")
+                      span.normal-gray.ms-1 Uredi
+                    .ms-3
+                      button.p-0.btn.delete-task(data-link-id=link.id)
+                        img(src="/images/red-trash-icon.svg" alt="")
+                        span.normal-gray.ms-2 Odstrani
+            else
+              #synced-terms-div
+                .container-fluid.task.task-completed.p-3.mb-4(id='code' + link)
+                  .d-sm-flex.justify-content-sm-between.d-grid
+                    .d-grid
+                      .d-inline
+                        span.bold-weight-black= `${link.code} - ${link.name}`
+                      if link.indexURL
+                        span.normal-gray.mt-2.mb-2= link.indexURL
+                    .d-flex.align-items-center.justify-content-sm-end
+                      if link.indexURL
+                        button.sync-portal-btn.btn.btn-secondary.align-itmes-center.d-flex(
+                          type="button"
+                          data-link-id=link.id
+                        )
+                          img(src="/images/refresh-ccw.svg")
+                          span.ms-1 Sinhroniziraj
+                      a.ms-2.btn.btn-secondary.align-items-center.d-flex(
+                        href=`/admin/povezave/seznam/${link.id}`
+                      )
+                        img(src="/images/book-colorized.svg")
+                        span.ms-1 Slovarji
+                  hr.mt-2.mb-3
+                  .d-sm-flex.justify-content-between
+                    .d-sm-flex.align-items-center.mb-0.form-check.form-switch.portal-enable-switch(
+                      data-portal-id=link.id
+                    )
+                      if link.isEnabled
+                        input.form-check-input(
+                          type="checkbox"
+                          name="isEnabled"
+                          id='checkbox' + link.id
+                          checked
+                        )
+                      else
+                        input.form-check-input(
+                          type="checkbox"
+                          name="isEnabled"
+                          id='checkbox' + link.id
+                        )
+                      label.normal-gray.ms-2.mt-1(for='checkbox' + link.id) Omogočeno
+                    .d-flex.align-content-center.mb-0.me-3.mt-2.mt-sm-0
+                      a.btn.p-0.image-link(
+                        type="link"
+                        href=`/admin/povezava/${link.id}/urejanje`
+                      )
+                        img(src="/images/u_edit-alt.svg" alt="Uredi")
+                        span.normal-gray.ms-1 Uredi
+                      .ms-3
+                        button.p-0.btn.delete-task(data-link-id=link.id)
+                          img(src="/images/red-trash-icon.svg" alt="")
+                          span.normal-gray.ms-2 Odstrani
+        else
+          .d-flex.justify-content-center.mt-5
+            p Nimate povezav za urejanje.
+    include /utilities/modal-alert
+    include /utilities/modal-response
+    +responseModal
+  include /common/footer

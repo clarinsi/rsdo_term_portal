@@ -1,0 +1,18 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/select.js")
+
+block body
+  //-MODUL izberi več
+  section#fixed-top-section.fixed-top
+    include /common/main-navigation
+    +main-navigation(true)
+
+  include /components/search-and-filter/search-filter-navigation
+  include /components/search-and-filter/search-filter-modal
+
+  include /components/main-panel/generic-main-panel-header
+
+  .content-hold-prerequisites.ps-5.pe-5
+    #offset-main.ps-3.pe-3

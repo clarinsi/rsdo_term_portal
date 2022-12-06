@@ -1,0 +1,23 @@
+h1 Terminološki kandidati
+
+include /utilities/pager
++pager
+
+ul#page-results
+  each termCandidate, index in firstPageOfTermCandidates
+    li [#{ index + 1 }] #{ JSON.stringify(termCandidate) }
+
+form(action=`/api/v1/extraction/${extractionId}/term-candidates-export`)
+  p Izvozi termine od številke
+  input(type="number" name="from")
+  p do številke
+  input(type="number" name="to")
+  button Izvozi
+
+script#variables-transport-script(nonce=cspNonce).
+  const termCandidates = !{ termCandidatesJson }.terminoloski_kandidati;
+  const hitsPerPage = #{ hitsPerPage };
+  const numberOfAllPages = #{ numberOfAllPages };
+  document.getElementById('variables-transport-script').remove();
+
+script(nonce=cspNonce src="/javascripts/extraction-poc-term-candidates.js")

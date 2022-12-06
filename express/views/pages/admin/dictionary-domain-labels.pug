@@ -1,0 +1,110 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'dictionaries', activeLvl2: 'subareas' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Področne oznake', description: 'Na tem mestu lahko določite področne oznake, če želite posamezne termine v svojem terminološkem slovarju razvrstiti še podrobneje.', helpLink: { linkHref: '/pomoc#help-content-domains', linkText: 'Več ...' }, buttons: [{ form: 'dictionary-domain-labels', type: 'disabled', content: 'Shrani' }] }
+  +mainHeader(c)
+
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      if results.length
+        .d-flex.justify-content-between.mt-2
+          .d-flex.flex-row.mb-4
+            include /components/search-and-filter/inline-search
+          .d-flex
+            include /utilities/pager
+            +pager
+
+        form#dictionary-domain-labels(
+          method="post"
+          action="/api/v1/dictionaries/update-domain-labels"
+        )
+          input#subareas-dict-id(
+            type="hidden"
+            name="dictionaryId"
+            value=dictionary.id
+          )
+          table#all-areas-table.table.areas-table.table-responsive
+            thead
+              tr
+                th.visible-th(scope="col") Vidno
+                th(scope="col") Področna oznaka
+                th(scope="col") 
+            tbody#page-results
+              each result in results
+                tr
+                  input(type="hidden" name="domainLabelId" value=result.id)
+                  th(scope="row")
+                    if result.isVisible
+                      input.form-check.checkbox-table(
+                        type="checkbox"
+                        name="isVisible"
+                        checked
+                        disabled
+                      )
+                    else
+                      input.form-check.checkbox-table(
+                        type="checkbox"
+                        name="isVisible"
+                        disabled
+                      )
+                  td.tdata-area= result.name
+                  td.buttons-group
+                    .table-buttons
+                      button.p-0.table-button-grp.me-3.edit-row-btn(
+                        type="button"
+                      )
+                        img(src="/images/u_edit-alt.svg" alt="")
+                      button.p-0.table-button-grp.delete-row-btn(
+                        type="button"
+                        data-bs-target="#alert-modal"
+                        data-bs-toggle="modal"
+                      )
+                        img(src="/images/red-trash-icon.svg" alt="")
+      else
+        form#dictionary-domain-labels(
+          method="post"
+          action="/api/v1/dictionaries/update-domain-labels"
+        )
+          input#subareas-dict-id(
+            type="hidden"
+            name="dictionaryId"
+            value=dictionary.id
+          )
+          #subareas-info.d-flex.justify-content-center.mt-5
+            p Niste vnesli področnih oznak.
+          #no-subareas-section.d-none
+            .d-flex.justify-content-between.mt-4
+              .d-flex.flex-row.mb-4
+                include /components/search-and-filter/inline-search
+              .d-flex
+                include /utilities/pager
+                +pager
+
+            table#all-areas-table.table.areas-table.table-responsive
+              thead
+                tr
+                  th.visible-th(scope="col") Vidno
+                  th(scope="col") Področna oznaka
+                  th(scope="col") 
+              tbody
+                tr.hidden(hidden)
+      .row
+        .col-sm-3
+          .subject-name
+            label.input-name-txt PODROČNA OZNAKA
+          input#subarea-input.form-control(type="text")
+        .col.d-flex.align-items-end.mt-2
+          button#add-area.btn.btn-primary(type="submit" disabled) Dodaj
+    include /utilities/modal-alert
+  include /common/footer

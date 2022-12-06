@@ -1,0 +1,173 @@
+version: "3.4"
+
+services:
+  express:
+    build: express
+    depends_on:
+      - postgres
+      - redis
+      - opensearch
+      - maildev
+    environment:
+      NODE_ENV: development
+      DEBUG: termPortal:*
+      IS_BEHIND_PROXY: "${EXPRESS_IS_BEHIND_PROXY:?}"
+      SECRET: "${EXPRESS_SECRET:?}"
+      COOKIES_SECURE: "false"
+      PGHOST: postgres
+      PGUSER: express
+      PGPASSWORD: "${POSTGRES_EXPRESS_PASSWORD:?}"
+      PGDATABASE: term_portal
+      SMTP_HOST: "${SMTP_HOST:?}"
+      SMTP_PORT: "${SMTP_PORT:?}"
+      SMTP_TLS_REJECT_UNAUTHORIZED: "${SMTP_TLS_REJECT_UNAUTHORIZED:?}"
+      SMTP_FROM: "${SMTP_FROM:?}"
+      ORIGIN: http://localhost:${EXPRESS_LISTEN_PORT:?}
+    volumes:
+      # When developing/debugging concordancer, disable express bind mount and node_modules volume and enable express-data.
+      # - express-data:/usr/src/app/data_files
+      - ./express:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "127.0.0.1:${EXPRESS_LISTEN_PORT:?}:3000"
+      - "127.0.0.1:9229:9229"
+    # Enabling TTY makes the npm module "debug" output display properly in container logs
+    tty: true
+
+  postgres:
+    image: postgres:15-alpine
+    # Use any of the two custom Dockerfiles below for debugging PL/pgSQL functions.
+    # Disable docker-entrypoint-initdb.d bind mount when doing so.
+    # build:
+    #   context: postgres
+    #   dockerfile: Dockerfile.debug.alpine
+    #   # dockerfile: Dockerfile.debug.debian
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_ADMIN_PASSWORD:?}"
+      POSTGRES_DB: term_portal
+      POSTGRES_EXPRESS_PASSWORD: "${POSTGRES_EXPRESS_PASSWORD:?}"
+      POSTGRES_CONCORDANCER_PASSWORD: "${POSTGRES_CONCORDANCER_PASSWORD:?}"
+      POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=sl-SI"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "127.0.0.1:${POSTGRES_LISTEN_PORT:?}:5432"
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis-data:/data
+      - ./redis/conf:/usr/local/etc/redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  opensearch:
+    build: opensearch
+    environment:
+      - cluster.name=term-portal
+      - node.name=node-1
+      # - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      # - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # disables execution of install_demo_configuration.sh bundled with security plugin, which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # disables security plugin entirely in OpenSearch by setting plugins.security.disabled: true in opensearch.yml
+      - "discovery.type=single-node" # disables bootstrap checks that are enabled when network.host is set to a non-loopback address
+    # ulimits:
+    #   memlock:
+    #     soft: -1
+    #     hard: -1
+    #   nofile:
+    #     soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+    #     hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+  # Disabled by default. Enable if needed.
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.3.0
+    profiles:
+      - debug-opensearch
+    depends_on:
+      - opensearch
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
+    ports:
+      - "127.0.0.1:${OS_DASHBOARDS_LISTEN_PORT:?}:5601"
+
+  concordancer:
+    # image: ghcr.io/clarinsi/rsdo-concordancer-api:v1.0.0
+    build: concordancer
+    profiles:
+      - develop-concordancer
+    depends_on:
+      - postgres
+      - opensearch
+    restart: always
+    environment:
+      - "RSDO:Database:MasterConnectionString=Host=postgres;Username=concordancer;Password=${POSTGRES_CONCORDANCER_PASSWORD:?};Database=Concordancer"
+      - "RSDO:Elastic:ConnectionString=http://opensearch:9200"
+      - "RSDO:Tokenizer:ClasslaUrl=https://orodja.cjvt.si/oznacevalnik/ajax_api/v1/slv/process"
+    ports:
+      - "127.0.0.1:${CONCORDANCER_LISTEN_PORT:?}:5000"
+    volumes:
+      - express-data:/data
+      - sloleks:/sloleks
+
+  concordancer-manager:
+    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.0
+    profiles:
+      - develop-concordancer
+    depends_on:
+      - postgres
+      - opensearch
+    restart: always
+    environment:
+      - "RSDO:Database:MasterConnectionString=Host=postgres;Username=concordancer;Password=${POSTGRES_CONCORDANCER_PASSWORD:?};Database=Concordancer"
+      - "RSDO:Elastic:ConnectionString=http://opensearch:9200"
+    volumes:
+      - sloleks:/sloleks
+
+  # Disabled by default. Enable for scheduled task testing.
+  # Manual testing can be done by running tasks inside express container directly.
+  # cron:
+  #   build: express
+  #   init: true
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - opensearch
+  #     - maildev
+  #   environment:
+  #     NODE_ENV: development
+  #     DEBUG: termPortal:*
+  #     PGHOST: postgres
+  #     PGUSER: express
+  #     PGPASSWORD: "${POSTGRES_EXPRESS_PASSWORD:?}"
+  #     PGDATABASE: term_portal
+  #     SMTP_HOST: "${SMTP_HOST:?}"
+  #     SMTP_PORT: "${SMTP_PORT:?}"
+  #     SMTP_TLS_REJECT_UNAUTHORIZED: "${SMTP_TLS_REJECT_UNAUTHORIZED:?}"
+  #     SMTP_FROM: "${SMTP_FROM:?}"
+  #   volumes:
+  #     - /usr/src/app/node_modules
+  #     - /usr/src/app/scheduled
+  #     - ./express:/usr/src/app
+  #   # Enabling TTY makes the npm module "debug" output display properly in container logs
+  #   tty: true
+  #   entrypoint: ["scheduled/entrypoint.sh"]
+  #   command: ["crond", "-f", "-l", "2"]
+
+  maildev:
+    image: maildev/maildev:2.0.0-beta3
+    volumes:
+      - maildev-data:/var/lib/maildev
+    ports:
+      - "127.0.0.1:${MAILDEV_WEB_GUI_PORT:?}:1080"
+
+volumes:
+  express-data:
+  postgres-data:
+  redis-data:
+  opensearch-data:
+  maildev-data:
+  sloleks:

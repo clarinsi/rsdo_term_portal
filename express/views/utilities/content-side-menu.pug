@@ -1,0 +1,193 @@
+.content-nav
+  .content-nav-mobile
+    button#nav-content-button.nav-button
+      img#burger-menu-img(src="/images/burger-menu-button-icon.svg" alt="Meni")
+      span.nav-title.ms-0 Vsebina
+
+    .nav-title
+      a#chevrons-back.link-back(href="/")
+        img(src="/images/chevrons-left.svg")
+        span.nav-title.ms-2 Vsebina
+  nav
+    ul.content-nav-content.scroller-style.ps-0
+      ul.filter-search-settings.ps-0
+        form#form-filter-search
+          li#unfiltered.filter-search-section.pb-0.px-3
+            .d-flex
+              select.form-select.py-0.filter-select.ps-1.pe-0(name="field")
+                option(value="term") Termin
+                option(value="domainLabels") Področna oznaka
+                option(value="label") Pojasnilo
+                option(value="definition") Definicija
+                option(value="synonyms") Sinonimi
+                option(value="links") Povezave
+                option(value="other") Drugo
+                option(value="foreignTerms") Tuj termin
+                option(value="foreignDefinition") Tuja definicija
+                option(value="foreignSynonyms") Tuj sinonim
+                option(value="") Iskanje po vseh
+            .d-flex.justify-content-between.mt-4
+              .classic-search-container.w-75
+                .classic-search.border1px-gray-2
+                  input.input-search(
+                    name="q"
+                    type="text"
+                    placeholder="Išči"
+                    autocomplete="off"
+                  )
+                  .position-relative
+                    button#inline-search-btn.border-0.bg-transparent
+                      img(src="/images/search.svg")
+              button.btn.clear-search-input.px-0(type="button")
+                img(src="/images/x-gray.svg")
+            .d-flex.justify-content-between.align-items-center.mt-4
+              label#span-filter.normal-gray-label(for="show-filter") Filtriranje
+              button#show-filter.btn.ps-0.pe-0(
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#filtered"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              )
+                img.py-2(
+                  src="/images/sliders.svg"
+                  data-bs-custom-class="gray-tooltip"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  title="Prikaži filtre"
+                )
+          li#filtered.filter-search-section.collapse.pt-1
+            .form-check.d-flex.align-items-center
+              input#valid.form-check-input.indeterminate-cbox(
+                type="checkbox"
+                name="isValid"
+              )
+              label.form-check-label(for="valid") Veljavno
+
+            .form-check.d-flex.align-items-center
+              input#published.form-check-input.indeterminate-cbox(
+                type="checkbox"
+                name="isPublished"
+              )
+              label.form-check-label(for="published") Obljavljeno
+
+            .form-check.d-flex.align-items-center
+              input#comments.form-check-input.indeterminate-cbox(
+                type="checkbox"
+                name="hasComments"
+              )
+              label.form-check-label(for="comments") Komentarji
+
+            .form-check.d-flex.align-items-center
+              input#edited.form-check-input.indeterminate-cbox(
+                type="checkbox"
+                name="isComplete"
+              )
+              label.form-check-label(for="edited") Urejeno
+
+            .form-check.d-flex.align-items-center
+              input#terminology-checked.form-check-input.indeterminate-cbox(
+                type="checkbox"
+                name="isTerminologyReviewed"
+              )
+              label.form-check-label(for="terminology-checked") Strokovno pregledano
+
+            .form-check.d-flex.align-items-center
+              input#language-checked.form-check-input.indeterminate-cbox(
+                type="checkbox"
+                name="isLanguageReviewed"
+              )
+              label.form-check-label(for="language-checked") Jezikovno pregledano
+
+      #term-list.btn-group.termin-list.d-flex.flex-column(role="group")
+        if terms.length
+          each term, index in terms
+            if !term.term
+              if term.foreignTerm
+                if term.foreignTerm.length
+                  .d-flex.justify-content-between.align-items-center
+                    label.terms-label.not-valid-not-published.btn.p-2.ms-2.me-3.text-truncate.justify-content-start.d-inline(
+                      class=index ? false : 'selected-term-btn'
+                      data-term-id=term.id
+                      data-index=index
+                      tabindex="0"
+                      data-bs-custom-class="label-tooltip"
+                      data-bs-original-title=""
+                      title
+                    )!= `#${term.foreignTerm}`
+                    span.me-4= term.commentActivityIndicator
+                else
+                  .d-flex.justify-content-between.align-items-center
+                    label.terms-label.not-valid-not-published.btn.p-2.ms-2.me-3.text-truncate.justify-content-start.d-inline(
+                      class=index ? false : 'selected-term-btn'
+                      data-term-id=term.id
+                      data-index=index
+                      tabindex="0"
+                      data-bs-custom-class="label-tooltip"
+                      data-bs-original-title=""
+                      title
+                    )= '[ni termina]'
+                    span.me-4= term.commentActivityIndicator
+              else
+                .d-flex.justify-content-between.align-items-center
+                  label.terms-label.not-valid-not-published.btn.p-2.ms-2.me-3.text-truncate.justify-content-start.d-inline(
+                    class=index ? false : 'selected-term-btn'
+                    data-term-id=term.id
+                    data-index=index
+                    tabindex="0"
+                    data-bs-custom-class="label-tooltip"
+                    data-bs-original-title=""
+                    title
+                  )= '[ni termina]'
+                  span.me-4= term.commentActivityIndicator
+            else
+              .d-flex.justify-content-between.align-items-center
+                if term.isValid
+                  if term.isPublished
+                    label.terms-label.term-good-btn.btn.p-2.ms-2.me-3.text-truncate.justify-content-start.d-inline(
+                      class=index ? false : 'selected-term-btn'
+                      data-term-id=term.id
+                      data-index=index
+                      tabindex="0"
+                      data-bs-custom-class="label-tooltip"
+                      data-bs-original-title=""
+                      title
+                    )!= term.term
+                    span.me-4= term.commentActivityIndicator
+                  else
+                    label.terms-label.btn.p-2.ms-2.me-3.text-truncate.justify-content-start.d-inline(
+                      class=index ? false : 'selected-term-btn'
+                      data-term-id=term.id
+                      data-index=index
+                      tabindex="0"
+                      data-bs-custom-class="label-tooltip"
+                      data-bs-original-title=""
+                      title
+                    )!= term.term
+                    span.me-4= term.commentActivityIndicator
+                else
+                  label.terms-label.not-valid-not-published.btn.p-2.ms-2.me-3.text-truncate.justify-content-start.d-inline(
+                    class=index ? false : 'selected-term-btn'
+                    data-term-id=term.id
+                    data-index=index
+                    tabindex="0"
+                    data-bs-custom-class="label-tooltip"
+                    data-bs-original-title=""
+                    title
+                  )!= term.term
+                  span.me-4= term.commentActivityIndicator
+        .lds-default.d-none
+          div
+          div
+          div
+          div
+          div
+          div
+          div
+          div
+          div
+          div
+          div
+          div
+        #pagination-content.d-flex.align-items-center.justify-content-center.border-top.mt-2
+          span#data-length= terms.length ? terms.length : 0

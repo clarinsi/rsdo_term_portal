@@ -1,0 +1,37 @@
+mixin topHeaderContent(headerContent)
+  #chevrons-left.d-flex
+    .header-container-divider-left
+      h2#site-header-title= headerContent.h2
+      h1#site-heading= headerContent.h1
+      span#text-description.page-description.pe-0= headerContent.description
+        if (headerContent.helpLink)
+          a.ms-2.page-description(href=headerContent.helpLink.linkHref)= headerContent.helpLink.linkText
+
+mixin mainHeader(headerContent, footerIncluded = true)
+  - const checkForSpecificRights = headerContent.specificRights
+  #offset-padding.header-consultancy-admin.no-side-menu.flex-grow-0.nav-bg.px-0.mx-max-xl-2rem 
+    .d-flex.justify-content-between.flex-wrap.flex-row.row
+      if checkForSpecificRights
+        .header-container-left-side.d-flex.col
+          +topHeaderContent(headerContent)
+      else
+        .header-container-left-side.d-flex.col-sm-12
+          +topHeaderContent(headerContent)
+
+    .header-consultancy-content.w-100
+      include ../components/search-and-filter/search-with-primary-domain-filter
+      +searchWithPrimaryDomainFilter("consultancy-form", "searchbar-main", "couns-search-btn")
+    if footerIncluded
+      .header-consultancy-content-footer.mt-3.mb-1.mt-5
+        .row
+          .col-sm-6.align-items-center.d-flex
+            if (entries.length>0)
+              p.mb-0.text-p875rem.strength500.text-header-title-gray Število vprašanj: #{ queryCount }
+            else
+              p.mb-0.text-p875rem.strength500.text-header-title-gray Ni vprašanj.
+          .col-sm-6.align-items-center.justify-content-end.d-flex
+            .col-sm-6.align-items-center.justify-content-end.d-flex
+            .col-sm-6.align-items-center.justify-content-end.d-flex
+              include /utilities/pager
+              +pager(1)
+      hr#header-row.mt-1.ms-0.mb-0

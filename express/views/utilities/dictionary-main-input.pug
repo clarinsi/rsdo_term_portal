@@ -1,0 +1,121 @@
+mixin dictionaryMainInput(data)
+  block input-container
+    form.needs-validation(id=data.formId method="post" novalidate)
+      .title
+        .subject-name
+          label.input-name-txt(for="dictionary-title") NASLOV SLOVARJA *
+        .row
+          .col-sm-6.align-items-center
+            input#dictionary-title.name-input.form-control.d-inline(
+              type="text"
+              name="nameSl"
+              required
+              maxlength="120"
+            )
+            .invalid-feedback Niste vpisali imena slovarja.
+
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Celotni naslov slovarja, ki bo zabeležen v bibliografskih podatkih.
+
+      .english-title.mt-4
+        .subject-name
+          label.input-name-txt(for="dictionary-title-en") ANGLEŠKI NASLOV SLOVARJA *
+        .row
+          .col-sm-6
+            input#dictionary-title-en.name-input.form-control.d-inline(
+              type="text"
+              name="nameEn"
+              maxlength="120"
+              required
+            )
+            .invalid-feedback Niste vpisali angleškega naslova slovarja.
+
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Celotni naslov slovarja v angleščini.
+
+      .short-title.mt-4
+        .subject-name
+          label.input-name-txt(for="short-dictionary-title") SKRAJŠANI NASLOV SLOVARJA
+        .row
+          .col-sm-6
+            input#short-dictionary-title.name-input.d-inline.form-control(
+              type="text"
+              name="nameSlShort"
+              maxlength="15"
+            )
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Zaradi organizacije podatkov na portalu za skrajšani naslov slovarja predlagamo poenobesedenje, ki se bo izpisovalo ob slovarju, npr. Davčni terminološki slovar &rarr; Davki
+
+      #first-author.author.mt-4
+        .subject-name
+          label.input-name-txt(for="author") AVTOR SLOVARJA
+        .row
+          .col-sm-6
+            input#author.name-input.d-inline.form-control(
+              type="text"
+              name="author"
+              maxlength="64"
+            )
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.
+
+      #add-new-author.author.mt-4
+        .subject-name
+          label.input-name-txt(for="input-new-author") NOV AVTOR SLOVARJA
+        .row
+          .col-sm-6
+            button#input-new-author.form-control(type="button")
+              span.new-author-text-btn Nov avtor
+
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.
+
+      .cerif-area.mt-4
+        .subject-name
+          label.input-name-txt(for="select-cerif") PODROČJE *
+        .row
+          .col-sm-6
+            select.name-input.d-inline.form-select(
+              name="domainPrimary"
+              required
+            )
+              option(value="" hidden disabled selected) Izberite področje
+              each domain in allPrimaryDomains
+                option(value=domain.id)= domain.nameSl
+            #invalid-section.invalid-feedback-selection.hidden-section.mt-3 Niste izbrali glavnega področja.
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Področje.
+
+      .small-name-area.mt-4
+        .subject-name
+          label.input-name-txt(for="domain-secondary") PODPODROČJE
+        .row
+          .col-sm-6
+            select#domain-secondary.name-input.d-inline.form-control.without-addition(
+              name="domainSecondary"
+              multiple
+            )
+              each domain in allSecondaryDomains
+                option(value=domain.id)= domain.nameSl
+
+          .col-sm.d-flex.align-items-center
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite podpodročje glavnega področja, ki ste ga izbrali. Če podpodročja ni med naborom, izberite polje Novo podpodročje.
+
+      #add-new-area.author.mt-4
+      .subject-name
+        label.input-name-txt NOVO PODPODROČJE
+      .row
+        .col-sm-6
+          button#input-new-area.form-control(type="button")
+            span.new-author-text-btn Novo podpodročje
+        .col-sm.d-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite novo podpodročje. Na seznamu podpodročij bo vidno takoj po potrditvi administratorja portala.
+      if (data.hasDescription)
+        #text-editor.mt-4
+        .subject-name
+          span.input-name-txt OPIS SLOVARJA
+        .container-xxl.ps-0.ms-0
+          #summernote
+      if (data.hasStructure)
+        .mt-4
+          include /utilities/dictionary-structure-input

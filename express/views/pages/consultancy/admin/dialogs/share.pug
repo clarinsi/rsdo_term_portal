@@ -1,0 +1,60 @@
+mixin shareResultsItem(userId, name)
+  .share-results-item(id=userId)
+    .row 
+      .col-11 
+        p.mb-0.navigation-text-color.mb0 #{ name }
+      .col-1
+        .d-flex.justify-content-end
+          button.delete-shared-cons.bg-transparent.no-border
+            img(src="/images/trash-2.svg")
+    hr.mt-1.mb-1
+
+mixin consultancyAdminShareBody
+  .share-dialog-window.w-100
+    .share-search-container.mb-3
+      select#share-sel.share-search-consultants.csq(name="share")
+        option(value="NONE_SELECTED_PLACEHOLDER")
+        each user in userList
+          option(value=user.id) #{ user.first_name } #{ user.last_name } (#{ user.username })
+      .position-relative
+        .search-icon-share 
+          img(src="/images/search_blue.svg" alt="")
+    .share-results-container
+      //- +shareResultsItem(1,'Ime priimek')
+      //- +shareResultsItem(2,'Ime priimek')
+
+mixin consultancyAdminShareModal
+  //- button.btn.btn-primary(
+    type="button"
+    data-bs-toggle="modal"
+    data-bs-target="#consultancyModalShare"
+    )
+    | Launch static backdrop modal
+  // Modal
+  #consultancyModalShare.modal.fade(
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="consultancyModalLabel"
+    aria-hidden="true"
+  )
+    .modal-dialog
+      .modal-content
+        .modal-header.mb-0.pb-0
+          h5.pt-3.navigation-text-color Deli
+          button.btn-close(
+            type="button"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          )
+        .modal-body
+          +consultancyAdminShareBody
+        .modal-footer
+          .row.button-modal-size
+            .col.d-flex.justify-content-start.mb-2
+              button#close-shared.btn.btn-secondary.height50(
+                type="button"
+                data-bs-dismiss="modal"
+              ) Zapri
+            #add-shared-author.col.d-flex.justify-content-end.mb-2
+              button.btn.btn-primary.height50(type="button") Dodaj

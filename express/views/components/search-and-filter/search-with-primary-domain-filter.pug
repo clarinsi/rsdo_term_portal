@@ -1,0 +1,54 @@
+mixin searchWithPrimaryDomainFilter(formId, searchId, searchBtnId, initialMarginClass="mt-3")
+  form.needs-validation.w-100(id=formId class=initialMarginClass)
+    - let checkrightSection = headerContent && headerContent.buttons && headerContent.buttons.length
+    .header-consultancy-divider.d-flex.d-column.w-100.row.g-0.ms-0
+      .header-consultancy-divider-left.d-flex.align-items-center.pe-0.mt-2(
+        class=checkrightSection ? 'col-sm-7' : 'col'
+      )
+        .row.w-100.g-0
+          //-Search Bar
+          .search-root-mobile-only.ps-0.pe-0
+            #searchbar-main.text-center
+              .search-bar.height-46p(tabindex="0")
+                button.searchbar-icon-container(id=searchBtnId type="submit")
+                  img.search_icon(src="/images/search.svg" alt="OK")
+                input#search-query.search-input(
+                  type="text"
+                  placeholder=isDictionaryListPage ? 'Ime slovarja' : 'Vpišite iskalni niz'
+                )
+                button#keyboard.search-button-keyboard
+                  span
+                    img.keyboard(src="/images/keyboard.svg" alt="Keys")
+                button#advanced-search.dropdown-btn
+                  img(src="/images/dropdown.svg" alt="Opt")
+          .row.w-100
+            span#SSC.d-block.w-100.position-relative
+              .search-suggestion-container.flex-column.position-absolute.calibrate-consultancy-sr
+                include advanced-search-modal-area-only
+                +consultancySM
+                include /utilities/keyboard
+                +keyboard
+      //- .header-consultancy-divider-middle.d-flex.align-items-center.justify-content-center.col-sm-4
+      //-   select.d-inline.height-46p.form-control(
+      //-     name="domainPrimary"
+      //-     required
+      //-   )
+      //-     option(value="" disabled selected hidden) Področje
+      //-     each domain in allPrimaryDomains
+      //-       option(
+      //-         value=domain.id
+      //-         selected=domain.id === dictionary.domainPrimary ? true : false
+      //-       ) [#{ domain.nameSl }]
+      if (checkrightSection)
+        .header-consultancy-divider-right.d-flex.align-items-center.justify-content-end.col-sm-5.pe-0.ps-3.mt-2
+          .fit-content
+            each el in headerContent.buttons
+              if el.type === 'button'
+                button.w-100.height-46p(
+                  class=el.classAtr || 'btn btn-primary'
+                  form=el.form
+                )= el.content
+              else if el.type === 'link'
+                a.w-100.height-46p(class=classAtr || 'btn btn-primary' href=el.url)= el.content
+              else if el.type === 'cancel'
+                a.w-100.height-46p(class=classAtr || 'btn btn-secondary' href=el.url)= el.content

@@ -1,0 +1,60 @@
+mixin navigation-search(search_included)
+  li.nav-item.nav-search-section
+    .search-root.ps-0.pe-0
+      .mx-auto.search-bar-navigation-container
+        if (search_included)
+          .row
+            .col 
+              //- double row due to bug
+              .row
+                #searchbar-main.search-bar.ps-0.pe-0(tabindex="0")
+                  button#search-button-main.searchbar-icon-container.click-on-enter
+                    img.search_icon(src="/images/search.svg" alt="OK")
+                  input#search-query.search-input.focused-for-enter(
+                    type="text"
+                    placeholder=""
+                    value=`${searchString ? searchString : ''}`
+                  )
+                  button#keyboard.search-button-keyboard.me-0
+                    span
+                      img.keyboard(src="/images/keyboard.svg" alt="Keys")
+                  //- </span>
+                  button#advanced-search.dropdown-btn
+                    img(src="/images/dropdown.svg" alt="Opt")
+              .row
+                .d-flex.justify-content-center
+                  #SSC.d-flex.w-100.position-relative.w-650px
+                    .search-suggestion-container.flex-column.position-absolute.calibrate-navigation-sr.bigsearch
+                      include ../components/search-and-filter/advanced-search-modal
+                      include /utilities/keyboard
+                      +keyboard
+
+mixin navigation-search-secondary(search_included)
+  .gray-responsive-bg.d-flex.justify-content-center
+    .container.ms-3.me-3
+      .row
+        .search-root-main.mb-0.ps-0.pe-0
+          #searchbar-main-sec.text-center
+            .search-bar(tabindex="0")
+              button#search-button-main-sec.searchbar-icon-container.click-on-enter(
+                href="/iskanje"
+              )
+                img.search_icon(src="/images/search.svg" alt="OK")
+              input#search-query-sec.search-input.focused-for-enter.fw-300.placeholder-gray(
+                type="text"
+                placeholder="Vpišite iskalni niz"
+                value=`${searchString ? searchString : ''}`
+              )
+              button#keyboard-sec.search-button-keyboard
+                span
+                  img.keyboard(src="/images/keyboard.svg" alt="Keys")
+              //-</span>
+              button#advanced-search-sec.dropdown-btn
+                img(src="/images/dropdown.svg" alt="Opt")
+      .row
+        .d-flex.justify-content-center
+          #SSCSec.d-flex.position-relative.w-39rem
+            //- .search-suggestion-container.flex-column.position-absolute.calibrate-homepage-sr.bigsearch
+              include /components/search-and-filter/advanced-search-modal
+              include /utilities/keyboard
+              +keyboard

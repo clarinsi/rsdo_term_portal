@@ -1,0 +1,50 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section
+    #fixed-top-section
+      include /common/main-navigation
+      +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'users', activeLvl2: 'list' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Uporabniki', h1: 'Seznam', description: 'Na seznamu uporabnikov lahko določite posameznemu uporabniku dodatne vloge ali urejate njihove podatke.' }
+  +mainHeader(c)
+  .content-hold-prerequisites.mt-4
+    #offset-main.main-container.mt-4
+      .table-full
+        .d-flex.w-100.justify-content-between.mb-4
+          .d-flex
+            include /components/search-and-filter/inline-search
+          .d-flex
+            include /utilities/pager
+            +pager
+
+        .table-responsive
+          table.styled-table
+            thead
+              tr
+                th= 'Uporabniško ime'
+                th= 'E - naslov'
+                th= 'Potrjen'
+                th= ''
+            tbody#page-results
+              each result in results
+                tr
+                  td= result.userName
+                  td= result.email
+                  td= result.status
+                  td
+                    a.image-link(
+                      type="link"
+                      href=`/admin/uporabniki/${result.id}/urejanje`
+                    )
+                      img(src="/images/u_edit-alt.svg" alt="Uredi")
+                      span.normal-gray.ms-1 Uredi
+
+  include /common/footer

@@ -1,0 +1,130 @@
+#offset-padding.cont-header-section-root.content-page-header.offset-padding
+  .d-flex.justify-content-between.flex-wrap.flex-md-nowrap
+    .cont-header-container-left-side.d-flex
+      #chevrons-left.d-flex.align-items-start.justify-content-start
+      .header-container-divider-left
+        h1.ms-1= dictionaryName
+    .header-container-divider-right
+  .d-xxl-flex.justify-content-between
+    .d-flex.site-links
+      button#content-preview.site-link.active-site-link Predogled
+      if terms.length
+        button#content-edit.site-link Urejanje
+        button#content-comments.site-link Komentarji
+      else
+        button#content-edit.site-link.disabled(disabled) Urejanje
+        button#content-comments.site-link.disabled(disabled) Komentarji
+
+    if (terms.length)
+      #preview-buttons
+        .d-flex.align-items-bottom.my-2
+          button#new-entry-btn.btn.border-header.px-xl-5.px-3(
+            type="button"
+            data-bs-custom-class="gray-tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Ustari novo geslo"
+          )
+            img(src="/images/u_edit-alt.svg")
+            span Nov
+          button#show-dates.ms-1.btn.border-header.ps-2.pe-2(
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#date-section"
+            aria-expanded="false"
+            aria-controls="date-section"
+          )
+            img.py-2(
+              src="/images/fi_blue-calendar.svg"
+              data-bs-custom-class="gray-tooltip"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Prikaži datume"
+            )
+          button#duplicate-entry.ms-1.btn.border-header.ps-2.pe-2(
+            data-bs-custom-class="gray-tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Podvoji"
+          )
+            img(src="/images/copy.svg")
+          button#delete-entry.ms-1.btn.border-header.ps-2.pe-2(
+            data-bs-custom-class="red-tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Briši"
+          )
+            img(src="/images/red-trash-icon.svg")
+
+          button#disabled-submit-btn.btn.btn-primary.ms-1.px-xl-5.px-3(
+            form="form-edit-content"
+            disabled
+          )
+            | Shrani
+    else
+      #preview-buttons
+        .d-flex.align-items-center.my-2
+          button#new-entry-btn.btn.border-header.px-xl-5.px-3(
+            type="button"
+            data-bs-custom-class="gray-tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Ustari novo geslo"
+            data-term="1"
+          )
+            img(src="/images/u_edit-alt.svg")
+            span Nov
+          button#show-dates.ms-1.btn.border-header.ps-2.pe-2(
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#date-section"
+            aria-expanded="false"
+            aria-controls="date-section"
+            disabled
+          )
+            img.py-2(
+              src="/images/fi_blue-calendar.svg"
+              data-bs-custom-class="gray-tooltip"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Prikaži datume"
+            )
+          button#duplicate-entry.ms-1.btn.border-header.ps-2.pe-2(
+            href="#"
+            data-bs-custom-class="gray-tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Podvoji"
+            disabled
+          )
+            img(src="/images/copy.svg")
+          button#delete-entry.ms-1.btn.border-header.ps-2.pe-2(
+            href="#"
+            data-bs-custom-class="red-tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Briši"
+            disabled
+          )
+            img(src="/images/red-trash-icon.svg")
+
+          button#disabled-submit-btn.btn.btn-primary.ms-1.px-xl-5(
+            form="form-edit-content"
+            disabled
+          )
+            | Shrani
+
+    #comments-buttons.d-flex.d-none.align-items-center.ms-2.ms-xl-0.me-2
+      .form-check
+        input#internal.form-check-input(
+          type="radio"
+          name="comments-type"
+          checked
+        )
+        label.ms-0.form-check-label(for="internal") Interni
+
+      .form-check.ms-2
+        input#external.form-check-input(type="radio" name="comments-type")
+        label.ms-0.form-check-label(for="external") Zunanji
+
+  hr#header-row.mt-0.ms-0.mb-0

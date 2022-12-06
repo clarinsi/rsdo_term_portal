@@ -1,0 +1,231 @@
+-
+  const registration_login_label = "registracija"
+  const registration_suggestion_label = "Še niste registriran uporabnik, registrirajte se."
+
+
+
+#staticBackdrop.modal.fade(
+  data-bs-backdrop="true"
+  data-bs-keyboard="true"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+)
+  .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down.modal-lg
+    .modal-content.ps-4.pe-4
+      .modal-header.mt-3
+        h2.logintitle.modal-title.color-primary-text.fs-2 Prijava
+        h2.regtitle.d-none.modal-title.color-primary-text.fs-2 Registracija
+        button.no-bg-and-borders(
+          type="button"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        )
+          img(src="/images/x.svg" alt="Zapri")
+      #logreg-mb.modal-body.pt-0.pe-5
+        p.logindesc.text-header-description-gray S prijavo pridobite možnost uporabe vseh funkcij terminološkega portala.
+        p.regdesc.d-none.text-header-description-gray Z registracijo pridobite možnost uporabe vseh funkcij terminološkega portala.
+        .pspelogsig-5
+          form#login-form(
+            action="/api/v1/users/login"
+            method="post"
+            autocomplete="off"
+          )
+            .row
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/user.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="login-username-or-email") UPORABNIK
+                input#login-username-or-email.d-block.w-100.input-lr(
+                  name="usernameOrEmail"
+                )
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-login-icon.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/lock.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="login-password") GESLO
+                input#login-password.d-block.w-100.input-lr(
+                  name="password"
+                  type="password"
+                )
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-login-icon.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-0
+              .col-2.d-flex.ps-4.align-items-center.pe-4
+                span
+              .col-10.ps-0
+                .row.pt-0
+                  .col-7.pt-2
+                    //- sm-8 was chosen because of the middle display collision issue
+                    input#login-remember.align-middle(
+                      name="rememberMe"
+                      type="checkbox"
+                    )
+                    label.ps-2.align-middle.rememberloginlabel.text-header-description-gray.pe-2(
+                      for="login-remember-me"
+                    ) Zapomni si prijavo
+                  .col-5.pt-2.d-flex-and-align-end.pe-0
+                    a.ms-auto.forgotten-password.gray1-text.no-text-decoration.align-middle(
+                      href="#"
+                    ) Pozabljeno geslo
+                .row.pt-0
+                  .col 
+                    p#error-description.error-text.pt-3.mb-1 Nepravilno uporabniško ime, elektronski naslov ali geslo.
+                .row.pt-3
+                  .col
+                    button.btn.btn-primary.h41.w151 PRIJAVA
+                .row.pt-3
+                  .col
+                    p#login-message-container
+
+          form#register-form.d-none(
+            action="/api/v1/users/register"
+            method="post"
+            autocomplete="off"
+          )
+            .row
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/user.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="register-username") UPORABNIK
+                input#register-username.w-100.input-lr(name="username")
+
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-username.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-1
+              .col.pe-0
+                p#error-username.mb-0.error-text.text-end Uporabniško ime že obstaja
+            .row.pt-0
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/user.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="register-name") IME
+                input#register-name.w-100.input-lr(name="firstName")
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-name.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-1
+              .col.pe-0
+                p#error-name.mb-0.error-text.text-end Prazno obvezno polje
+            .row.pt-1
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/user.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="register-surname") PRIIMEK
+                input#register-surname.w-100.input-lr(name="lastName")
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-surname.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-1
+              .col.pe-0
+                p#error-surname.mb-0.error-text.text-end Prazno obvezno polje
+            .row.pt-1
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/user.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="register-email") ELEKTRONSKI NASLOV
+                input#register-email.w-100.input-lr(name="email")
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-email.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-1
+              .col.pe-0
+                p#error-email.mb-0.error-text.text-end Elektronski naslov že obstaja
+            .row.pt-1
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/lock.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="register-password") GESLO
+                input#register-password.w-100.input-lr(
+                  name="password"
+                  type="password"
+                )
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-password.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-1
+              .col.pe-0
+                p#error-password.mb-0.error-text.text-end Geslo je prekratko
+            .row.pt-1
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+                img(src="/images/lock.svg" alt="")
+              .col-8.input-floor.ps-0
+                label.loginregisterlabel(for="register-password-repeat") PONOVI GESLO
+                input#register-password-repeat.w-100.input-lr(
+                  name="passwordRepeat"
+                  type="password"
+                )
+              .col-2.input-floor.d-flex.justify-content-end.pe-0 
+                img.error-icon.error-password-repeat.align-self-end.d-flex(
+                  src="/images/x_red.svg"
+                  alt="X"
+                )
+            .row.pt-1
+              .col.pe-0
+                p#error-password-repeat.mb-0.repeat.error-text.text-end Geslo se ne ujema
+            .row.mt-1.pt-0
+              .col-2.d-flex.align-items-center.justify-content-center.pe-4
+              .col-8.ps-0
+                .mb-2
+                  input#terms-of-use.me-3(type="checkbox")
+                  span Strinjam se s <a href="/pogoji-uporabe">pogoji uporabe</a>
+                .mb-2
+                  input#privacy-policy.me-3(type="checkbox")
+                  span Soglašam s <a href="/politika-zasebnosti">politiko zasebnosti</a>
+              .col-2.d-flex.justify-content-end.pe-0
+            .row
+              .col-2.d-flex.ps-4.align-items-center.pe-4
+              .col-10.ps-0
+                button.btn.btn-primary.h41.w151 Registracija
+            .row
+              .col-sm-2.d-flex.ps-4.align-items-center
+              .col-sm-10
+                p#register-message-container.error-text
+
+        #logreg-mf.modal-footer.pb-5
+          .row
+            .col-sm-2
+            .col-sm-10.ps-0.no-flex
+              #regbtn.registration.register-login-form
+                button(
+                  style="border: none; background: none; text-decoration: none"
+                )
+                  span.form-icon-data-seperator
+                    span.form-icon
+                      //-<i class="bi-person-plus"></i>
+                      img(src="/images/icon-user-x.svg" alt="")
+                    span.form-data
+                      h6 Registracija
+                      p Še niste registriran uporabnik, registrirajte se.
+              #loginbtn.registration.register-login-form.login.d-none
+                button(
+                  style="border: none; background: none; text-decoration: none"
+                )
+                  span.form-icon-data-seperator
+                    span.form-icon
+                      //-<i class="bi-person-plus"></i>
+                      img(src="/images/icon-user-x.svg" alt="")
+                    span.form-data
+                      h6 Prijava
+                      p Nazaj na prijavo
+
+script(nonce=cspNonce src="/javascripts/login-and-register.js")

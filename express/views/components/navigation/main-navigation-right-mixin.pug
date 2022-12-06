@@ -1,0 +1,81 @@
+mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false, userTextPresent=false)
+  li.nav-item
+    .container
+      //-<span class="nav">
+      //- if languageToolbarPresent
+        a.col-sm.nav-entry.language-desktop-entry(href="#")
+          img(src="/images/globe.svg" alt="")
+          span#langtoggle.text-white SL
+      .col-sm.nav-entry.menu-link
+        button#dropdownMenuButton1(
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        )
+          img.threedots(src="/images/threedots.svg" alt="")
+          if menuTextPresent
+            span.text-white.menutxt MENI
+        ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
+          li
+            a.dropdown-item(href="/") Iskanje
+          if extractionEnabled
+            li
+              a.dropdown-item(href="/luscenje") Luščenje
+          if dictionariesEnabled
+            li
+              a.dropdown-item(href="/slovarji/moji") Urejanje
+          if consultancyEnabled
+            li
+              a.dropdown-item(href="/svetovanje") Svetovanje
+          if user && (user.hasRole('portal admin') || user.hasRole('dictionaries admin'))
+            li
+              a.dropdown-item(href="/admin") Administracija
+          li
+            a.dropdown-item(href="/pomoc") Pomoč
+
+      if user
+        button#dropdownAccountButton.col-sm.nav-entry.no-border.no-bg.pe-3(
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        )
+          img(src="/images/profile-loggedin.svg" alt="")
+          // .position-absolute
+          //   .green-dot
+          if userTextPresent
+            span.text-white.signintxt.position-relative.left-2 RAČUN
+        ul.dropdown-menu.dropdown-menu-end.py-3.children-pspe-4.children-pt-pb-1.ul-children-hover(
+          aria-labelledby="dropdownAccountButton"
+        )
+          li.pt-0.mt-0.noHoverBGEffect.ps-3
+            .ps-0.pb-2.navigation-text-color= user.userName
+            .text-header-description-gray.index-font-size= user.email
+          li.noHoverBGEffect.pt-0.pb-0.ps-3
+            hr.mt-2.mb-2
+          li.ps-3
+            a.dropdown-item.ps-0.pb-2.navigation-text-color(
+              href="/nastavitve-racuna"
+            )
+              .row
+                .col-3
+                  img(src="/images/cog.svg" alt="")
+                .col-9
+                  span.text-header-description-gray.d-block Nastavitve
+          li.pb-0.mb-0.ps-3
+            form(action="/users/logout" method="post")
+              button.profile-menu-button
+                .row
+                  .col-3
+                    img(src="/images/log-out.svg" alt="")
+                  .col-9
+                    span.text-header-description-gray.d-block Odjava
+      else
+        button#login-static-backdrop-button.col-sm.nav-entry.no-border.no-bg(
+          href="#"
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#staticBackdrop"
+        )
+          img(src="/images/profile.svg" alt="")
+          if userTextPresent
+            span.text-white.signintxt.ps-2 PRIJAVA

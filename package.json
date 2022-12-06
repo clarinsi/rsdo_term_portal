@@ -1,0 +1,24 @@
+{
+  "name": "terminoloski-portal-project",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier": "prettier . express/bin/www --check",
+    "prettier:fix": "npm run prettier -- --write",
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "sass:watch": "sass --watch express/public/sass:express/public/stylesheets"
+  },
+  "devDependencies": {
+    "@prettier/plugin-pug": "1.16.1",
+    "eslint": "~7.30.0",
+    "eslint-config-prettier": "~8.3.0",
+    "eslint-config-standard": "~16.0.3",
+    "eslint-plugin-import": "~2.23.4",
+    "eslint-plugin-node": "~11.1.0",
+    "eslint-plugin-promise": "~5.1.0",
+    "prettier": "2.3.2",
+    "sass": "^1.35.2"
+  }
+}

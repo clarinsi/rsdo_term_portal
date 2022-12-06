@@ -1,0 +1,220 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/extraction.js")
+  script(nonce=cspNonce src="/javascripts/extraction-list.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-fake
+  +sideNavigationFake
+  if user
+    include /utilities/dictionaries-main-panel-header
+    - const c = { sideMenu: false, h2: 'Luščenje', h1: 'Seznam luščenj', description: 'Nabor vseh luščenj, s katerimi lahko uporabnik iz izbranih besedil pridobi sezname terminoloških kandidatov. Posamezne terminološke kandidate lahko preveri tudi v konkordančniku.' }
+    +mainHeader(c)
+    -
+      const localeDayOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }
+
+    -
+      const localeHourOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+      }
+    .content-hold-prerequisites
+      #offset-main.mt-2
+        form(method="post")
+          input(type="hidden" name="extractionType" value="own")
+          .row.align-items-center
+            .col-xl-6.white-border-background.p-4.d-flex.ms-lg-3
+              span.smaller-blue-subheading.me-auto.mt-3 Luščenje iz lastnih besedil
+              button.btn.btn-primary.ps-5.pe-5 DODAJ
+            .col-sm.mt-2.mt-xl-0.ms-2
+              span.span.d-md-inline.d-block.gray-info Luščenje terminoloških kandidatov iz besedil, ki jih ima uporabnik shranjena pri sebi. Za boljšo učinkovitost svetujemo format .txt.
+        form(method="post")
+          input(type="hidden" name="extractionType" value="oss")
+          .row.mt-4.align-items-center
+            .col-xl-6.white-border-background.p-4.d-flex.ms-lg-3
+              span.smaller-blue-subheading.me-auto.mt-3 Luščenje iz korpusa besedil OSS
+              button.btn.btn-primary.ps-5.pe-5 DODAJ
+            .col-md.mt-2.mt-xl-0.ms-2
+              span.span.d-md-inline.d-block.gray-info Luščenje terminoloških kandidatov iz besedil, ki jih uporabnik izbere med vsemi besedili, vključenimi v #[a.gray-info(href="https://openscience.si/") Nacionalni portal odprte znanosti].
+
+        #extraction-list.all-tasks.mt-5.ms-2.ps-0
+          if !extractions.length
+            p Nimate luščenj za urejanje.
+          else
+            each el in extractions
+              if el.status === 'new'
+                .task.task-new.p-3.mb-4(data-id=el.id)
+                  .d-sm-flex.justify-content-sm-between.d-grid
+                    .d-grid.task-name
+                      span.bold-weight-black= el.name
+                    .d-flex.align-items-center
+                      button.btn.btn-secondary.extraction-btn.btn-begin.align-items-center.d-flex(
+                        disabled=!el.canBegin ? true : false
+                      )
+                        img(src="/images/fi_arrow-right-circle.svg")
+                        span.ms-1 ZAČNI
+                  hr.mt-2.mb-3
+                  .d-flex.justify-content-sm-between
+                    .d-sm-flex.align-items-center.mb-0
+                      img(src="/images/alert-circle.svg")
+                      span.normal-gray.ms-1.me-2.me-sm-0 Nov
+                    .d-flex.align-items-center
+                      a.btn.p-0.align-items-center.me-lg-3.edit-task(
+                        href=`luscenje/${el.id}`
+                      )
+                        img(src="/images/u_edit-alt.svg" alt="Edit")
+                        span.ms-1.normal-gray Uredi
+                      .ms-3
+                        button.p-0.btn.delete-task.btn-delete(type="button")
+                          img(src="/images/red-trash-icon.svg" alt="")
+                          span.normal-gray.ms-2 Briši
+
+              if el.status === 'in progress'
+                .task.task-in-progress.p-3.mb-3(data-id=el.id)
+                  .d-sm-flex.d-grid
+                    .d-grid.task-name
+                      span.bold-weight-black= el.name
+                    .d-flex
+                      .d-flex.start-date
+                        .d-grid.ms-1.align-items-center
+                          .d-flex.align-items-center
+                            img.me-1(src="/images/fi_calendar.svg")
+                            span.smaller-gray-uppercase.align-items-center Začetek
+                          .d-grid.ms-4.align-items-center
+                            span.bold-weight-black= el.timeStarted.toLocaleString('sl-SI', localeDayOptions)
+                            span.normal-gray= el.timeStarted.toLocaleString('sl-SI', localeHourOptions)
+                  hr.mt-2.mb-3
+                  .d-flex.justify-content-between
+                    .d-sm-flex.align-items-center.mb-0.flex-grow-1
+                      img(src="/images/clock.svg")
+                      span.normal-gray.ms-1 V obdelavi
+
+              if el.status === 'failed'
+                .task.task-cancelled.p-3.mb-3(data-id=el.id)
+                  .d-lg-flex.justify-content-between
+                    .d-flex.flex-column
+                      span.bold-weight-black= el.name
+                    .d-sm-flex
+                      .d-flex
+                        .d-sm-flex.start-date
+                          .d-sm-grid.ms-1.align-items-center.mt-2.mt-md-0
+                            .d-sm-flex.align-items-center
+                              img.me-1(src="/images/fi_calendar.svg")
+                              span.smaller-gray-uppercase.align-items-center Začetek
+                            .d-grid.ms-2.ms-sm-4.align-items-center
+                              span.bold-weight-black= el.timeStarted.toLocaleString('sl-SI', localeDayOptions)
+                              span.normal-gray= el.timeStarted.toLocaleString('sl-SI', localeHourOptions)
+                        .d-md-flex.start-date.ms-sm-5.ms-2.mt-2.mt-md-0
+                          .d-md-grid.ms-md-1.align-items-center
+                            .d-md-flex.align-items-center
+                              img.me-1(src="/images/fi_calendar.svg")
+                              span.smaller-gray-uppercase.align-items-center Konec
+                            .d-grid.ms-4.align-items-center
+                              span.bold-weight-black= el.timeFinished.toLocaleString('sl-SI', localeDayOptions)
+                              span.normal-gray= el.timeFinished.toLocaleString('sl-SI', localeHourOptions)
+
+                    //- TODO: Once duplication is implemented remove "disabled" attribute from btn
+                    .d-flex.align-items-center.justify-content-lg-end.mt-2.mt-sm-0.ms-2.ms-md-0
+                      button.btn.btn-secondary.double-task.align-items-center.d-flex(
+                        disabled
+                      )
+                        img(src="/images/fi_copy_border.svg")
+                        span.ms-1 PODVOJI
+                  hr.mt-2.mb-3
+                  .d-flex.justify-content-sm-between
+                    .d-sm-flex.align-items-center.mb-sm-0.me-3.me-sm-0
+                      img(src="/images/alert-triangle.svg")
+                      span.normal-gray.ms-sm-1.ms-0 Prekinjen
+                    .d-flex.align-items-center.mb-sm-0.me-3.mt-0
+                      //- a.edit-task.btn.p-0(href=`luscenje/${el.id}`)
+                      //-   img(src="/images/u_edit-alt.svg" alt="Edit")
+                      //-   span.normal-gray.ms-sm-1.ms-0 Uredi
+                      //- .ms-3.align-items-center.delete-task
+                      //-   img(src="/images/red-trash-icon.svg" alt="Delete")
+                      //-   span.normal-gray.ms-sm-1.ms-0 Briši
+                      .ms-3
+                        button.p-0.btn.delete-task.btn-delete(type="button")
+                          img(src="/images/red-trash-icon.svg" alt="")
+                          span.normal-gray.ms-2 Briši
+              if el.status === 'finished'
+                .task.task-completed.p-3.mb-3(data-id=el.id)
+                  .d-lg-flex.justify-content-between
+                    .d-flex.flex-column.task-name
+                      span.bold-weight-black= el.name
+                    .d-sm-flex
+                      .d-flex
+                        .d-sm-flex.start-date
+                          .d-sm-grid.ms-1.align-items-center.mt-2.mt-md-0
+                            .d-sm-flex.align-items-center
+                              img.me-1(src="/images/fi_calendar.svg")
+                              span.smaller-gray-uppercase.align-items-center Začetek
+                            .d-grid.ms-2.ms-sm-4.align-items-center
+                              span.bold-weight-black= el.timeStarted.toLocaleString('sl-SI', localeDayOptions)
+                              span.normal-gray= el.timeStarted.toLocaleString('sl-SI', localeHourOptions)
+                        .d-md-flex.start-date.ms-sm-5.ms-2.mt-2.mt-md-0
+                          .d-md-grid.ms-md-1.align-items-center
+                            .d-md-flex.align-items-center
+                              img.me-1(src="/images/fi_calendar.svg")
+                              span.smaller-gray-uppercase.align-items-center Konec
+                            .d-grid.ms-4.align-items-center
+                              span.bold-weight-black= el.timeFinished.toLocaleString('sl-SI', localeDayOptions)
+                              span.normal-gray= el.timeFinished.toLocaleString('sl-SI', localeHourOptions)
+                      .d-sm-flex.align-items-center.ms-sm-5.mt-2.mt-md-0
+                        img(src="/images/fi_check-circle.svg")
+                        span.ms-2 Končan
+                    .d-sm-flex.align-items-center.mt-2.mt-md-0.ms-auto.me-3
+                      a.edit-task.btn.p-0(href=`luscenje/${el.id}`)
+                        img(src="/images/u_edit-alt.svg")
+                        span.ms-1 UREDI
+                  hr.mt-2.mb-3
+                  .d-lg-flex.justify-content-between
+                    .d-lg-flex.align-content-center.mb-0.flex-grow-1
+                      a#terminology-candidates.btn.btn-primary.align-items-center(
+                        href=`luscenje/${el.id}/kandidati`
+                      )
+                        img(src="/images/book-white.svg")
+                        span.ms-1 Terminološki kandidati [#{ el.termCandidatesCount }]
+                      if el.status === 'finished' && el.corpusId
+                        a.btn.btn-secondary.ps-2.pe-2.mt-2.mt-lg-0.ms-md-1(
+                          href=`/korpus/${el.corpusId}`
+                          target="_blank"
+                        )
+                          img(src="/images/list.svg")
+                          span.normal-gray.ms-1 Uporabniški korpus
+                      if el.status === 'finished' && el.ossParams
+                        a.btn.btn-secondary.ps-2.pe-2.mt-2.mt-lg-0.ms-md-1(
+                          href="https://www.clarin.si/noske/run.cgi/corp_info?corpname=oss&struct_attr_stats=1"
+                          target="_blank"
+                        )
+                          img(src="/images/list.svg")
+                          span.normal-gray.ms-1 Korpus KAS+
+                    .d-flex.align-items-center.mb-0.me-3.mt-2.mt-lg-0
+                      .align-items-center.double-task
+                        img(src="/images/fi_copy_border.svg" alt="Copy")
+                        span.normal-gray.ms-1 Podvoji
+                      .ms-3
+                        button.p-0.btn.delete-task.btn-delete(type="button")
+                          img(src="/images/red-trash-icon.svg" alt="")
+                          span.normal-gray.ms-2 Briši
+    include /utilities/modal-alert
+    include /utilities/modal-alert-mixin
+    +alertModal("max-extractions", "Razumem", "Prekliči", "ok-btn-modal", "cancel-btn", 'TODO text več kot 5 luščenj!')
+    include /utilities/modal-response
+    +responseModal("begin-response", "Razumem", "understand-btn", "Luščenje je bilo dano v fazo obdelave.")
+  else
+    include /utilities/dictionaries-main-panel-header
+    - const c = { sideMenu: false, h2: 'Luščenje', h1: 'Seznam luščenj', description: 'Nabor vseh luščenj, s pomočjo katerih uporabnik iz vhodnih besedil pridobi sezname terminoloških kandidatov in dostop do konkordančnika po teh besedilih.' }
+    +mainHeader(c)
+    .content-hold-prerequisites
+      #offset-main
+        .d-flex.justify-content-center.mt-5
+          p Za luščenje terminoloških kandidatov morate biti prijavljeni.
+  include /common/footer

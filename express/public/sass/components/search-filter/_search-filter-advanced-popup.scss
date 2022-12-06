@@ -1,0 +1,273 @@
+@use "../../variables/variables" as v;
+
+.search-suggestion-container {
+  display: flex;
+}
+
+.advanced-search-root {
+  /*display: flex;*/
+  flex-direction: column;
+  /*position: absolute;*/
+  /*top: 64px + 83px;*/
+  left: 0;
+  right: 0;
+  /*bottom: 0;*/
+
+  padding: 2rem;
+  z-index: 1000;
+  background-color: #f5f5f5;
+
+  > * {
+    margin: 4px 0;
+  }
+
+  .advanced-search-options {
+    display: flex;
+    max-width: 500px;
+
+    div {
+      margin-top: 4px;
+    }
+
+    > div {
+      flex-grow: 1;
+      align-content: center;
+
+      > span {
+        :nth-child(2) {
+          margin-left: 8px;
+        }
+      }
+    }
+
+    input {
+      width: 24px;
+    }
+
+    :first-child {
+      display: flex;
+    }
+
+    :nth-child(2) {
+      display: flex;
+      justify-content: center;
+    }
+
+    :last-child {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  .advanced-search-filter-section {
+    > span:not(.advanced-search-filter-division) {
+      margin: 16px 0;
+      /*border-bottom: 4px solid v.$gray-2;*/
+      display: flex;
+    }
+
+    /* SELECT 2 LIBRARY OPTIMIZATIONS */
+    .select2-selection {
+      border: none; /* disable previous border */
+      border-bottom: 3px solid v.$gray-2;
+      background: none;
+    }
+
+    .advanced-input-label {
+      position: absolute;
+      transition-duration: 0.3s;
+
+      &.jumped {
+        bottom: 44px;
+        font-size: 0.7rem;
+      }
+    }
+
+    button {
+      position: absolute;
+      right: 0;
+      border: none;
+      background: none;
+    }
+
+    img {
+      position: absolute;
+      right: 0;
+      bottom: 8px;
+      z-index: -1;
+    }
+
+    .resizable {
+      display: block;
+      width: 100%;
+      input {
+        width: 100%;
+        display: flex;
+        flex-grow: 1;
+        border: none;
+        background: none;
+        /*outline: none;*/
+      }
+
+      &.selected {
+      }
+    }
+
+    span#area,
+    span#dict,
+    span#source,
+    span#consultant {
+      position: relative; /* combination with right 0 on button*/
+    }
+
+    .advanced-search-filter-division {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      margin-top: 12px;
+
+      > span {
+        margin-top: 4px;
+        display: flex;
+        flex-grow: 1;
+        //border-bottom: 4px solid v.$gray-2;
+        display: flex;
+
+        > div {
+          position: relative;
+        }
+      }
+    }
+
+    span {
+      span.sf-label {
+        span {
+          display: block;
+          width: 300px;
+          top: 0px;
+          color: v.$gray-1;
+          z-index: -10;
+        }
+      }
+    }
+
+    /*
+    > span {
+      > span {
+        > {
+          position: absolute;
+        }
+      }
+    }*/
+  }
+
+  .omrs-input-group {
+    border-bottom: 0.125rem solid v.$border-bottom-inputs;
+    .tags-root {
+      /*border-bottom: 0.125rem solid v.$border-bottom-inputs;*/
+      align-self: flex-end;
+      .search-filter-keyword-item {
+        display: inline-flex;
+        min-width: 20px;
+        background-color: v.$side-nav-mobile-color;
+        flex-grow: 10;
+
+        span {
+          color: v.$navigation-maincolor;
+        }
+
+        button {
+          &:hover {
+            background-color: v.$gray-1;
+          }
+        }
+      }
+    }
+  }
+
+  .advanced-search-final-options {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      margin-top: 10px;
+    }
+
+    > span {
+      display: flex;
+
+      > button {
+        display: flex;
+        flex-grow: 1;
+        width: 100%;
+        height: 46px;
+        text-align: center;
+        justify-content: center; /* for the flex buttons*/
+        align-items: center;
+        color: #848c90;
+        //border: 1px solid #848c90;
+        border-radius: 6px;
+        background-color: v.$nav-white;
+
+        &.clear-f {
+          border: 1px solid #dadada;
+        }
+
+        &.search-btn-a {
+          border: none;
+        }
+      }
+
+      :first-child {
+        margin-right: 10px;
+      }
+
+      :last-child {
+        background-color: v.$navigation-maincolor;
+        color: #fff;
+      }
+    }
+  }
+}
+
+/* MEDIA SCREEN */
+/*
+
+Note that you have a home page of advanced screen popup and a navigation screen with a popup
+
+*/
+@media (min-width: v.$layout-breakpoint-medium) {
+  .advanced-search-root {
+    /*top: 350px;*/
+    // height: 500px;
+    // width: 39rem;
+    // margin: 0 auto;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 0px 0px 6px 6px;
+
+    .advanced-search-final-options {
+      button {
+        height: 40px;
+      }
+    }
+
+    .advanced-search-filter-section {
+      .advanced-search-filter-division {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        > span {
+          flex-grow: 1;
+        }
+
+        > :first-child {
+          margin-right: 5px;
+        }
+
+        > :last-child {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

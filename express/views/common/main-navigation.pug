@@ -1,0 +1,18 @@
+//- extends TEMPLATE-demo
+
+include navigation-search-mixin
+
+mixin main-navigation(search_included)
+  .top-container
+    div(class=search_included ? 'main-nav-no-search' : 'main-nav-no-search')
+      ul.nav
+        li.nav-item
+          a(href="/")
+            img.logo-small(src="/images/logo.png" alt="Logo")
+        +navigation-search(search_included)
+
+        include ../components/navigation/main-navigation-right-mixin
+        +main-navigation-right(false, false, false)
+  if (search_included)
+    .top-container-mobile-search
+      +navigation-search-secondary(search_included)

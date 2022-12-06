@@ -1,0 +1,27 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/tooltip-helper.js")
+  script(nonce=cspNonce src="/javascripts/search-results.js")
+  script(nonce=cspNonce src="/javascripts/search-results-admin.js")
+  script(nonce=cspNonce src="/javascripts/side-menu-filter-languages.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(true)
+  include /components/search-and-filter/search-filter-navigation-mixin
+
+  +sfSideNavigation(searchFilterData)
+  include /components/search-and-filter/search-filter-modal
+
+  //- empty header for code to work
+  #offset-padding.offset-padding.header-section-root 
+
+  .content-hold-prerequisites.mt-4
+    #offset-main.main-container.ps-1.mt-2
+      .d-flex.mb-4.w-100
+        include /components/search-and-filter/result-panel
+        +result-panel(entries)
+
+  include /common/footer

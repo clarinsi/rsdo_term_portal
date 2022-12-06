@@ -1,0 +1,19 @@
+overrides:
+  - files:
+      - "*.js"
+      - "*.pug"
+      - "express/bin/www"
+    options:
+      semi: false
+      singleQuote: true
+      trailingComma: none
+      arrowParens: avoid
+  - files: "*.pug"
+    options:
+      pugAttributeSeparator: as-needed
+      pugSingleQuote: false
+  # Disabled and solved in package.json
+  # Reason: bug https://github.com/prettier/prettier/issues/8924
+  # - files: "express/bin/www"
+  #   # options:
+  #   #   parser: babel

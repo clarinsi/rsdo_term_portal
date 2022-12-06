@@ -1,0 +1,20 @@
+FROM postgres:13-alpine AS base
+
+FROM base AS builder
+RUN apk add --update git make openssl-dev clang llvm13 krb5-dev g++
+WORKDIR /tmp
+RUN git clone https://github.com/EnterpriseDB/pldebugger.git
+WORKDIR /tmp/pldebugger
+ENV USE_PGXS=1
+RUN make
+RUN make install
+
+FROM base AS dist
+COPY --from=builder /usr/local/lib/postgresql/ /usr/local/lib/postgresql/
+COPY --from=builder /usr/local/share/postgresql/ /usr/local/share/postgresql/
+COPY --from=builder /usr/local/share/doc/postgresql/ /usr/local/share/doc/postgresql/
+COPY init /docker-entrypoint-initdb.d
+COPY debugger-setup.sh /docker-entrypoint-initdb.d
+
+# Run below in DB to enable the extension:
+# CREATE EXTENSION pldbgapi;

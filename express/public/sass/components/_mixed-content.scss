@@ -1,0 +1,30 @@
+.mc-button {
+  border: 1px solid #b6bec4;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  background-position: center;
+  background: #ffffff;
+  margin-right: 3px;
+}
+
+.mc-button:focus {
+  box-shadow: 0 0 0 0.25rem #b6bec4;
+  border: gray;
+}
+
+.mc-button:focus-visible {
+  box-shadow: 0 0 0 0.25rem #b6bec4;
+  border: gray;
+}
+
+.mc-buttons-group {
+  margin-right: 5px;
+}
+
+.mc-center-img {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: 7px;
+}

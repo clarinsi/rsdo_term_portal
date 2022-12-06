@@ -1,0 +1,38 @@
+section.filter-modal-root
+  #modal-filter.modal.fade(
+    tabindex="-1"
+    aria-labelledby="modal-filter-label"
+    aria-hidden="true"
+  )
+    .modal-dialog.modal-dialog-centered.modal-lg
+      .modal-content
+        .modal-header.flex-wrap.pb-2
+          h5#modal-filter-label.modal-title.maincolor-text
+            | #{ "PLACEHOLDER" }
+          button.btn-close(
+            type="button"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          )
+          .flex.w-100.search-modal-header-root
+            span.search-modal-filter
+              input(type="text")
+              span
+                img(src="/images/search_blue.svg" alt="")
+            span.d-flex.flex-grow-1.align-content-center
+              a#ccf.clear-filter-modal-section(href="#")
+                img(src="/images/square-minus.svg" alt="")
+                span POČISTI FILTRE
+        .modal-body.pb-2
+          ul#modal-list.nav-modal-section-content.mb-0.pb-0
+            // Added dynamically...
+        .modal-footer.justify-content-start
+          div
+            button.btn.btn-light.border.border-dark.close(
+              type="button"
+              data-bs-dismiss="modal"
+            )
+              | Zapri
+          .justify-content-end
+            button#sf-modal-button.btn.btn-primary.use(type="button")
+              | Uporabi

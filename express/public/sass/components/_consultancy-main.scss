@@ -1,0 +1,289 @@
+@use "../variables/variables" as v;
+@use "search-filter/search-filter-navigation" as sf;
+
+.consultancy-padding-main {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  // margin: 0 1rem;
+}
+
+.consultancy-padding-admin {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.consultancy-container-unique {
+  #offset-padding {
+    z-index: 3;
+  }
+}
+
+.consultancy-container {
+  .consultancy-anchor {
+    div {
+      div {
+        padding-right: 0;
+        button.btn {
+          height: 40px;
+          /*padding-left: 0.25rem;
+
+          :first-child {
+            padding-left: 0;
+          }*/
+        }
+      }
+    }
+    .consultancy-question-item {
+      div {
+        div {
+          span.question-asked-time {
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+.height-46p {
+  height: 46px !important;
+}
+
+.header-consultancy-divider-middle {
+  .select2-selection {
+    border-radius: 6px;
+  }
+}
+
+.admin-cons-btn {
+  opacity: 80%;
+
+  &:hover {
+    opacity: 100%;
+  }
+}
+
+.send-cons-btn {
+  width: 164px;
+  height: 41px;
+}
+
+#consultancyModalShare,
+#consultancyModalAssign {
+  .share-dialog-window,
+  .assign-dialog-window {
+    .share-search-container,
+    .assign-search-container {
+      .share-search-consultants.csq,
+      .assign-search-consultants.csq {
+        border: none;
+      }
+
+      .select2-container--default .select2-selection {
+        display: flex;
+        height: 37px;
+        border: none;
+        background-color: v.$white-1;
+        padding: 0;
+        margin: 0;
+
+        .select2-selection__arrow {
+          display: none;
+        }
+
+        .select2-selection__rendered {
+          align-self: center;
+        }
+      }
+    }
+  }
+  li.select2-results__option {
+    padding: 0 6px;
+  }
+
+  .button-modal-size {
+    div {
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+.search-icon-share,
+.search-icon-assign {
+  position: absolute;
+  right: 9px;
+  bottom: 6px;
+  pointer-events: none;
+}
+
+a.bg-transparent.border-0.consultancy-back-button {
+  text-decoration: none;
+  display: inline-block;
+  :visited {
+    text-decoration: none;
+  }
+}
+
+.consultancy-back-button {
+  width: 95px;
+}
+
+.consultancy-item-detailed {
+  background-color: #ffffff;
+  padding: 33px 20px 20px 36px;
+  border-radius: 8px;
+  * {
+    font-size: 0.875rem;
+  }
+  .navigation-text-color {
+    font-size: 1.825rem;
+  }
+}
+
+.consultancy-ask-question-container {
+  padding: 15px 38px 45px 43px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+a.consultancy-anchor {
+  color: #000000;
+  text-decoration: none;
+
+  &:visited {
+    color: #000000;
+  }
+
+  &:hover {
+    color: #000000;
+  }
+
+  .consultancy-question-item {
+    $hoverSpace: 1rem;
+    margin: 2rem $hoverSpace;
+    z-index: 1;
+    .question-asked-time {
+      padding-top: 2px;
+      color: v.$header-description-gray;
+    }
+
+    * {
+      z-index: inherit;
+    }
+
+    &:hover {
+      // background-color: #ffffff;
+      // border-radius: 8px;
+      // padding: 18px 24px 22px;
+
+      .hovered {
+        visibility: visible;
+        background-color: #ffffff;
+        border-radius: 8px;
+        // padding: 18px 24px 22px;
+        left: -1 * $hoverSpace;
+        right: -1 * $hoverSpace;
+        top: -16px;
+        bottom: -16px;
+        z-index: 0;
+      }
+
+      .row.btn-group {
+        display: flex;
+      }
+    }
+
+    .row.btn-group {
+      display: none;
+    }
+
+    .consultancy-description-text {
+      line-height: 16px;
+      word-wrap: normal;
+
+      * {
+        display: block;
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-wrap: normal;
+      }
+    }
+
+    .circle {
+      width: 17px;
+      height: 17px;
+      background-color: v.$gray-2;
+      border-radius: 50%;
+    }
+  }
+}
+
+@media (min-width: v.$layout-breakpoint-large) {
+  .consultancy-padding-admin {
+    margin: auto;
+  }
+}
+
+@media (min-width: v.$layout-breakpoint-x-large) {
+  // .admin-nav-mobile {
+  //   display: none;
+  // }
+
+  .consultancy-padding-main {
+    // padding: 0 17%;
+  }
+
+  .consultancy-padding-admin {
+    margin-left: sf.$sfPanelWidth;
+    padding-left: 1rem; // error correction
+    .admin-nav {
+      nav {
+        .slidable {
+          padding-left: 1rem;
+          // width: 240px;
+          padding-right: 1rem;
+
+          > * {
+            padding: 8px 1rem;
+          }
+        }
+      }
+    }
+
+    #export-consultancy-info {
+      margin-right: 1rem;
+    }
+  }
+
+  .consultancy-as {
+    top: -2px !important;
+    left: 0px !important;
+  }
+}
+
+@media (min-width: 1400px) {
+  .consultancy-padding-main {
+    width: 60rem;
+  }
+}
+
+@media (min-width: 1500px) {
+  .consultancy-padding-main {
+    // padding: 0 18%;
+  }
+
+  .consultancy-padding-admin {
+  }
+
+  #export-consultancy-info {
+    position: relative;
+    left: 18%;
+  }
+}

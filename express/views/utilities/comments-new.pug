@@ -1,0 +1,38 @@
+-
+  const localeOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'}
+if comments
+  each comment in comments
+    - const date = new Date(comment.timeCreated).toLocaleDateString('sl-SL', localeOptions)
+    .comment(class=comment.status === 'hidden' ? 'comment-white-text' : '')
+      .row
+        .comment-initials-container
+          span.test= `${comment.author.firstName[0]}${comment.author.lastName[0]}`
+        .comment-col.col
+          span.comment-author-name= `${comment.author.firstName} ${comment.author.lastName}`
+          span.comment-date= `• ${date}`
+          if (comment.showEye)
+            if comment.status === 'visible'
+              button.comment-seen-btn.me-2
+                img(src="/images/eye.svg" alt="Viden")
+            else
+              button.comment-eye-off-btn.me-2
+                img(src="/images/eye-off.svg" alt="Skrit")
+          button.comment-reply-btn
+            img(src="/images/fi_corner-down-left.svg" alt="Odgovori")
+      .row
+        .comment-text
+          if comment.quote
+            .comment-text-2
+              - const quoteDate = new Date(comment.quote.timeCreated).toLocaleDateString('sl-SL', localeOptions)
+              img(src="/images/quote-marks.svg")
+              span.comment-quotename= `${comment.quote.author.firstName} ${comment.quote.author.lastName}`
+              span.comment-quotedate= `• ${quoteDate}`
+              .comment-quotedtext= comment.quote.message
+                hr.comment-quotehr
+          .comment-text-2= comment.message
+            hr.line

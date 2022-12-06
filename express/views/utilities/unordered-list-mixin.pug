@@ -1,0 +1,10 @@
+mixin listItemClickable(value='', listClassString='', anchorClassString='')
+  li(class=classString)
+    a(class=anchorClassString) = value
+      if block
+        block
+
+mixin listItemClickableWithIcon(value='', listClassString='', anchorClassString='', imgSrc='', itemLabel='')
+  +listItemClickable(value, listClassString, anchorClassString)
+    img(src=imgSrc)
+    p = itemLabel

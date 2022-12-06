@@ -1,0 +1,48 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+  script(nonce=cspNonce src="/javascripts/pagination-extensions.js")
+  script(nonce=cspNonce src="/javascripts/search-dictionary.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+
+  //- include /common/side-menu-fake
+  //- +sideNavigationFake
+
+  #offset-padding.header-section-root.no-side-menu.p-squeeze-lg
+    //- .ms-4
+    #chevrons-left.d-flex
+      a#btn-chevrons.no-text-decoration.btn-chevrons-left.pt-0.h-24.d-flex(
+        type="link"
+        href="/"
+      )
+        img.align-middle(src="/images/chevrons-left.svg") 
+        span.ms-2.text-header-description-gray.fw-700 Nazaj
+    .d-flex.justify-content-between.flex-md-nowrap.flex-wrap
+      .header-container-left-side.d-flex
+        .header-container-divider-left
+          //- h2#site-header-title 
+          h1#site-heading Seznam slovarjev
+          span#text-description.pe-xl-5.page-description Seznam vseh slovarjev, ki so na tem portalu na voljo uporabnikom.
+    hr#header-row.mt-1.mb-0
+
+  //- - const c = {sideMenu:false, h2: 'Urejanje', h1: 'Nov slovar', description: 'Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.', helpLink: { linkHref: '/pomoc', linkText: 'Več ...' }, buttons: [{ type: 'cancel', content: 'Prekliči', url:"." },{ type: 'button', content: 'Ustvari', form: 'form-dictionary-new' }] }
+  //- +mainHeader(c)
+  .content-hold-prerequisites.ps-3.pe-3
+    #offset-main.container-fluid.mt-4.ps-sm-3.errc
+      .p-squeeze-lg
+        .row
+          .col-md-6
+            include ../../components/search-and-filter/search-with-primary-domain-filter
+            +searchWithPrimaryDomainFilter("dictionaries-search-form", "searchbar-main", "dicts-search-btn", "")
+          .col-md-6.d-flex.justify-content-end.pt-3
+            include /utilities/pager
+            +pager(1)
+        .row.mt-5.g-0 
+          include ../../components/dictionary/dictionary-list
+          +table(dictionaries, true)
+  include /common/footer

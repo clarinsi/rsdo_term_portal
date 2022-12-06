@@ -1,0 +1,386 @@
+form#form-edit-content.needs-validatio.mt-2(
+  method="post"
+  novalidate
+  action="/api/v1/entries/create"
+)
+  if canPublishEntriesInEdit === 'T'
+    input#can-publish-entries-in-edit(type="hidden" checked)
+  else
+    input#can-publish-entries-in-edit(type="hidden")
+  .collapsable-entry-part.collapse
+    .d-xl-flex.align-items-center.justify-content-between
+      .d-sm-flex.col-xl-6.col-12.align-items-center
+        .col-12.col-sm-3.flex-fill.me-2
+          span.term-id.normal-gray-label ID:
+        .col-12.col-sm-3.flex-fill
+          span#edit-version-el.normal-gray-label Verzija 1
+      .d-sm-flex.col-xl-6.col-12.align-items-center
+        .col-12.col-sm-3.flex-fill
+          span#edit-name-el.normal-gray-label Ime Priimek
+        .col-12.col-sm-3.flex-fill.ms-sm-2
+          span.normal-gray-label Zaporedje:
+          input#homonym-sort.ms-2.homonym-field.form-control.d-inline(
+            type="text"
+            name="homonymSort"
+            maxlength="2"
+          )
+    .d-xl-flex.align-items-center.mt-3.justify-content-between
+      .d-sm-flex.col-xl-6.col-12.align-items-center
+        .col-12.col-sm-3.flex-fill.me-2
+          select#status-edit.form-select.select-content-state.w-auto(
+            name="status"
+          )
+            option(value="suggestion" disabled) Predlog
+            option(value="in_edit") V urejanju
+            option(value="complete") Urejeno
+
+        .col-12.col-sm-3.flex-fill
+          .form-check.form-switch
+            input#published-cbox.form-check-input.me-2(
+              type="checkbox"
+              name="isPublished"
+            )
+            label.normal-gray-label(for="published-cbox") Objavljeno
+      .d-sm-flex.col-xl-6.col-12.align-items-center
+        .col-12.col-sm-3.flex-fill
+          input#terminology-cbox.form-check-input.me-2(
+            type="checkbox"
+            name="isTerminologyReviewed"
+          )
+          label.normal-gray-label(for="terminology-cbox") Strokovno pregledano
+        .col-12.col-sm-3.flex-fill.ms-sm-2
+          input#language-cbox.form-check-input.me-2(
+            type="checkbox"
+            name="isLanguageReviewed"
+          )
+          label.normal-gray-label(for="language-cbox") Jezikovno pregledano
+  .d-flex.justify-content-between.align-items-center.collapsible-data
+    .collapse-content
+      .d-flex.collapsed-text.align-items-center
+        .white-background
+          span.status-collapsed.normal-gray.m-2 
+        .published-collapsed.d-flex.d-none
+          span.normal-gray.ms-2 |
+          span.normal-gray.ms-2 Objavljeno
+        .terminology-collapsed.d-flex.d-none
+          span.normal-gray.ms-2 |
+          span.normal-gray.ms-2 Strokovno pregledano
+        .lang-collapsed.d-flex.d-none
+          span.normal-gray.ms-2 |
+          span.normal-gray.ms-2 Jezikovno pregledano
+        .homonim-collapse-div.d-flex.d-none
+          span.normal-gray.ms-2 |
+          span.homonim-collapsed.normal-gray.ms-2
+    a.collapsable-entry-btn.entry-collapsed.btn.p-0.me-2(
+      data-bs-toggle="collapse"
+      href=".collapsable-entry-part"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapseExample"
+    )
+      img(src="/images/chevron-right.svg") 
+
+  .note-section.mt-2
+    .message-container.d-none
+      .task.task-declined.p-2.mb-4.me-2
+        .d-sm-flex.justify-content-sm-between.d-grid.mt-2
+          .d-grid
+            .d-flex.align-items-center
+              img(src="/images/alert-triangle-dark-red.svg")
+              span.ms-2.normal-red-note Slovarski sestavek je neveljaven
+            ul.mt-2.ms-4.mb-2
+              li.error-type-1.heavy-gray-text.d-none Tip napake 1 (ni slovenskega termina)
+              li.error-type-2.heavy-gray-text.d-none Tip napake 2 (ni definicije ali tujejezičnega termina)
+    .col.note-section-line.me-1.my-1.d-none
+      hr.my-0
+  input#hidden-dictionary-id.hidden-input-dict-id(
+    type="hidden"
+    name="dictionaryId"
+    value=dictionaryId
+  )
+  .term-input-group.mt-xl-4.mt-3
+    .subject-name.col-sm-6.d-flex.justify-content-between
+      label.input-name-txt(for="term-name") TERMIN
+      include /utilities/mixed-content
+      - const type = 'two'
+      +mixedContentBtns
+    .row.align-items-center
+      .col-sm-12.col-xl-8.col-xxl-6
+        textarea#term-name.name-input.form-control.d-inline.explanation-field.mc-field.dispatch-tab(
+          type="text"
+          name="term"
+        )
+
+      .col.d-none.d-xl-flex.align-items-center
+        span.d-md-inline.d-block.name-info-txt Vnesite termin.
+
+  #create-headword-group.mt-sm-3.mt-2
+    .subject-name
+      label.input-name-txt(for="btn-new-headword-grp") OBLIKE, NAGLASI, IZGOVOR
+    .row
+      .col-sm-12.col-xl-8.col-xxl-6
+        button#btn-new-headword-grp.input-new-btn.form-control(type="button")
+          span.new-author-text-btn Poveži z leksikalno bazo.
+
+      .col.d-none.d-xl-flex.align-items-center
+        span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Z Izbiro gumba se boste povezali z leksikalno bazo in boste lahko potrdili, ali se termin, ki ste ga zapisali pregiba, naglašuje ali izgovarja na način, kakor je predstavljeno.
+
+  #created-headword-group.mt-sm-4.mt-2.d-none
+    .subject-name
+      span.input-name-txt Oblike, naglasi, izgovor
+    .col-sm-12.col-xl-8.col-xxl-6
+      .table-responsive
+        table#headword-table.table-striped.table
+          tr
+            td#term-key 
+            td 
+              a(href="") Oblike
+            td 
+              a(href="") Naglas
+            td 
+              a(href="") Izgovor
+  if structure.hasDomainLabels
+    .title.mt-sm-4.mt-2
+      .subject-name
+        label.input-name-txt(for="headword-group") PODROČNE OZNAKE
+      .row
+        .col-sm-12.col-xl-8.col-xxl-6
+          select#domain-secondary.name-input.d-inline.form-control.multiple(
+            name="domainLabels"
+            multiple
+          )
+            if entryDomainLabels.length
+              each domain in entryDomainLabels
+                option(value=domain.id)= domain.name
+
+        .col.d-none.d-xl-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vstavite ustrezno področno oznako, ki jo želite določiti za posamezni termin.
+  if structure.hasLabel
+    .title.mt-sm-4.mt-2
+      .subject-name.col-sm-6.d-flex.justify-content-between
+        label.input-name-txt(for="explanation-field") POJASNILO
+        +mixedContentBtns(type)
+      .row
+        .col-sm-12.col-xl-8.col-xxl-6
+          textarea#explanation-field.form-control.explanation-field.mc-field(
+            type="text"
+            name="label"
+          )
+        .col.d-none.d-xl-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Pojasnilo ...
+  if structure.hasDefinition
+    .title.mt-sm-4.mt-2
+      .subject-name.col-sm-6.d-flex.justify-content-between
+        label.input-name-txt(for="definition-field") DEFINICIJA
+        +mixedContentBtns(type)
+      .row
+        .col-sm-12.col-xl-8.col-xxl-6
+          textarea#definition-field.form-control.explanation-field.mc-field.dispatch-tab(
+            type="text"
+            name="definition"
+          )
+        .col.d-none.d-xl-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vstavite definicijo termina.
+  if structure.hasSynonyms
+    .title.mt-sm-4.mt-2
+      .subject-name.col-sm-6.d-flex.justify-content-between
+        label.input-name-txt(for="synonyms-input") SINONIMI
+        //- +mixedContentBtns
+      .row
+        .col-sm-12.col-xl-8.col-xxl-6
+          select#synonyms-input.select-synonyms.name-input.d-inline.form-control.without-dropdown.mc-field(
+            name="synonyms"
+            multiple
+          )
+        .col.d-none.d-xl-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vstavite sinonime, ki se za termin še uporabljajo.
+  if structure.hasLinks
+    .title.mt-sm-4.mt-2
+      .subject-name.col-sm-6.d-flex.justify-content-between
+        label.input-name-txt(for="connections") POVEZANI TERMIN
+        +mixedContentBtns
+      .row.align-items-center.link-row
+        .col-xl-2.col-6
+          select.name-input.form-select.d-inline(
+            type="text"
+            name="type"
+            placeholder="Tip"
+          )
+            option(value="related") Sorodni
+            option(value="broader") Širši
+            option(value="narrow") Ožji
+        .col-sm-12.col-xl-4
+          input#connections.name-input.form-control.d-inline.mc-field(
+            type="text"
+            name="links"
+            maxlength="120"
+          )
+
+        .col.d-none.d-xl-flex.align-items-cente
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Povezani termin ...
+
+    #add-new-connection.mt-sm-4.mt-2
+      .subject-name
+        label.input-name-txt(for="input-new-connection") DODATNI POVEZANI TERMIN
+      .row
+        .col-sm-12.col-xl-8.col-xxl-6
+          button#input-new-connection.input-new-btn.form-control(type="button")
+            span.new-author-text-btn Dodaj povezani termin.
+
+        .col.d-none.d-xl-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte termin, ki je sicer definiran v samostojnem slovarskem sestavku, vendar je povezan s terminom, ki ga opisujete v tem slovarskem sestavku.
+
+  if structure.hasOther
+    .title.mt-sm-4.mt-2
+      .subject-name.col-sm-6.d-flex.justify-content-between
+        label.input-name-txt(for="other-field") DRUGO
+        - const br = 'br'
+        +mixedContentBtns(br)
+      .row
+        .col-sm-12.col-xl-8.col-xxl-6
+          textarea#other-field.form-control.explanation-field.mc-field(
+            type="text"
+            name="other"
+          )
+        .col.d-none.d-xl-flex.align-items-center
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Definicija ...
+
+  if structure.hasForeignLanguages
+    #foreign-languages-group
+      .mt-sm-4.mt-2
+        span.input-name-txt TUJI JEZIKI
+      .languages-group-white.pb-3.pt-1.mt-2
+        if languages.length
+          each language, index in languages
+            hr(class=index ? 'hr-languages' : 'd-none')
+            .language.px-3(data-langauge-id=language.id)
+              span.bold-blue-text= language.nameSl
+              input(
+                type="hidden"
+                name=`foreign[${language.id}][code]`
+                value=language.code
+              )
+              .subject-name.mt-2.col-sm-6.d-flex.justify-content-between
+                label.input-name-txt.mt-2(for="foreign-term") TERMINI
+                +mixedContentBtns
+              .row
+                .col-sm-12.col-xl-8.col-xxl-6
+                  select.foreign-term-el.name-input.d-inline.form-control.without-dropdown.mc-field(
+                    name=`foreign[${language.id}][term]`
+                    multiple
+                  )
+                .col.d-none.d-xl-flex.align-items-center
+                  span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte tujejezični ustreznik.
+
+              if structure.hasForeignDefinitions
+                .mt-sm-4.mt-2
+                  .subject-name.d-flex.justify-content-between.col-sm-6
+                    label.input-name-txt DEFINICIJA
+                    +mixedContentBtns(type)
+                  .row
+                    .col-sm-12.col-xl-8.col-xxl-6
+                      textarea.foreign-definition-el.foreign-definition-field.form-control.explanation-field.mc-field.dispatch-tab(
+                        type="text"
+                        name=`foreign[${language.id}][definition]`
+                      )
+                    .col.d-none.d-xl-flex.align-items-center
+                      span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vpišite definicijo v tujem jeziku.
+              if structure.hasForeignSynonyms
+                .mt-sm-4.mt-2
+                  .subject-name.d-flex.justify-content-between.col-sm-6
+                    label.input-name-txt.mt-2 SINONIMI
+                    //- +mixedContentBtns
+                  .row.mb-4
+                    .col-sm-12.col-xl-8.col-xxl-6
+                      select.foreign-synonym-el.name-input.d-inline.form-control.without-dropdown.mc-field(
+                        name=`foreign[${language.id}][synonym]`
+                        multiple
+                      )
+                    .col.d-none.d-xl-flex.align-items-center
+                      span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte tujejezične ustreznike, ki se za opisani termin tudi uporabljajo v tujem jeziku.
+        else
+          .language.px-3
+            span.bold-blue-text= languages.nameSl
+            .subject-name.d-flex.flex-column.mt-2
+              label.input-name-txt.mt-2(for="foreign-term") TERMINI
+            .row
+              .col-sm-12.col-xl-8.col-xxl-6
+                select.name-input.d-inline.form-control.without-dropdown(
+                  name="foreignTerm"
+                  multiple
+                )
+              .col.d-none.d-xl-flex.align-items-center
+                span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte tujejezični ustreznik.
+  if structure.hasImages ||  structure.hasAudio || structure.hasVideo
+    .mt-sm-4.mt-2
+      span.input-name-txt MULTIMEDIJA
+    .multimedia-section.px-3.pb-3.pt-1
+      if structure.hasImages
+        .mt-3
+          .subject-name
+            label.input-name-txt(for="image-input-field") SLIKA
+          .row
+            .col-sm-12.col-xl-8.col-xxl-6
+              input#image-input-field.form-control.d-inline(
+                name="image"
+                maxlength="120"
+                placeholder="URL"
+              )
+            .col.d-none.d-xl-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Slika ...
+
+        #add-new-image.mt-sm-4.mt-2
+          .subject-name
+            label.input-name-txt(for="input-new-image") NOVA SLIKA
+          .row
+            .col-sm-12.col-xl-8.col-xxl-6
+              button#input-new-image.input-new-btn.form-control(type="button")
+                span.new-author-text-btn Nova slika
+            .col.d-none.d-xl-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodaj video ...
+      if structure.hasAudio
+        .mt-sm-4.mt-2
+          .subject-name
+            label.input-name-txt(for="audio-input-field") ZVOK
+          .row
+            .col-sm-12.col-xl-8.col-xxl-6
+              input#audio-input-field.form-control.d-inline(
+                name="audio"
+                maxlength="120"
+                placeholder="URL"
+              )
+            .col.d-none.d-xl-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Zvok ...
+
+        #add-new-audio.mt-sm-4.mt-2
+          .subject-name
+            label.input-name-txt(for="input-new-audio") NOV ZVOK
+          .row
+            .col-sm-12.col-xl-8.col-xxl-6
+              button#input-new-audio.input-new-btn.form-control(type="button")
+                span.new-author-text-btn Nov zvok
+            .col.d-none.d-xl-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodaj zvok ...
+      if structure.hasVideo
+        .mt-sm-4.mt-2
+          .subject-name
+            label.input-name-txt(for="video-input-field") VIDEO
+          .row
+            .col-sm-12.col-xl-8.col-xxl-6
+              input#video-input-field.form-control.d-inline(
+                name="video"
+                maxlength="120"
+                placeholder="URL"
+              )
+            .col.d-none.d-xl-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Video ...
+
+        #add-new-video.mt-sm-4.mt-2
+          .subject-name
+            label.input-name-txt(for="input-new-video") NOV VIDEO
+          .row
+            .col-sm-12.col-xl-8.col-xxl-6
+              button#input-new-video.input-new-btn.form-control(type="button")
+                span.new-author-text-btn Nov video
+            .col.d-none.d-xl-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodaj video ...

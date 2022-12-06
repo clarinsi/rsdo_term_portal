@@ -1,0 +1,17 @@
+.pager-holder
+  .comments-pager
+    button#collapseComments.no-bg.no-border
+      span.navigation-text-color.fw-500 Komentarji
+      img#dropImage(src="images/arrow_drop_down.svg")
+    span#comments-count.comment-count.d-flex.ms-auto.me-4.text-p875rem
+    include /utilities/pager
+    +pager
+  hr.comments-top-hr.mt-3
+.d-flex.flex-row.w-100.mb-4
+ul#comments-container.comments-container.pe-1
+  include /utilities/comments-input-text
+  if comments
+    script(nonce=cspNonce).
+      const initialComments = !{ JSON.stringify(comments) }
+      const commentEls = document.getElementById('comments-container').children
+      initialComments.forEach((c, i) => {commentEls[i].dataObject = c})

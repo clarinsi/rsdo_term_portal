@@ -1,0 +1,38 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+  script(nonce=cspNonce src="/javascripts/consultancy.js")
+  script(nonce=cspNonce src="/javascripts/consultancy-search-mechanism.js")
+
+block body
+  block preDefinitions
+    - const resultAmountDisplay = false
+
+  - const specificUserRights = user && (user.hasRole('consultant') || user.hasRole('consultancy admin'))
+
+  //- include /common/side-menu-fake
+  //- +sideNavigationFake
+
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  .consultancy-padding-main.p-squeeze-lg
+    include /utilities/consultancy-main-panel-header
+    //- const c = { h1: 'Terminološko svetovanje', description: 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj, pa strokovnjaki čutijo potrebo po sistemskem poenotenju oz. izbiri najprimernejše rešitve.', buttons: [{ type: 'link', content: 'Zastavi novo vprašanje', url: '/svetovanje/vprasanje/novo' }] }
+    block headerConfig
+      - const c = { specificRights: specificUserRights, exportButtonPresent: false, h1: 'Terminološko svetovanje', description: 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj.', buttons: [{ type: 'link', content: 'Zastavi novo vprašanje', url: '/svetovanje/vprasanje/novo' }], show5MostRecent: true }
+    +mainHeader(c)
+    .content-hold-prerequisites.ps-0.pe-0
+      #offset-main
+        include /components/consultancy/consultancy-item
+        .consultancy-container
+          // To remove duplicates
+          //- - const moderatorList = entryList.filter(a => a.isModerator) // All published questions have a moderator...
+          each entry in entries
+            +consultancyItem(entry)
+
+        //- .d-flex.justify-content-center.mt-5
+          span soslfmkelčfmewqčfmčewkmfkčewfmkčewfmkmfewklfmewlk
+
+  include /common/footer

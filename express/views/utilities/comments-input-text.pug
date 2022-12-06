@@ -1,0 +1,25 @@
+if user
+  include /utilities/comments-new
+  .comment-div
+    form#comment-form.comment-form
+      #comment-circle.circle.comment-initials-container IP
+      textarea#comment-message-input(
+        contenteditable=""
+        type="text"
+        placeholder="Dodaj komentar..."
+        name="comment"
+      )
+      .verticalLine.mt-1.mb-1
+      button#comment-submit-btn(type="button")
+        img.img-comment-svg(src="/images/comment.svg" alt="Pošlji")
+        | Pošlji
+
+  #reply-form-container.hide
+    form#comment-reply-form.comment-reply-form
+      input#comment-quote-id(type="hidden" name="quoteId")
+      #reply-circle.circle.comment-initials-container IP
+      textarea#comment-reply-input(placeholder="Dodaj odgovor..." type="text")
+      .verticalLine.mt-1.mb-1
+      button#comment-submit-reply-btn(type="button")
+        img(src="/images/fi_down_left.svg" alt="Odgovori")
+        | Odgovori

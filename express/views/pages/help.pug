@@ -1,0 +1,19 @@
+extends /layout
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/help.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /utilities/help-side-nav
+  .content-hold-prerequisites.ps-xl-0.ps-3.pe-xl-5.pe-3.mt-4
+    #offset-main.main-container.mt-xl-5.mt-3
+      .help-page-elements
+        .scrollspy-example(
+          data-bs-spy="scroll"
+          data-bs-target="#list-example"
+          tabindex="0"
+        )
+        include /utilities/help-text
+  include /common/footer

@@ -1,0 +1,21 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+
+  include /common/side-menu-fake
+  +sideNavigationFake
+  include /utilities/dictionaries-main-panel-header
+  - const c = {sideMenu:false, h2: 'Urejanje', h1: 'Nov slovar', description: 'Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.', helpLink: { linkHref: '/pomoc#help-editor', linkText: 'Več ...' }, buttons: [{ type: 'cancel', content: 'Prekliči', classAtr:"btn btn-secondary header-btn-secondary link-back" },{ type: 'button', content: 'Ustvari', form: 'form-dictionary-new' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.container-fluid.mt-4.ps-sm-3
+      include /utilities/dictionary-main-input
+      +dictionaryMainInput({ formId: 'form-dictionary-new', hasStructure: true})
+    include /utilities/modal-alert
+  include /common/footer

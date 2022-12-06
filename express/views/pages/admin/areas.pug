@@ -1,0 +1,86 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'areas', activeLvl2: '' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Podpodročja', h1: 'Podpodročja', description: 'Podpodročja so namenjena podrobnejšemu razvrščanju terminoloških slovarjev. Administrator mora vsa novo predlagana podpodročja potrditi, preden jih lahko na seznamu vidijo tudi drugi uporabniki portala.', buttons: [{ form: 'dictionary-domain-labels', type: 'disabled', content: 'Shrani' }] }
+  +mainHeader(c)
+
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      if results.length
+        .d-flex.justify-content-between.mt-4
+          .d-flex.flex-row.mb-4
+            include /components/search-and-filter/inline-search
+          .d-flex
+            include /utilities/pager
+            +pager
+        form#dictionary-domain-labels(
+          method="post"
+          action="/api/v1/dictionaries/renovateSecondaryDomains"
+        )
+          table#all-areas-table.table.areas-table.table-responsive
+            thead
+              tr
+                th(scope="col") Vidno
+                th(scope="col") Podpodročje
+                th(scope="col") Prevod
+                th(scope="col") 
+            tbody#page-results
+              each result in results
+                tr
+                  input(type="hidden" name="secondaryDomainId" value=result.id)
+                  th(scope="row")
+                    if result.isApproved
+                      input.form-check.checkbox-table(
+                        type="checkbox"
+                        name="isApproved"
+                        checked
+                        disabled
+                      )
+                    else
+                      input.form-check.checkbox-table(
+                        type="checkbox"
+                        name="isApproved"
+                        disabled
+                      )
+                  td.tdata-area= result.nameSl
+                  td.tdata-translation= result.nameEn
+                  td.buttons-group
+                    .table-buttons
+                      button.p-0.table-button-grp.me-3.edit-row-btn(
+                        type="button"
+                      )
+                        img(src="/images/u_edit-alt.svg" alt="")
+                      button.p-0.table-button-grp.delete-row-btn(
+                        data-bs-target="#alert-modal"
+                        data-bs-toggle="modal"
+                        type="button"
+                      )
+                        img(src="/images/red-trash-icon.svg" alt="")
+
+      #input-row.row
+        .col-sm-3
+          .subject-name
+            label.input-name-txt PODPODROČJE
+          input#area-input.form-control(type="text")
+        .col-sm-3
+          .subject-name
+            label.input-name-txt ANGLEŠKI PREVOD PODPODROČJA
+          input#translation-input.form-control(type="text")
+        .col.d-flex.align-items-end.mt-2
+          button#add-area.btn.btn-primary(type="submit" disabled) Dodaj
+
+      include /utilities/modal-alert
+  include /utilities/modal-alert-mixin
+  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
+  include /common/footer

@@ -1,0 +1,69 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/extraction.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-fake
+  +sideNavigationFake
+  include /utilities/dictionaries-main-panel-header
+  - const c = { noSidebar: false, hrefurl: '/luscenje', h2: 'Luščenje iz lastnih besedil', h1: 'Dodaj opravilo', description: 'Luščenje terminoloških kandidatov iz besedil, ki jih uporabnik namensko izbere, je najučinkovitejše. Primerno izbrano ime opravila, vam omogoča, da lahko sledite, katera luščenja ste že opravili. Ko vnesete podatke, morate vse spremembe shraniti. Zaradi omejenega prostora za shranjevanje lahko shranite največ pet zadnjih luščenj. ', buttons: [{ type: 'cancel', url:'/luscenje', content: 'Prekliči', classAtr:"btn btn-secondary header-btn-secondary" }, { type: 'button', content: 'Shrani', form: 'extraction-name' }] }
+  +mainHeader(c)
+  .root-container
+    .content-hold-prerequisites.mt-2
+      #offset-main
+        form#extraction-name(method="post")
+          .subject-name
+            label.smaller-black-uppercase(for="name") IME
+          .row.pe-0
+            .col-sm-6.pe-0
+              input#name.name-input.form-control.d-inline(
+                type="text"
+                name="name"
+                value=extraction.name
+              )
+            .col-sm.d-flex.align-items-center.ms-sm-4.ps-sm-0.mt-1.mt-sm-0
+              span.d-md-inline.d-block.smaller-gray-info Izberite takšno ime, ki vam bo pomagalo slediti rezultatom, če boste luščenje besedil opravili večkrat.
+
+        .table-documents.mt-4.d-sm-flex
+          .col-sm-6.d-flex.flex-column
+            .personal-documents.justify-content-between.d-flex.align-items-center
+              span.smaller-black-uppercase Lastni dokumenti
+              a.btn.btn-primary.button-edit.align-items-center.d-flex.justify-content-center(
+                type="link"
+                href=`/luscenje/${id}/besedila`
+              ) Uredi
+            div
+              table.table.mt-2
+                tbody
+                  each document, index in extractionDocuments
+                    tr
+                      th.normal-gray= index + 1
+                      td.text-sm-start.normal-gray= document.filename
+                      td.text-sm-end.normal-gray= document.size
+          .col-sm.d-flex.ms-sm-4.mt-1.mt-sm-0
+            span.d-md-inline.d-block.smaller-gray-info Preden naložite besedila, jih shranite v besedilni obliki (končnica .txt).
+
+        .table-kas.mt-4.d-sm-flex
+          .col-sm-6.d-flex.flex-column
+            .personal-documents.justify-content-between.d-flex.align-items-center
+              span.smaller-black-uppercase (STOP) Termini
+              a.btn.btn-primary.button-edit.align-items-center.d-flex.justify-content-center(
+                type="link"
+                href=`/luscenje/${id}/stop-termini`
+              ) Uredi
+            div
+              table.table.mt-2
+                tbody
+                  each file, index in stopTermsFiles
+                    tr
+                      th.normal-gray= index + 1
+                      td.text-sm-start.normal-gray= file.filename
+                      td.text-sm-end.normal-gray= file.size
+          .col-sm.d-flex.ms-sm-4.mt-1.mt-sm-0
+            .d-md-inline.d-block.smaller-gray-info Dodate lahko seznam besed, ki jih v seznam terminoloških kandidatov ne želite vključiti. Seznam naj bo shranjen v formatu .txt. #[a.smaller-gray-info(href="/pomoc#help-stop-lists") Več...]
+
+  include /common/footer

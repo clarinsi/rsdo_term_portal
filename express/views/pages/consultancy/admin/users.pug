@@ -1,0 +1,103 @@
+extends /layout
+
+mixin sideMenu(meta)
+  include /common/side-menu-mixin-consultancy
+  +sideNavigation(meta)
+
+//-
+  mixin header
+    .pass
+
+  mixin body
+    .pass
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/utils.js")
+  script(nonce=cspNonce src="/javascripts/consultancy.js")
+  //- script(nonce=cspNonce src="/javascripts/tooltips.js")
+
+block body
+  - const specificUserRights = user && (user.hasRole('consultant') || user.hasRole('consultancy admin'))
+
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  block config
+    - const pageTypeObject = { users: true }
+    - const subHeading = 'Uporabniki'
+
+  +sideMenu(pageTypeObject)
+
+  //-- modals
+  //- include dialogs/share
+  //- include dialogs/assign
+  //- +consultancyAdminShareModal
+  //- +consultancyAdminAssignModal
+
+  if specificUserRights
+    #offset-padding.offset-padding.header-section-root.mx-max-xl-2rem
+      .d-flex.justify-content-between.flex-wrap.flex-row.row
+        .header-container-left-side.d-flex.col-sm-10
+          #chevrons-left.d-flex.w-100
+            .header-container-divider-left
+              h2#site-header-title Uporabniki
+              h1#site-heading Seznam svetovalcev
+              span#text-description.page-description.pe-0 Na tem mestu lahko dodajate svetovalce, ki so registrirani uporabniki terminološkega portala. Če boste pripisali področje, boste lahko svetovalcu dodeljevali samo vprašanja, ki sodijo na izbrano področje, vsem drugim pa vsa.
+        .header-container-divider-right.d-flex.justify-content-end.col-sm-2
+          //- a.btn.btn-primary.header-btn(disabled) Dodaj
+
+      hr
+
+    .content-hold-prerequisites
+      #offset-main.main-container.ps-xl-0
+        .d-flex.justify-content-between
+          .d-flex.flex-row.mb-4
+            include /components/search-and-filter/inline-search
+          .dflex
+            include /utilities/pager
+            +pager(1,2,3,1,3,true)
+
+        table#all-areas-table.table.areas-table.table-responsive
+          thead
+            tr
+              th(scope="col") Ime
+              th(scope="col") Področja
+              th(scope="col") 
+          tbody
+            each user in users
+              tr(id=user.id)
+                input(type="hidden" name="secondaryDomainId" value=user.id)
+                td.tdata-name= user.username
+                td.tdata-area= user.domains ? user.domains : ''
+                td.buttons-group
+                  .table-buttons
+                    button.p-0.table-button-grp.me-3.edit-row-btn
+                      img(src="/images/u_edit-alt.svg" alt="")
+                    button.p-0.table-button-grp.delete-row-btn(
+                      data-bs-target="#alert-modal"
+                      data-bs-toggle="modal"
+                    )
+                      img(src="/images/red-trash-icon.svg" alt="")
+        .d-flex.justify-content-between.mt-4
+          .d-flex.flex-row.mb-4
+          .dflex
+            //- +pager(1,2,3,1,3,true)
+
+        form#insert-consultant(
+          action="/api/v1/consultancy/add-consultant-by-username"
+          method="POST"
+        )
+          .row.mb-5
+            .col-sm-3
+              .subject-name
+                label.input-name-txt Ime
+              input#username.form-control(type="text")
+            .col-sm-3
+              .subject-name
+                label.input-name-txt Področja
+              input#domains.form-control(type="text")
+            .col.d-flex.align-items-end.mt-2
+              button#add-area.btn.btn-primary(type="submit") Dodaj
+
+    include /utilities/modal-alert
+  include /common/footer

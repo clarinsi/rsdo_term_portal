@@ -1,0 +1,23 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/comments.js")
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'dictionaries', activeLvl2: 'comments' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Komentarji', description: 'Na tem mestu so zbrani vsi komentarji, povezani z izbranim terminološkim slovarjem.' }
+  +mainHeader(c)
+
+  .comments-content.col-12.col-md-12.py-md-3.bd-content.content-hold-prerequisites
+    #offset-main.main-container
+      include /utilities/comments-with-pager
+
+  include /common/footer

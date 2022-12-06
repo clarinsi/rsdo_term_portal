@@ -1,0 +1,37 @@
+doctype html
+html(lang="sl")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Paginacija - POC
+  body
+    h1 Demo konceptualna zasnova paginacije (muštr)
+
+    //- Id krovnega elementa je v realnem primeru lahko poljuben, saj ga podaš funkciji initPagination (v demo-paginacija.js).
+    //- Interna struktura mora ostati enaka (imena elementov, njihove klase, imena, vrednosti).
+    //- Lahko pa v gumbe dodaš slike itd., če je potrebno, ali dodatne klase na njih, če je potrebno zaradi oblikovanja.
+    //- Oblikovanja tu namenoma nisem dodajal, da je demo čim enostavnejši. Oblikovati ga morata vidva oz. prvi, ki bo to delal.
+    //- Če kaj ne bo jasno, me raje vprašaj.
+    #pagination
+      button.first-page(disabled) <<
+      button.previous-page(disabled) <
+      form
+        input(name="page" value="1")
+        span= ' / '
+        span.pages-total= numberOfAllPages
+      button.next-page(disabled=numberOfAllPages === 1) >
+      button.last-page(disabled=numberOfAllPages === 1) >>
+
+    ul#page-results
+      each result in results 
+        li Zanimiva vrednost: #[b= result.zanimivo]. Totalno nezanimivo: #{ result.nezanimivo1 } in #{ result.nezanimivo2 }
+
+    //- V realnem primeru:
+    //- Ne uvoziš axiosa, ker je že v layout.pug
+    //- Ne uvoziš skripte demo-paginacija.js, ker inicializacijsko kodo po njenem zgledu uporabiš v skripti, ki jo ta stan že uporablja.
+    script(
+      nonce=cspNonce
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+    )
+    script(nonce=cspNonce src="/javascripts/demo-paginacija.js") 

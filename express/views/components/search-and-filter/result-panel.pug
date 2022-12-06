@@ -1,0 +1,34 @@
+mixin result-section(list, title)
+  if (list.length > 0)
+    if (title)
+      p.mt-4.results-secton-title!= title
+    .result-item-container
+      each entry in list
+        +result-item(entry.term, entry, list[list.length-1] === entry) 
+
+mixin result-sections
+  +result-section(entriesByCategory.uncategorized, "")
+  +result-section(entriesByCategory.byTerm, "ISKANI NIZ JE BIL NAJDEN <b class='results-secton-title fw-700'>V IZTOČNICAH</b> SLOVARSKIH SESTAVKOV")
+  +result-section(entriesByCategory.byForeignTerm, "ISKANI NIZ JE BIL NAJDEN <b class='results-secton-title fw-700'>V TUJEJEZIČNIH USTREZNIKIH</b> SLOVARSKIH SESTAVKOV")
+  +result-section(entriesByCategory.byOther, "ISKANI NIZ JE BIL NAJDEN <b class='results-secton-title fw-700'>V DRUGI VSEBINI</b> SLOVARSKIH SESTAVKOV")
+
+mixin result-panel(rpList)
+  #res-panel.results-root.w-100.ms-0
+    #chevrons-left.d-flex
+    .header-container-divider-left
+      h1#site-heading Seznam zadetkov
+
+    hr#disposable-break.mt-0
+    //- include ./result-panel-decision-mixin
+    //- +decision(0)
+    .results-quickstats.row.align-items-center
+      .row.pe-0.align-items-center
+        .col-md-6
+          span.text-header-title-gray Rezultati: #{ numberOfAllHits }
+        .col-md-6.mx-auto.text-center.d-flex.justify-content-end.pe-0
+          include /utilities/pager
+          +pager(page)
+
+    #results-data.results-data.mt-4
+      include ./result-item
+      +result-sections

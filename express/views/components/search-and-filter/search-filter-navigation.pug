@@ -1,0 +1,77 @@
+.admin-nav
+  .admin-nav-mobile
+    button#nav-button.nav-button
+      img#burger-menu-img(src="/images/burger-menu-button-icon.svg" alt="Meni")
+    span.nav-title Filtri
+  nav
+    .admin-nav-content.slidable
+      .search-filter-nav-content
+        a.clear-filter-section(href="#")
+          img(src="/images/square-minus.svg" alt="")
+          span POČISTI FILTRE
+        .nav-section
+          hr
+          .nav-section-header
+            span Izvorni jeziki
+            span.btn-area
+              button.btn.btn-primary(
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-filter"
+              )
+                span.select-more-text IZBERI VEČ
+                div
+                  img(src="/images/fi_copy.svg" alt="")
+          ul.nav-section-content
+            //-MODULE
+            li
+              a#sl(href="#")
+                div
+                  img(src="/images/chevron-right.svg" alt="")
+                span.nav-section-content-desc Slovenščina
+                span 461
+            li
+              a#hr(href="#")
+                div
+                  img(src="/images/chevron-right.svg" alt="")
+                span.nav-section-content-desc Hrvaščina
+                span 461
+            li
+              a#it(href="#")
+                div
+                  img(src="/images/chevron-right.svg" alt="")
+                span.nav-section-content-desc Italijanščina
+                span 461
+            li
+              a(href="#")
+                div
+                  img(src="/images/chevron-right.svg" alt="")
+                span.nav-section-content-desc Slovenščina
+                span 461
+        .nav-section
+          hr
+          .nav-section-header
+            span Slovarji
+            span.btn-area
+              button.btn.btn-primary(
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-filter"
+              )
+                span.select-more-text IZBERI VEČ
+                div
+                  img(src="/images/fi_copy.svg" alt="")
+          ul.nav-section-content
+            //-MODULE
+            li
+              a(href="#")
+                div
+                  img(src="/images/chevron-right.svg" alt="")
+                span.nav-section-content-desc Nemško-slovenski slovar tehnike in naravoslovja
+                span 111
+            li
+              a(href="#")
+                div
+                  img(src="/images/chevron-right.svg" alt="")
+                span.nav-section-content-desc kfkl kwlkdwodčsl
+                span 25

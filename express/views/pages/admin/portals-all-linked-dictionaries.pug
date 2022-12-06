@@ -1,0 +1,56 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+  script(nonce=cspNonce src="/javascripts/admin-portals.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'connections', activeLvl2: 'dictionaries' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Vsi povezani slovarji', description: 'Poiščite naslove terminoloških slovarjev, s katerimi želite dopolniti iskalne zadetke na svojem portalu. Lahko izberete vse slovarje ali le nekatere. Svoje izbire morate shraniti. Vse vaše izbire mora potrditi administrator povezanega portala.', buttons: [{ type: 'button', form: 'all-linked-dictionaries', content: 'Shrani' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      if results.length
+        .d-flex.justify-content-between
+          .d-flex.flex-row.mb-4
+            include /components/search-and-filter/inline-search
+          .d-flex.me-3
+            include /utilities/pager
+            +pager
+
+        form#all-linked-dictionaries(method="post") 
+          .table-responsive
+            table.styled-table
+              thead
+                tr
+                  th= ''
+                  th= 'Naslov'
+                  th= 'Oznaka portala'
+                  th= ''
+              tbody#page-results
+                each result in results
+                  tr
+                    td
+                      .form-check.form-switch.d-flex.align-items-center
+                        input.form-check-input(
+                          type="checkbox"
+                          name=`isEnabled['${result.id}']`
+                          checked=result.isEnabled
+                          data-dict-id=result.id
+                        )
+                      if result.name
+                        td= result.name
+                      if result.code
+                        td= result.code
+      else
+        .d-flex.justify-content-center
+          p Ni še povezanih portalov
+
+  include /common/footer

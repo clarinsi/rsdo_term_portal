@@ -1,0 +1,64 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'dictionaries', activeLvl2: 'advanced' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Napredno', description: 'Napredno urejanje omogoča spreminjanje večjega števila podatkov v terminološkem slovarju.' }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-3
+      input#adv-dictionary-id(
+        type="hidden"
+        name="dictionaryId"
+        value=dictionary.id
+      )
+      .row
+        .col-md-6.white-border-background.p-4.d-flex.align-items-center
+          span.info-text-for-button.me-auto Indeksiraj ...
+          button#index-entries-btn.btn.btn-primary.ps-5.pe-5.advanced-blue-btn UREDI
+        .col-sm.align-items-center.ms-xxl-3.ms-md-3.d-flex.ps-1
+          span.name-info-txt Navodilo k posamičnemu polju.
+
+      .file-type.mt-4
+        .row.mt-5
+          .col-md-6.white-border-background.p-4.d-flex.align-items-center
+            span.info-text-for-button.me-auto Brisanje slovarskih sestavkov
+            button#adv-delete-all-entries.btn.btn-primary.ps-5.pe-5.advanced-blue-btn BRIŠI
+          .col-sm.align-items-center.ms-xxl-3.ms-md-3.d-flex.ps-1
+            span.name-info-txt Izbrišete lahko vse doslej obdelane slovarske sestavke in ohranite vse metapodatke o slovarju. Dejanja ni mogoče preklicati.
+              a.name-info-txt.ms-1(href="/pomoc") Več …
+      .file-type.mt-5
+        .row.mt-5
+          .col-md-6.white-border-background.p-4.d-flex.align-items-center
+            span.info-text-for-button.me-auto Brisanje slovarja
+            button#adv-delete-dictionary.btn.btn-primary.ps-5.pe-5.advanced-blue-btn BRIŠI
+          .col-sm.align-items-center.ms-xxl-3.ms-md-3.d-flex.ps-1
+            span.name-info-txt Izbrišete lahko celoten slovar z vsemi metapodatki. Dejanja ni mogoče preklicati.
+              a.name-info-txt.ms-2(href="/pomoc") Več …
+      .file-type.mt-5
+        .row.mt-5
+          .col-md-6.white-border-background.p-4.d-flex.align-items-center
+            span.info-text-for-button.me-auto Objava vseh slovarskih sestavkov
+            button#adv-publish-all-entries.btn.btn-primary.ps-5.pe-5.advanced-blue-btn OBJAVI
+          .col-sm.align-items-center.ms-xxl-3.ms-md-3.d-flex.ps-1
+            span.name-info-txt Po koncu urejanja vseh slovarskih sestavkov lahko slovar objavite in ga tako prikažete na javnem delu terminološkega portala.
+    include /utilities/modal-spinner
+    include /utilities/modal-alert-mixin
+    +alertModal("index-entries", "Uporabi", "Prekliči", "modal-use-btn", "cancel-btn", 'Ali želite indeksirati?')
+    +alertModal("delete-entries", "Izbriši", "Prekliči", "modal-use-btn", "cancel-btn", 'S tem dejanjem boste izbrisali vse slovarske sestavke v slovarju. Metapodatki bodo ostali. Dejanja ni mogoče razveljaviti.')
+    +alertModal("delete-dictionary", "Izbriši", "Prekliči", "modal-use-btn", "cancel-btn", 'S tem dejanjem boste izbrisali vse slovarske sestavke v slovarju in vse metapodatke. Dejanja ni mogoče razveljaviti.')
+    +alertModal("publish-entries", "Objavi", "Prekliči", "modal-use-btn", "cancel-btn", 'Ali želite objaviti vsa gesla?')
+    include /utilities/modal-response
+    +responseModal("delete-entries-res", "Razumem", "understand-btn", "Slovarski sestavki so bili izbrisani.")
+    +responseModal("delete-dict-res", "Razumem", "understand-btn", "Slovar je bil izbrisan.")
+    +responseModal("publish-entries-res", "Razumem", "understand-btn", "Slovarski sestavki so bili objavljeni.")
+  include /common/footer

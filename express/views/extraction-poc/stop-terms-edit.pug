@@ -1,0 +1,22 @@
+h1 Stop termini za luščenje #{ id }
+
+h2 Seznam datotek
+ul#files-list
+  each file in stopTermsFiles
+    li DATOTEKA - Ime: #[span.filename= file.filename], velikost: #{ file.size }, datum: #{ new Date(file.timeModified).toLocaleDateString('sl-SL') } #[a.delete-file(href="#") BRIŠI]
+
+h2 Dodaj nov(e) datoteke(e)
+form#upload-files(method="post" enctype="multipart/form-data")
+  input(type="hidden" name="extractionId" value=id)
+  label Datoteka(e):
+    input(type="file" name="extractionFile" accept=".txt" multiple)
+
+a(href=`../${id}`) Nazaj
+p Obestila:
+ul#messages
+
+script(
+  nonce=cspNonce
+  src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+)
+script(nonce=cspNonce src="/javascripts/extraction-poc-files-edit.js")

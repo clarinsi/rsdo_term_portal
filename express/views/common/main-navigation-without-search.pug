@@ -1,0 +1,34 @@
+//- extends TEMPLATE-demo
+
+block main-navigation
+  .top-container
+    .main-nav-no-search
+      ul.nav
+        li.nav-item
+          a(href="/")
+            img.logo-small(src="/images/logo.png" alt="Logo")
+        li.ms-auto
+          .container
+            .col-sm.nav-entry.menu-link
+              button#dropdownMenuButton1(
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              )
+                img.threedots(src="/images/threedots.svg" alt="")
+              ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
+                li
+                  a.dropdown-item(href="/") Iskanje
+                if req.extractionEnabled
+                  li
+                    a.dropdown-item(href="/luscenje") Luščenje
+                if req.dictionariesEnabled
+                  li
+                    a.dropdown-item(href="/slovarji/moji") Urejanje
+                if req.consultancyEnabled
+                  li
+                    a.dropdown-item(href="#") Svetovanje
+                li
+                  a.dropdown-item(href="/admin/nastavitve/portal") Administracija
+            a.col-sm.nav-entry(href="#")
+              img(src="/images/profile.svg" alt="")

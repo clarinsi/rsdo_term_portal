@@ -1,0 +1,123 @@
+mixin consultancyItem(data, section)
+  a.consultancy-anchor(id='id-' + data.id)
+    .consultancy-question-item.position-relative
+      .row.mt-3.mb-2
+        .col.align-items-center.align-items-center.d-flex
+          if section.inProgress
+            img.i1rx1r(src="/images/u_edit-alt.svg" alt="")
+          else if section.new
+            img.i1rx1r(src="/images/star-blue.svg" alt="")
+          else if section.rejected
+            img.i1rx1r(src="/images/x-circle-blue.svg" alt="")
+          else if section.prepared
+            img.i1rx1r(src="/images/cog-blue.svg" alt="")
+          else if section.published
+            img.i1rx1r(src="/images/book-open-blue.svg" alt="")
+          span.d-inline-block.pt-0.ps-2.question-asked-time.text-p875rem= `${data.primaryDomain}`
+          span.d-inline-block.pt-0.ps-2.question-asked-time.text-p875rem.ms-1.me-1 •
+          if (data.firstName && data.lastName)
+            span#moderatorName.d-inline-block.pt-0.ps-2.question-asked-time.text-p875rem= `${data.firstName} ${data.lastName}`
+            - const sharedListCondition = data.sharedAuthors && data.sharedAuthors.length > 0
+            if sharedListCondition
+              .d-inline.d-inline-block(
+                tabindex="0"
+                data-bs-toggle="tooltip"
+                data-bs-title=""
+                data-bs-container="body"
+                data-bs-placement="right"
+                data-tooltip-content=data.sharedAuthors.reduce((acc, value) => {
+                  return acc + value + ',';
+                }, '')
+              )
+                .circle.ms-1.align-items-center.justify-content-center.d-flex
+                  span.pt-0.question-asked-time.text-p625rem #{ data.sharedAuthors.length }
+            span.d-inline-block.pt-0.ps-1.question-asked-time.text-p875rem.ms-2.me-1 •
+          span.d-inline-block.pt-0.ps-1.question-asked-time.text-p875rem= `${data.formattedTimeCreated}`
+      if (data.title)
+        .row.mt-2.mb-2
+          .col
+            h5-pb-0.navigation-text-color
+              b= data.title
+      else
+        .row.mt-2.mb-2
+          span.consultancy-description-text 
+            b.text-p875rem= 'Opis terminološkega problema: '
+            span.text-p875rem= data.description
+      .row.mt-3.btn-group
+        if section.inProgress
+          if user.hasRole('consultancy admin')
+            .col-md-2
+              button.btn.btn-secondary.w-100.consultancy-modal-assign(
+                type="button"
+              )
+                img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+                span.ps-1 DODELI
+          .col-md-2
+            button.btn.btn-secondary.w-100.consultancy-modal-share(
+              type="button"
+            )
+              img.i1p5rx1p5r(src="/images/users.svg" alt="")
+              span.ps-1 DELI
+          .col-md-2
+            button.btn.btn-secondary.w-100.reject-item
+              img.i1p5rx1p5r(src="/images/x-circle-red.svg" alt="")
+              span.ps-1 ZAVRNI
+          .col-md-2
+            button.edit-button.btn.btn-secondary.w-100
+              img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+              span.ps-1 UREDI
+          .col-md-2
+            button.btn.btn-primary.review-btn.w-100(disabled=!data.title)
+              img.i1p5rx1p5r(src="/images/book-open-white.svg" alt="")
+              span.ps-1 OBJAVI
+        else if section.new
+          .col-md-2
+            button.btn.btn-secondary.w-100.consultancy-modal-assign(
+              type="button"
+            )
+              img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+              span.ps-1 DODELI
+          .col-md-2
+            button.btn.btn-secondary.w-100.delete-item
+              img.i1p5rx1p5r(src="/images/trash-2.svg" alt="")
+              span.ps-1 BRIŠI
+        else if section.rejected
+          .col-md-2
+            button.btn.btn-secondary.w-100.consultancy-modal-assign(
+              type="button"
+            )
+              img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+              span.ps-1 DODELI
+          .col-md-2
+            button.btn.btn-secondary.w-100.delete-item
+              img.i1p5rx1p5r(src="/images/trash-2.svg" alt="")
+              span.ps-1 BRIŠI
+        else if section.prepared
+          .col-md-2
+            button.edit-button.btn.btn-secondary.w-100
+              img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+              span.ps-1 UREDI
+          if user.hasRole('consultancy admin')
+            .col-md-2
+              button.btn.btn-primary.publish-btn.w-100(disabled=!data.title)
+                img.i1p5rx1p5r(src="/images/book-open-white.svg" alt="")
+                span.ps-1 OBJAVI
+        else if section.published
+          if user.hasRole('consultancy admin')
+            .col-md-2
+              button.btn.btn-secondary.w-100.consultancy-modal-assign(
+                type="button"
+              )
+                img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+                span.ps-1 DODELI
+          .col-md-2
+            button.edit-button.btn.btn-secondary.w-100
+              img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
+              span.ps-1 UREDI
+          if user.hasRole('consultancy admin')
+            .col-md-2
+              button.btn.btn-secondary.w-100.delete-item
+                img.i1p5rx1p5r(src="/images/trash-2.svg" alt="")
+                span.ps-1 BRIŠI
+
+      .hovered.position-absolute

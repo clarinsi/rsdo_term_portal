@@ -1,0 +1,150 @@
+version: "3.4"
+
+services:
+  express:
+    build:
+      context: express
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - postgres
+      - redis
+      - opensearch
+    restart: always
+    environment:
+      NODE_ENV: production
+      IS_BEHIND_PROXY: "${EXPRESS_IS_BEHIND_PROXY:?}"
+      SECRET: "${EXPRESS_SECRET:?}"
+      COOKIES_SECURE: "true"
+      PGHOST: postgres
+      PGUSER: express
+      PGPASSWORD: "${POSTGRES_EXPRESS_PASSWORD:?}"
+      PGDATABASE: term_portal
+      SMTP_HOST: "${SMTP_HOST:?}"
+      SMTP_PORT: "${SMTP_PORT:?}"
+      SMTP_TLS_REJECT_UNAUTHORIZED: "${SMTP_TLS_REJECT_UNAUTHORIZED:?}"
+      SMTP_FROM: "${SMTP_FROM:?}"
+      ORIGIN: "${URL_ORIGIN:?}"
+    volumes:
+      - express-data:/usr/src/app/data_files
+    ports:
+      - "127.0.0.1:${EXPRESS_LISTEN_PORT:?}:3000"
+
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_ADMIN_PASSWORD:?}"
+      POSTGRES_DB: term_portal
+      POSTGRES_EXPRESS_PASSWORD: "${POSTGRES_EXPRESS_PASSWORD:?}"
+      POSTGRES_CONCORDANCER_PASSWORD: "${POSTGRES_CONCORDANCER_PASSWORD:?}"
+      POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=sl-SI"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "127.0.0.1:${POSTGRES_LISTEN_PORT:?}:5432"
+
+  redis:
+    image: redis:6-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+      - ./redis/conf:/usr/local/etc/redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  opensearch:
+    build: opensearch
+    restart: always
+    environment:
+      - cluster.name=term-portal
+      - node.name=node-1
+      # - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      # - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # disables execution of install_demo_configuration.sh bundled with security plugin, which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # disables security plugin entirely in OpenSearch by setting plugins.security.disabled: true in opensearch.yml
+      - "discovery.type=single-node" # disables bootstrap checks that are enabled when network.host is set to a non-loopback address
+    # ulimits:
+    #   memlock:
+    #     soft: -1
+    #     hard: -1
+    #   nofile:
+    #     soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+    #     hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+  # Disabled by default. Enable if needed.
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.3.0
+    profiles:
+      - opensearch-dashboards
+    depends_on:
+      - opensearch
+    restart: always
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
+    ports:
+      - "127.0.0.1:${OS_DASHBOARDS_LISTEN_PORT:?}:5601"
+
+  concordancer:
+    # image: ghcr.io/clarinsi/rsdo-concordancer-api:v1.0.0
+    build: concordancer
+    depends_on:
+      - postgres
+      - opensearch
+    restart: always
+    environment:
+      - "RSDO:Database:MasterConnectionString=Host=postgres;Username=concordancer;Password=${POSTGRES_CONCORDANCER_PASSWORD:?};Database=Concordancer"
+      - "RSDO:Elastic:ConnectionString=http://opensearch:9200"
+      - "RSDO:Tokenizer:ClasslaUrl=https://orodja.cjvt.si/oznacevalnik/ajax_api/v1/slv/process"
+    ports:
+      - "127.0.0.1:${CONCORDANCER_LISTEN_PORT:?}:5000"
+    volumes:
+      - express-data:/data
+      - sloleks:/sloleks
+
+  # Disabled by default. Enable if needed.
+  concordancer-manager:
+    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.0
+    profiles:
+      - concordancer-manager
+    depends_on:
+      - postgres
+      - opensearch
+    restart: always
+    environment:
+      - "RSDO:Database:MasterConnectionString=Host=postgres;Username=concordancer;Password=${POSTGRES_CONCORDANCER_PASSWORD:?};Database=Concordancer"
+      - "RSDO:Elastic:ConnectionString=http://opensearch:9200"
+    volumes:
+      - sloleks:/sloleks
+
+  cron:
+    build:
+      context: express
+      dockerfile: Dockerfile.prod
+    init: true
+    depends_on:
+      - postgres
+      - redis
+      - opensearch
+    restart: always
+    environment:
+      NODE_ENV: production
+      PGHOST: postgres
+      PGUSER: express
+      PGPASSWORD: "${POSTGRES_EXPRESS_PASSWORD:?}"
+      PGDATABASE: term_portal
+      SMTP_HOST: "${SMTP_HOST:?}"
+      SMTP_PORT: "${SMTP_PORT:?}"
+      SMTP_TLS_REJECT_UNAUTHORIZED: "${SMTP_TLS_REJECT_UNAUTHORIZED:?}"
+      SMTP_FROM: "${SMTP_FROM:?}"
+    entrypoint: ["scheduled/entrypoint.sh"]
+    command: ["crond", "-f", "-l", "2"]
+
+volumes:
+  express-data:
+  postgres-data:
+  redis-data:
+  opensearch-data:
+  sloleks:

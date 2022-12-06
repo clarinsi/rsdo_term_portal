@@ -1,0 +1,43 @@
+mixin consultancySM(adminFields=false)
+  .d-none-weak.advanced-search-root.w-100
+    .advanced-search-filter-section
+      span#area 
+        .d-flex.w-100
+          span.tags-root.me-0.rounded-0
+          label.d-flex.flex-grow-1.align-items-end
+            //- input#area-input.box-sizing-content.bg-transparent
+            //- select#domain-select.select-search-field(multiple="multiple")
+            //-   option(value="SSKJ") Filozofija
+            //-   option(value="SSKJ2") Matematika
+            select#domain-select.select-domain-field.d-inline.height-46p.form-control(
+              name="domainPrimary"
+              multiple="multiple"
+            )
+              //- option.d-none(value="-1")= ' '
+              each domain in allPrimaryDomains
+                option(value=domain.id) #{ domain.nameSl }
+            span.advanced-input-label
+            //- span.advanced-input-label Področje
+          //- img#area-img(src="/images/chevron-down-darker.svg" alt="")
+        span#area-suggestions.suggs
+
+      if adminFields
+        span#consultant 
+          .d-flex.w-100
+            span.tags-root.me-0.rounded-0
+            label.d-flex.flex-grow-1.align-items-end
+              //- input#area-input.box-sizing-content.bg-transparent
+              select#consultancy-select.select-search-field(
+                multiple="multiple"
+              )
+                option(value="Joze") Jože
+                option(value="Franc") Franc
+              span.advanced-input-label Svetovalec
+            img#consultancy-img(src="/images/chevron-down-darker.svg" alt="")
+          span#consultancy-suggestions.suggs
+
+    .advanced-search-final-options
+      //- button Počisti filtre
+      span
+        button#clear-in-filter-modal.btn.clear-f Počisti filtre
+        button#search-in-filter-modal.btn.search-btn-a Najdi

@@ -1,0 +1,104 @@
+.d-none-weak.advanced-search-root.w-100
+  //- p Poišči izraze, ki so v:
+  //- .advanced-search-options
+    div
+      span
+        input#headword-checkbox.h-100(type="checkbox")
+        label.align-items-center(for="headword-checkbox") Iztočnici
+    div
+      span
+        input#translation-checkbox.h-100(type="checkbox")
+        label.align-items-center(for="translation-checkbox") Prevodu
+    div
+      span
+        input#othr-checkbox.h-100(type="checkbox")
+        label.align-items-center(for="othr-checkbox") Drugo
+  //- https://stackoverflow.com/questions/24347340/styling-of-select2-dropdown-select-boxes
+  .advanced-search-filter-section
+    span.advanced-search-filter-division
+      span#src-lang
+        .d-flex.w-100
+          span.tags-root.me-0.rounded-0
+          label.d-flex.flex-grow-1.align-items-end
+            //- input#src-lang-input.box-sizing-content.bg-transparent
+            select#src-lang-select.select-src-lang-field(multiple="multiple")
+              each language in sourceLanguages
+                option(value=language.id) #{ language.nameSl }
+            span.advanced-input-label
+            //- span.advanced-input-label Izvorni jezik
+          //- img#src-lang-img(src="/images/chevron-down-darker.svg" alt="")
+        span#src-lang-suggestions.suggs
+      span#dest-lang
+        .d-flex.w-100
+          span.tags-root.me-0.rounded-0
+          label.d-flex.flex-grow-1.align-items-end
+            //- input#dest-lang-input.box-sizing-content.bg-transparent
+            select#dest-lang-select.select-dest-lang-field(multiple="multiple")
+              each language in targetLanguages
+                option(value=language.id) #{ language.nameSl }
+            span.advanced-input-label
+            //- span.advanced-input-label Ciljni jezik
+          //- img#dest-lang-img(src="/images/chevron-down-darker.svg" alt="")
+        span#dest-lang-suggestions.suggs
+      //- span#src-lang
+      //-   span.sf-label.position-relative
+      //-     span.position-absolute Izvorni jezik
+      //-   .resizable
+      //-     input(placeholder="" type="text")
+      //-   img(src="/images/chevron-down-darker.svg" alt="")
+      //- span#dest-lang
+      //-   span.sf-label.position-relative
+      //-     span.position-absolute Ciljni jezik
+      //-   .resizable
+      //-     input(placeholder="" type="text")
+      //-   img(src="/images/chevron-down-darker.svg" alt="")
+    span#area 
+      .d-flex.w-100
+        span.tags-root.me-0.rounded-0
+        label.d-flex.flex-grow-1.align-items-end
+          //- input#area-input.box-sizing-content.bg-transparent
+          select#domain-select.select-domain-field(
+            name="domainPrimary"
+            multiple="multiple"
+          )
+            each domain in allPrimaryDomains
+              option(value=domain.id) #{ domain.nameSl }
+          span.advanced-input-label
+          //- span.advanced-input-label Področje
+        //- img#area-img(src="/images/chevron-down-darker.svg" alt="")
+      span#area-suggestions.suggs
+
+    span#dict
+      .d-flex.w-100
+        span.tags-root.me-0.rounded-0
+        label.d-flex.flex-grow-1.align-items-end
+          //- input#dict-input.box-sizing-content.bg-transparent
+          select#dict-select.select-dict-field(
+            name=dictionary
+            multiple="multiple"
+          )
+            each dictionary in allDictionaryNames
+              option(value=dictionary.id) #{ dictionary.nameSl }
+          span.advanced-input-label
+          //- span.advanced-input-label Slovar
+        //- img#dict-img(src="/images/chevron-down-darker.svg" alt="")
+      span#dict-suggestions.suggs
+
+    span#source
+      .d-flex.w-100
+        span.tags-root.me-0.rounded-0
+        label.d-flex.flex-grow-1.align-items-end
+          //- input#source-input.box-sizing-content.bg-transparent
+          select#src-select.select-source-field(multiple="multiple")
+            each portal in portals
+              option(value=portal.code) #{ portal.name }
+          span.advanced-input-label
+          //- span.advanced-input-label Vir
+        //- img#source-img(src="/images/chevron-down-darker.svg" alt="")
+      span#source-suggestions.suggs
+
+  .advanced-search-final-options
+    //- button Počisti filtre
+    span
+      button#clear-in-filter-modal.btn.clear-f Počisti filtre
+      button#search-in-filter-modal.btn.search-btn-a Najdi

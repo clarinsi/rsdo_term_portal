@@ -1,0 +1,29 @@
+mixin mini-searchbar
+  //-Search Bar
+  .gray-responsive-bg.d-flex.justify-content-center
+    .container.ms-3.me-3
+      .row
+        .search-root-main.mb-0.ps-0.pe-0
+          #searchbar-main.text-center
+            .search-bar.mb-md-3(tabindex="0")
+              button#search-button-main.searchbar-icon-container.click-on-enter(
+                href="/iskanje"
+              )
+                img.search_icon(src="/images/search.svg" alt="OK")
+              input#search-query.search-input.focused-for-enter.fw-300.placeholder-gray(
+                type="text"
+                placeholder="Vpišite iskalni niz"
+              )
+              button#keyboard.search-button-keyboard
+                span
+                  img.keyboard(src="/images/keyboard.svg" alt="Keys")
+              //-</span>
+              button#advanced-search.dropdown-btn
+                img(src="/images/dropdown.svg" alt="Opt")
+      .row(class=isRoot ? 'margin-md-minus-1-rem' : '')
+        .d-flex.justify-content-center
+          #SSC.d-flex.position-relative.w-39rem
+            .search-suggestion-container.flex-column.position-absolute.calibrate-homepage-sr.bigsearch
+              include /components/search-and-filter/advanced-search-modal
+              include /utilities/keyboard
+              +keyboard

@@ -1,0 +1,80 @@
+@use "../variables/variables" as v;
+@use "search-filter/search-filter-navigation" as sf;
+
+// current footer size: 80px
+$navbarSize: calc(100vh - 130px - 72px); // 130px from top minus footer size
+
+.slidable {
+  list-style: none;
+  display: inline-block;
+
+  background-color: v.$side-nav-mobile-color;
+  // box-shadow: 9px 4px 33px rgba(0, 0, 0, 0.25);
+
+  /* MOBILE PROPERTIES */
+  position: absolute;
+  // width: 320px;
+  width: sf.$sfPanelWidth;
+  left: -420px;
+  top: 61px;
+  bottom: 0;
+  padding-top: 30px;
+  padding-right: 1rem;
+
+  z-index: 3;
+
+  // padding-right: 16px;
+  // bottom: 32px;
+  //padding-bottom: 32px;
+  transition: 0.3s;
+  height: 100vh;
+  // max-height: calc(100vh - 80px);
+  max-height: $navbarSize;
+  overflow-y: auto;
+}
+
+@media (min-width: v.$layout-breakpoint-x-large) {
+  .slidable {
+    position: fixed;
+    box-shadow: none;
+    left: 0;
+    background-color: v.$nav-white;
+    padding-top: 0;
+    top: 130px;
+  }
+}
+
+.sel-anchr {
+  > div {
+    > img {
+      width: 1rem;
+      height: 1rem;
+      display: inline-block;
+      align-self: start;
+      margin-top: 0.33rem;
+    }
+  }
+}
+
+.sel-anchr:hover {
+  background-color: #ffffff;
+}
+
+.advanced-input-label {
+  z-index: -5;
+}
+
+.min-content-height {
+  height: min-content !important;
+}
+
+.sf-correct {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.slidable-list {
+  padding-right: 1rem;
+  height: $navbarSize; // 1 rem offset to list it better
+  overflow-y: auto;
+}

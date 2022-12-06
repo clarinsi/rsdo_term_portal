@@ -1,0 +1,90 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'connections', activeLvl2: 'list' }
+  +sideNavigation(d)
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Povezave s portali', description: 'Vnesite podatke terminološkega portala, s katerim želite povezati svoj portal.' }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      .row
+        ul.col-sm-5
+          span.smaller-blue-subheading Uredi povezavo
+
+      form#form-connection-update(method="post")
+        .mt-3
+          .subject-name
+            label.smaller-black-uppercase(for="portal-name") IME PORTALA *
+          .row
+            .col-sm-5
+              input#portal-name.name-input.form-control.autocomplete.d-inline(
+                type="text"
+                name="name"
+                required
+                value=portal.name
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Ime terminološkega portala ... (potrebujem text)
+
+        .mt-5
+          .subject-name
+            label.smaller-black-uppercase(for="portal-label") OZNAKA PORTALA *
+          .row
+            .col-sm-5
+              input#portal-label.name-input.form-control.autocomplete.d-inline(
+                type="text"
+                maxlength="2"
+                name="code"
+                value=portal.code
+                required
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Unikatna dvočrkovna oznaka povezanega terminološkega portala za prikaz na tem portalu.
+
+        .mt-5
+          .subject-name
+            label.smaller-black-uppercase(for="index-url") URL za sinhronizacijo slovarjev *
+          .row
+            .col-sm-5
+              input#index-url.name-input.form-control.autocomplete.d-inline(
+                type="text"
+                name="url_index"
+                required
+                value=portal.indexURL
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 URL naslov terminološkega portala, s katerim želimo povezati svoj portal. (API klic)
+
+        .mt-5
+          .subject-name
+            label.smaller-black-uppercase(for="update-url") URL za sinhronizacijo slovarskih sestavkov *
+          .row
+            .col-sm-5
+              input#update-url.name-input.form-control.autocomplete.d-inline(
+                type="text"
+                name="url_update"
+                required
+                value=portal.URLupdate
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 URL naslov terminološkega portala, s katerim želimo povezati svoj portal.
+
+        .mt-5
+          .row
+            .col-sm-5
+            .col-sm.d-flex.flex-column.flex-sm-row.align-items-center.justify-content-center
+              a.btn.btn-secondary.w-sm-100(href="/admin/povezave/seznam") Prekliči
+              button.btn.btn-primary.ms-sm-4.mt-2.mt-sm-0(
+                type="submit"
+                form="form-connection-update"
+              ) Shrani spremembe
+
+  include /common/footer

@@ -1,0 +1,72 @@
+@use "../variables/variables" as v;
+
+/* POP UP KEYBOARD WITH SPECIAL CHARACTERS AND THE SUGGESTIONS STYLING FILE */
+
+.kbd-root {
+  height: auto;
+  width: 100%;
+  .keyboard-popup {
+    background-color: v.$nav-white;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 0 0 6px 6px;
+    padding: 1rem 2rem;
+    /*width: 100%;*/
+    z-index: 1000;
+    /*position: fixed;*/
+    height: auto;
+
+    span {
+      min-height: 40px;
+      button {
+        display: block;
+        margin-top: auto;
+        width: 32px;
+        height: 32px;
+        padding: 0 10px;
+        background-color: #ddd;
+        /*box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);*/
+        border-radius: 2px;
+        border: none;
+
+        &:hover {
+          background-color: #aaa;
+        }
+
+        &:active {
+          /* on click if required */
+        }
+      }
+    }
+  }
+}
+
+.suggestion-popup {
+  /*position: absolute;*/
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+  border-radius: 0px 0px 6px 6px;
+
+  button {
+    border: none;
+    background-color: v.$nav-white;
+
+    &:hover {
+      background-color: v.$gray-2;
+    }
+  }
+}
+
+.suggs {
+  position: absolute;
+  /*top: 150px;*/
+  > div {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+    background-color: #fff;
+    > button.button-sugg {
+      background-color: v.$nav-white;
+
+      &:hover {
+        background-color: #aaa;
+      }
+    }
+  }
+}

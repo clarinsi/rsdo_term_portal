@@ -1,0 +1,83 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /pages/profile/my-profile-side-menu-mixin
+  - const d = { selection: 'change-profile-data' }
+  +sideNavigation(d)
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h1: 'Osnovni podatki', description: 'Tukaj lahko spremenite ime, priimek in elektronski naslov uporabnika.', buttons: [{ type: 'disabled', content: 'Shrani', form: 'profileForm' }] }
+  +mainHeader(c)
+
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2.pe-5
+      form#profileForm.needs-validation(method="post" novalidate)
+        div
+          .subject-name
+            label.input-name-txt(for="profile-username") UPORABNIŠKO IME
+          .row
+            .col-sm-6.align-items-center
+              input#profile-username.name-input.form-control.d-inline(
+                type="text"
+                name="username"
+                disabled
+                value=user.userName
+              )
+              .invalid-feedback
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+        .mt-4
+          .subject-name
+            label.input-name-txt(for="profile-name") IME
+          .row
+            .col-sm-6
+              input#profile-name.name-input.form-control.d-inline(
+                type="text"
+                name="name"
+                minLength="1"
+                value=user.firstName
+              )
+              .invalid-feedback Niste vpisali imena
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+        .mt-4
+          .subject-name
+            label.input-name-txt(for="profile-surname") PRIIMEK
+          .row
+            .col-sm-6
+              input#profile-surname.name-input.form-control.d-inline(
+                type="text"
+                name="surname"
+                minLength="1"
+                value=user.lastName
+              )
+              .invalid-feedback Niste vpisali priimka.
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+        .mt-4
+          .subject-name
+            label.input-name-txt(for="profile-surname") ELEKTRONSKI NASLOV
+          .row
+            .col-sm-6
+              input#profile-surname.name-input.form-control.d-inline(
+                type="text"
+                name="email"
+                minLength="1"
+                value=user.email
+              )
+              .invalid-feedback Neveljavni elektronski naslov.
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+  include /common/footer

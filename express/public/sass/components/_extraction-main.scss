@@ -1,0 +1,204 @@
+@use "../variables/variables" as v;
+
+.edit-task {
+  cursor: pointer;
+}
+
+.delete-task {
+  cursor: pointer;
+}
+
+.double-task {
+  cursor: pointer;
+}
+
+.upload-a-file-field {
+  background-color: v.$side-nav-mobile-color;
+}
+
+.upload-inner-border {
+  background: v.$side-nav-mobile-color;
+  border: 2px dashed #ffffff;
+  box-sizing: border-box;
+}
+
+.delete-btn-table {
+  border: none;
+  background-color: inherit;
+}
+
+.white-background-btn {
+  background-color: white;
+}
+
+.button-edit {
+  font-size: 0.875rem;
+  padding-left: 8px;
+  padding-top: 12px;
+  padding-right: 8px;
+  padding-bottom: 12px;
+  width: 57px;
+  height: 32px;
+}
+
+// List
+
+.task {
+  background: #ffffff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+  border-radius: 0px 8px 8px 0px;
+}
+
+.task-new {
+  border-left: 4px solid#057ed1;
+  border-radius: 6px 8px 8px 6px;
+}
+
+.task-in-progress {
+  border-left: 4px solid #fba728;
+  border-radius: 6px 8px 8px 6px;
+}
+
+.task-cancelled {
+  border-left: 4px solid #fb6f28;
+  border-radius: 6px 8px 8px 6px;
+}
+
+.task-declined {
+  border-left: 4px solid #d12525;
+  border-radius: 6px 8px 8px 6px;
+}
+
+.task-completed {
+  border-radius: 6px 8px 8px 6px;
+}
+
+.white-border-background {
+  border-radius: 6px;
+  background-color: white;
+}
+
+.extraction-btn {
+  width: 175px;
+}
+
+.task-name {
+  width: 45%;
+}
+
+/* Chrome, Safari, Edge, Opera */
+.without-arrows::-webkit-outer-spin-button,
+.without-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+// Select2 styles
+
+.select2-selection {
+  height: 42px;
+}
+
+.select2-selection--multiple {
+  overflow: hidden;
+  height: auto;
+}
+
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice__remove {
+  border: none;
+  right: 0;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  left: inherit;
+}
+
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice {
+  padding-left: 6px;
+  padding-bottom: 3px;
+  padding-right: 4px;
+  margin-top: 4px;
+  margin-left: 8px;
+  padding-top: 5px;
+  white-space: unset;
+  background-color: v.$side-nav-mobile-color;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+  height: 25px;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+  margin-top: 10px;
+}
+
+.select2-container--default .select2-selection--multiple {
+  border: 1px solid #ced4da;
+}
+
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice__display {
+  color: v.$navigation-maincolor;
+  font-family: Roboto;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 19px;
+  letter-spacing: 0em;
+  text-align: left;
+  margin-right: 12px;
+}
+
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice {
+  border: none;
+}
+
+.autocomplete {
+  background-color: white;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+// li {
+//   list-style: none;
+// }
+
+#terminology-candidates {
+  width: 100%;
+}
+
+#user-corpus-btn {
+  width: 100%;
+}
+
+#kas-corpus-btn {
+  width: 100%;
+}
+
+@media screen and (min-width: v.$layout-breakpoint-large) {
+  #terminology-candidates {
+    width: unset;
+    height: 49px;
+  }
+
+  #user-corpus-btn {
+    width: unset;
+    height: 49px;
+  }
+
+  #kas-corpus-btn {
+    width: unset;
+    height: 49px;
+  }
+}
+@media screen and (min-width: v.$layout-breakpoint-x-large) {
+  .extraction-margin-left {
+    margin-left: 1.6rem;
+  }
+}

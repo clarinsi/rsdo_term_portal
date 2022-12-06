@@ -1,0 +1,364 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/extraction.js")
+  script(nonce=cspNonce src="/javascripts/extraction-oss-edit.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-fake
+  +sideNavigationFake
+  include /utilities/dictionaries-main-panel-header
+  - const c = { noSidebar: false, hrefurl: '/luscenje', h2: 'Luščenje iz korpusa besedil OSS', h1: 'Korpus OSS', description: 'Luščenje terminoloških kandidatov iz besedil, ki so že predhodno oblikoslovno označena, nudi dobre rezultate, vendar je treba nabor besedil omejiti. Svetujemo vam, da zoožite področje in dodatno omejite izbiro s tipi besedil in časovnim razponom, v katerih so nastala. Ko vnesete podatke, morate vse spremembe shraniti. Po vnosu podatkov, s katerimi boste omejili nabor izbranih besedil, morate pritisniti gumb Najdi. Izbiro boste shranili lahko le v primeru, da ne bo število najdenih dokumentov preveliko.', buttons: [{ type: 'cancel', url: '/luscenje', content: 'Nazaj', classAtr: 'btn btn-secondary header-btn-secondary' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.mt-2
+      form#form-edit-oss(method="post")
+        .title
+          .subject-name
+            label.smaller-black-uppercase(for="name") IME
+          .row
+            .col-sm-6
+              input.name-input.form-control.d-inline(
+                type="text"
+                name="name"
+                value=extraction.name
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Izberite takšno ime, ki vam bo pomagalo slediti rezultatom, če boste luščenje besedil opravili večkrat.
+
+        .cerif.mt-4
+          .subject-name
+            label.smaller-black-uppercase PODROČJE
+          .row 
+            .col-sm-6
+              select.name-input.form-control.d-inline(name="domain")
+                option
+                each domain in allPrimaryDomains
+                  option(
+                    value=domain.id
+                    selected=domain.id === extraction.domainId
+                  )= domain.nameSl
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Izberite področje iz seznama področij, da zmanjšate obseg besedil, iz katerih bo potekalo luščenje.
+
+        .cerif.mt-4
+          .subject-name
+            label.smaller-black-uppercase VRSTA DOKUMENTA
+          .row
+            .col-sm-6
+              select.pick-multiple.name-input.form-control.d-inline(
+                name="documentType"
+                multiple
+              )
+                option
+                option(
+                  value=101
+                  selected=extraction.documentType.includes(101)
+                ) Izvirni znanstveni članek
+                option(
+                  value=102
+                  selected=extraction.documentType.includes(102)
+                ) Pregledni znanstveni članek
+                option(
+                  value=103
+                  selected=extraction.documentType.includes(103)
+                ) Kratki znanstveni prispevek
+                option(
+                  value=104
+                  selected=extraction.documentType.includes(104)
+                ) Strokovni članek
+                option(
+                  value=105
+                  selected=extraction.documentType.includes(105)
+                ) Poljudni članek
+                option(
+                  value=106
+                  selected=extraction.documentType.includes(106)
+                ) Objavljeni znanstveni prispevek na konferenci (vabljeno predavanje)
+                option(
+                  value=107
+                  selected=extraction.documentType.includes(107)
+                ) Objavljeni strokovni prispevek na konferenci (vabljeno predavanje)
+                option(
+                  value=108
+                  selected=extraction.documentType.includes(108)
+                ) Objavljeni znanstveni prispevek na konferenci
+                option(
+                  value=109
+                  selected=extraction.documentType.includes(109)
+                ) Objavljeni strokovni prispevek na konferenci
+                option(
+                  value=110
+                  selected=extraction.documentType.includes(110)
+                ) Objavljeni povzetek znanstvenega prispevka na konferenci (vabljeno predavanje)
+                option(
+                  value=112
+                  selected=extraction.documentType.includes(112)
+                ) Objavljeni povzetek znanstvenega prispevka na konferenci
+                option(
+                  value=113
+                  selected=extraction.documentType.includes(113)
+                ) Objavljeni povzetek strokovnega prispevka na konferenci
+                option(
+                  value=116
+                  selected=extraction.documentType.includes(116)
+                ) Samostojni znanstveni sestavek ali poglavje v monografski publikaciji
+                option(
+                  value=117
+                  selected=extraction.documentType.includes(117)
+                ) Samostojni strokovni sestavek ali poglavje v monografski publikaciji
+                option(
+                  value=118
+                  selected=extraction.documentType.includes(118)
+                ) Geslo – sestavek v enciklopediji, leksikonu, slovarju...
+                option(
+                  value=119
+                  selected=extraction.documentType.includes(119)
+                ) Recenzija, prikaz knjige, kritika
+                option(
+                  value=120
+                  selected=extraction.documentType.includes(120)
+                ) Predgovor, spremna beseda
+                option(
+                  value=121
+                  selected=extraction.documentType.includes(121)
+                ) Polemika, diskusijski prispevek
+                option(
+                  value=122
+                  selected=extraction.documentType.includes(122)
+                ) Intervju
+                option(
+                  value=123
+                  selected=extraction.documentType.includes(123)
+                ) Umetniški sestavek
+                option(
+                  value=124
+                  selected=extraction.documentType.includes(124)
+                ) Bibliografija, kazalo ipd.
+                option(
+                  value=125
+                  selected=extraction.documentType.includes(125)
+                ) Drugi članki ali sestavki
+                option(
+                  value=201
+                  selected=extraction.documentType.includes(201)
+                ) Znanstvena monografija
+                option(
+                  value=202
+                  selected=extraction.documentType.includes(202)
+                ) Strokovna monografija
+                option(
+                  value=203
+                  selected=extraction.documentType.includes(203)
+                ) Univerzitetni, visokošolski ali višješolski učbenik z recenzijo
+                option(
+                  value=204
+                  selected=extraction.documentType.includes(204)
+                ) Srednješolski, osnovnošolski ali drugi učbenik z recenzijo
+                option(
+                  value=205
+                  selected=extraction.documentType.includes(205)
+                ) Video in druga učna gradiva
+                option(
+                  value=206
+                  selected=extraction.documentType.includes(206)
+                ) Enciklopedija, slovar, leksikon, priročnik, atlas, zemljevid
+                option(
+                  value=207
+                  selected=extraction.documentType.includes(207)
+                ) Bibliografija
+                option(
+                  value=208
+                  selected=extraction.documentType.includes(208)
+                ) Doktorska disertacija
+                option(
+                  value=209
+                  selected=extraction.documentType.includes(209)
+                ) Magistrsko delo
+                option(
+                  value=210
+                  selected=extraction.documentType.includes(210)
+                ) Specialistično delo
+                option(
+                  value=211
+                  selected=extraction.documentType.includes(211)
+                ) Diplomsko delo
+                option(
+                  value=212
+                  selected=extraction.documentType.includes(212)
+                ) Končno poročilo o rezultatih raziskav
+                option(
+                  value=213
+                  selected=extraction.documentType.includes(213)
+                ) Elaborat, predštudija, študija
+                option(
+                  value=214
+                  selected=extraction.documentType.includes(214)
+                ) Projektna dokumentacija (idejni projekt, izvedbeni projekt)
+                option(
+                  value=215
+                  selected=extraction.documentType.includes(215)
+                ) Izvedensko mnenje, arbitražna odločba
+                option(
+                  value=216
+                  selected=extraction.documentType.includes(216)
+                ) Umetniško delo
+                option(
+                  value=217
+                  selected=extraction.documentType.includes(217)
+                ) Katalog razstave
+                option(
+                  value=218
+                  selected=extraction.documentType.includes(218)
+                ) Raziskovalni ali dokumentarni film, zvočni ali video posnetek
+                option(
+                  value=219
+                  selected=extraction.documentType.includes(219)
+                ) Radijska ali televizijska oddaja
+                option(
+                  value=220
+                  selected=extraction.documentType.includes(220)
+                ) Raziskovalni podatki
+                option(
+                  value=221
+                  selected=extraction.documentType.includes(221)
+                ) Programska oprema
+                option(
+                  value=222
+                  selected=extraction.documentType.includes(222)
+                ) Nova sorta
+                option(
+                  value=223
+                  selected=extraction.documentType.includes(223)
+                ) Patentna prijava
+                option(
+                  value=224
+                  selected=extraction.documentType.includes(224)
+                ) Patent
+                option(
+                  value=225
+                  selected=extraction.documentType.includes(225)
+                ) Druge monografije in druga zaključena dela
+                option(
+                  value=227
+                  selected=extraction.documentType.includes(227)
+                ) Znanstveni terminološki slovar, enciklopedija ali tematski leksikon
+                option(
+                  value=230
+                  selected=extraction.documentType.includes(230)
+                ) Zbornik strokovnih ali nerecenziranih znanstvenih prispevkov na konferenci
+                option(
+                  value=231
+                  selected=extraction.documentType.includes(231)
+                ) Zbornik recenziranih znanstvenih prispevkov na mednarodni ali tuji konferenci
+                option(
+                  value=232
+                  selected=extraction.documentType.includes(232)
+                ) Zbornik recenziranih znanstvenih prispevkov na domači konferenci
+                option(
+                  value=310
+                  selected=extraction.documentType.includes(310)
+                ) Umetniška poustvaritev
+                option(
+                  value=311
+                  selected=extraction.documentType.includes(311)
+                ) Radijski ali TV dogodek
+                option(
+                  value=312
+                  selected=extraction.documentType.includes(312)
+                ) Razstava
+                option(
+                  value=313
+                  selected=extraction.documentType.includes(313)
+                ) Organiziranje znanstvenih in strokovnih sestankov
+                option(
+                  value=314
+                  selected=extraction.documentType.includes(314)
+                ) Predavanje na tuji univerzi
+                option(
+                  value=315
+                  selected=extraction.documentType.includes(315)
+                ) Prispevek na konferenci brez natisa
+                option(
+                  value=316
+                  selected=extraction.documentType.includes(316)
+                ) Vabljeno predavanje na konferenci brez natisa
+                option(
+                  value=320
+                  selected=extraction.documentType.includes(320)
+                ) Druga dela
+                option(
+                  value=325
+                  selected=extraction.documentType.includes(325)
+                ) Druga izvedena dela
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Izberite vrsto dokumenta iz seznama, npr. članek, diplomsko delo.
+
+        .year.mt-4
+          .subject-name
+            label.smaller-black-uppercase LETO
+          .row
+            .col-sm-6
+              select.enter-multiple.name-input.form-control.d-inline(
+                name="year"
+                multiple
+              )
+                each year in extraction.year
+                  option(value=year selected)= year
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Dodajte leto izida besedil, ki jih želite luščiti. Lahko dodate več posameznih let. Če boste polje pustili prazno, bodo vključena vsa leta. Če bo besedil preveč, boste morali omejiti izbiro.
+
+        .words.mt-4
+          .subject-name
+            label.smaller-black-uppercase KLJUČNE BESEDE
+          .row
+            .col-sm-6
+              select.enter-multiple.name-input.form-control.d-inline(
+                name="keywords"
+                multiple
+              )
+                each keyword in extraction.keywords
+                  option(value=keyword selected)= keyword
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 S ključnimi besedami, ki so vključene v večino znanstvenih in strokovnih, lahko bolj natančno izberete besedila, ki jih želite uporabiti za luščenje terminoloških kandidatov.
+        .table-kas.mt-5.d-sm-flex
+          .d-flex.flex-column.col-sm-6
+            .personal-documents.justify-content-between.d-flex.align-items-center
+              span.smaller-black-uppercase (STOP) Termini
+              a#edit-stop-terms.btn.btn-primary.button-edit.align-items-center.d-flex.justify-content-center.me-2(
+                type="link"
+                href=`${id}/stop-termini`
+              ) Uredi
+            div
+              table.table.mt-2
+                tbody
+                  each file, index in stopTermsFiles
+                    tr
+                      th.normal-gray= index + 1
+                      td.text-sm-start.normal-gray= file.filename
+                      td.text-sm-end.normal-gray= file.size
+          .col.d-flex.ms-2
+            .d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Dodate lahko seznam besed, ki jih v seznam terminoloških kandidatov ne želite vključiti. Seznam naj bo shranjen v formatu .txt. Vse spremembe morate shraniti. #[a.smaller-gray-info(href="/pomoc#help-stop-lists") Več...]
+
+      .col-sm-4.mt-5
+        button#search-btn.btn.btn-primary(type="button") Najdi
+
+      #search-result
+        .task.task-completed.p-3.mb-3.mt-4.d-none
+          .d-sm-flex.justify-content-between
+            .d-sm-grid
+              span.normal-gray Število dokumentov
+              span#results-count.bold-weight-black 
+            .d-sm-flex.align-items-center
+              button#save-params.btn.btn-primary.align-items-center.d-flex(
+                disabled
+              )
+                img(src="/images/external-link-white.svg")
+                span.ms-1 Shrani
+
+  include /utilities/modal-spinner
+  include /utilities/modal-alert
+  include /common/footer

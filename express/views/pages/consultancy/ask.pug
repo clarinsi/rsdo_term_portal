@@ -1,0 +1,132 @@
+extends /layout
+
+block pageSpecificScipts
+  //- the only reason to include the bottom script is to calibrate the padding of the content
+  script(nonce=cspNonce src="/javascripts/consultancy.js")
+  script(nonce=cspNonce src="/javascripts/utils.js")
+
+block body
+  - const specificUserRights = user && (user.hasRole('consultant') || user.hasRole('consultancy admin'))
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  .consultancy-padding-main.p-squeeze-lg
+    include /utilities/empty-main-panel-header
+    +mainHeader
+    .content-hold-prerequisites.ps-4.pe-4
+      #offset-main.ps-2.pe-2
+        if user
+          .consultancy-container.mb-5
+            .back-section.mt-4.mb-3.d-flex
+              a.bg-transparent.border-0.consultancy-back-button.d-flex.align-items-center(
+                href="/svetovanje"
+              )
+                img.align-middle(src="/images/chevrons-left.svg")
+                .text-header-description-gray.ms-2.float-start
+                  b Nazaj
+            .consultancy-ask-question-container.mt-4
+              form#create-consultancy-question.needs-validation(
+                action="/api/v1/consultancy/entry"
+                method="post"
+                autocomplete="off"
+                novalidate
+              )
+                h5.navigation-text-color.text-1p5rem.fw-light Zastavi terminološko vprašanje
+                #name-field.mt-4
+                  .subject-name
+                    label.smaller-gray-uppercase(for="name") IME IN PRIIMEK
+                  .row
+                    .col-sm-6
+                      input#name.name-input.d-inline.form-control(
+                        type="text"
+                        name="name"
+                        value=`${user.firstName} ${user.lastName}`
+                        disabled
+                      )
+                    .col-sm.d-flex.align-items-center
+                      span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Ime in priimek trenutno prijavljenega uporabnika.
+
+                  #email-field.mt-4
+                  .subject-name
+                    label.smaller-gray-uppercase(for="email") ELEKTRONSKI NASLOV
+                  .row
+                    .col-sm-6
+                      input#email.name-input.d-inline.form-control(
+                        type="text"
+                        name="email"
+                        value=`${user.email}`
+                        disabled
+                      )
+                    .col-sm.d-flex.align-items-center
+                      span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Elektronski naslov trenutno prijavljenega uporabnika.
+                  #institution-field.mt-4
+                    .subject-name
+                      label.smaller-gray-uppercase(for="institution") INSTITUCIJA
+                    .row
+                      .col-sm-6
+                        textarea#institution.explanation-field.form-control.noScrollbar.resizeNone.institution-input(
+                          name="institution"
+                          rows="1"
+                        )
+                      .col-sm.d-flex.align-items-center
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Institucija, kjer trenutno prijavljeni uporabnik deluje.
+
+                  #text-editor.mt-4
+                    .subject-name
+                      span.smaller-gray-uppercase OPIS TERMINOLOŠKEGA PROBLEMA *
+                    .row
+                      .col-sm-6
+                        textarea#description.explanation-field.form-control.ms-0.noScrollbar.resizeNone.r-3.form-check-label(
+                          name="description"
+                          rows="2"
+                          required
+                        )
+                        .invalid-feedback Niste vpisali opisa terminološkega problema.
+                      .col-sm.d-flex.align-items-center
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Čim bolj natančno opišite terminološki problem, zlasti opišite vsebino pojma.
+
+                  .cerif-area.mt-4
+                    .subject-name
+                      label.smaller-gray-uppercase(for="select-cerif") PODROČJE
+                    .row
+                      #cerif.col-sm-6
+                        select#select-cerif.select-cerif.name-input.d-inline.form-control(
+                          name="domainPrimary"
+                        )
+                          option(value=-1)
+                          each domain in allPrimaryDomains
+                            option(value=domain.id)= domain.nameSl
+                      #invalid-section.invalid-feedback-selection.hidden-section.mt-3 Nimate izbranega področja CERIF.
+                      .col-sm.d-flex.align-items-center
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Področje, v katero sodi opisani terminološki problem.
+
+                  #text-editor.mt-4
+                    .subject-name
+                      span.smaller-gray-uppercase OBSTOJEČE POIMENOVALNE REŠITVE
+                    .row
+                      .col-sm-6
+                        textarea#existing-solutions.explanation-field.form-control.noScrollbar.r-3.resizeNone(
+                          name="existing_solutions"
+                          rows="2"
+                        )
+                      .col-sm.d-flex.align-items-center
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Morebitne že obstoječe poimenovalne rešitve, če obstajajo.
+
+                  #text-editor.mt-4
+                    .subject-name
+                      span.smaller-gray-uppercase PRIMERI RABE V BESEDILIH
+                    .row
+                      .col-sm-6
+                        textarea#examples-of-use.explanation-field.form-control.noScrollbar.r-3.resizeNone(
+                          name="examples_of_use"
+                          rows="2"
+                        )
+                      .col-sm.d-flex.align-items-center
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Morebitni primeri rabe termina v besedilih ali povezave do njih, če obstajajo.
+
+                  .send-section.mt-5
+                    button.btn.btn-primary.send-cons-btn(type="submit") Pošlji
+
+        else
+          p Za zastavljanje terminoloških vprašanj morate biti prijavljeni.
+  include /common/footer

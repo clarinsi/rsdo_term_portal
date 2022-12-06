@@ -1,0 +1,34 @@
+mixin tableHeader(tableHeaderContent, tableDataContent)
+  .table-responsive
+    table.styled-table
+      thead
+        tr
+          each item in tableHeaderContent
+            th= item
+
+          each dataRow in tableDataContent
+            tr
+              each el in dataRow
+                td
+                  if typeof el === 'string'
+                    = el
+                  else
+                    if el.button
+                      button(class=el.button.classAtr || 'btn btn-primary')
+                        if el.button.img
+                          img.me-2(src=el.button.img.src alt=el.button.img.alt)
+                        else
+                          = el.button.content
+                    if el.link
+                      a(
+                        class=el.link.classAtr || 'btn btn-primary'
+                        href=el.link.href
+                      )
+                        if el.link.img
+                          img.me-2(src=el.link.img.src alt=el.link.img.alt)
+                        else
+                          = el.link.content
+                    if el.switch
+                      .form-check.form-switch.d-flex.align-items-center.justify-content-center
+                        input.form-check-input(type="checkbox")
+                    = el.content

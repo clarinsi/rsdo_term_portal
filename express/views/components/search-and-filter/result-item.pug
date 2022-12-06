@@ -1,0 +1,86 @@
+mixin result-item(headword, entry, isLast=false)
+  -
+    const foreignEntries = entry.foreignEntries ? entry.foreignEntries : []
+    const synonyms = entry.synonyms?entry.synonyms:[]
+    const domain = entry.primaryDomain&&entry.primaryDomain.nameSl?entry.primaryDomain.nameSl:""
+    const slovenianDefinitionExists = !!entry.definition
+    let foreignDefinitionExists = !!entry.foreignEntries && entry.foreignEntries.length > 0 
+    let checkAllForeignDefinitions = false
+    if(foreignDefinitionExists){
+      entry.foreignEntries.forEach(e => {
+        checkAllForeignDefinitions = checkAllForeignDefinitions || !!e.definition
+      })
+    }
+
+
+  a.rl.py-3(href=`/termin/${entry.id}`)
+    .anchor(id='e-' + entry.id)
+    .result-item.d-flex.flex-row.w-100
+      .row.w-100.result-items-row
+        .col-lg-4
+          .row.w-100.ls
+            .col-10.word-constraint-container
+              .results-item-headword.d-flex.flex-grow-1.word-constraint.d-flex.flex-direction-column.w-100.flex-nowrap
+                span.rihw.word-breakable.ps-2.long-text-wrap-r!= headword
+              .results-item-headword.d-flex.flex-grow-1.word-constraint.d-flex.flex-direction-column.w-100.flex-nowrap
+                - let btr = 0
+                ul.px-0.w-100.my-0.w-100
+                  each synonym in synonyms
+                    if (synonym)
+                      li.ps-2.pt-0.mt-1.hspcf.list-item
+                        span.word-breakable.risy.long-text-wrap-r!= synonym
+                      - btr++
+            .col-2.flex-column.row.rsc
+              .results-comments.d-inline.me-4.align-top
+                if slovenianDefinitionExists
+                  img.bgmsg.mb-1(src="/images/message-square-black.svg")
+                else if checkAllForeignDefinitions
+                  img.bgmsg.mb-1(src="/images/message-square.svg")
+        .col-lg-4.d-flex.px-0
+          //- .results-foreign-languages.d-inline-block.align-top
+            ul.mt-1.px-0
+              each fe in foreignEntries
+                //- fe.nbspCount 0 is included because it means there is at least one term or synonym otherwise the value is -1
+                if (fe.nbspCount >= 0)
+                  li.results-item-language.pe-0
+                    p.ex-span.pb-0.mb-0.lh-18px.lang-h= fe.lang.code
+                - let n = 0
+                while n < fe.nbspCount
+                  li
+                    p.ex-span.pb-0.mb-0.lh-18px.d-block.rsl-ph &nbsp&nbsp
+                  - n++
+          .results-foreign-terms.align-top
+            ul.mt-0.ps-2.mb-0.ms-2
+              each fe in foreignEntries
+                li.word-constraint-container.d-flex.flex-direction-column.w-100.flex-nowrap
+                  .language-icon-seperator.d-flex
+                    .h-100.results-item-language.align-items-top.d-flex
+                      p.d-flex.text-uppercase.ex-span.mb-0.lang-h= fe.lang.code
+                  ul.word-constraint.terms-and-synonyms.d-flex.flex-grow-1.flex-column.ps-3.w-90
+                    each line in fe.terms
+                      if !!line
+                        li.results-foreign-term.align-items-top.d-flex
+                          p.word-breakable.pb-0.mb-0.lh-18px.term-h.fw-500.long-text-wrap-r!= `<b class="long-text-wrap-r fw-500"> ${line} </b>`
+
+                    each synonym in fe.synonyms 
+                      if !!synonym
+                        li.results-foreign-term.align-items-top.d-flex
+                          p.word-breakable.text-truncate.pb-0.mb-0.lh-18px.syn-h.long-text-wrap-r!= synonym
+
+        .col-lg-4
+          .row
+            .col
+              .results-keywords.d-flex.flex-grow-1.ms-2 
+                span.res-domain= domain
+            .col
+              .results-sources.d-flex.flex-shrink-1.justify-content-end.align-items-center
+                .results-dict.d-flex.justify-content-end.align-items-center.me-2.px-2(
+                  data-bs-toggle="tooltip"
+                  title=`${entry.dictionary.nameSl}`
+                ) #{ entry.dictionary.nameSlShort }
+                .results-portal.d-flex.justify-content-end.align-items-center.te(
+                  data-bs-toggle="tooltip"
+                  title=`${entry.source.name}`
+                ) #{ entry.source.code }
+  if (!isLast)
+    hr.my-0.short-hr-gray-3

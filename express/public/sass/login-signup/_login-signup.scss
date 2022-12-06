@@ -1,0 +1,253 @@
+@use "../variables/variables" as v;
+
+/*$gray: #c4c4c4;
+$gray-stronger: #848c90;
+$gray-darker: #46535b;
+ */
+$modal-padding: 48px;
+.color-primary-text {
+  color: v.$navigation-maincolor !important;
+}
+
+.bg-primary {
+  background-color: v.$navigation-maincolor !important;
+}
+
+.dark-gray-text {
+  color: v.$header-description-gray;
+}
+
+.h41 {
+  height: 41px !important;
+}
+
+.w151 {
+  width: 151px !important;
+}
+
+.no-bg-and-borders {
+  border: none;
+  background: none;
+}
+
+/* fade effect - Note structure must be consistent!!! */
+body.modal-open .no-modal {
+  -webkit-filter: blur(3px);
+  -moz-filter: blur(3px);
+  -o-filter: blur(3px);
+  -ms-filter: blur(3px);
+  filter: blur(3px);
+}
+
+.modal-content {
+  border-radius: 20px;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+.padding-right-25 {
+  padding-right: 25px !important;
+}
+
+.padding-left-25 {
+  padding-left: 25px !important;
+}
+
+/* FORM */
+
+.input-floor {
+  border-bottom: 1px solid rgba($color: #000000, $alpha: 0.6);
+}
+
+.register-login-form {
+  /*padding: 0 $modal-padding;*/
+
+  input {
+    font-size: 1.6rem;
+    height: 1.8rem;
+  }
+}
+
+.form-control-login-signup {
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid v.$gray-C4;
+  padding-left: 0;
+  color: v.$header-description-gray;
+}
+
+.form-icon-data-seperator {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.form-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    display: inline-block;
+    width: 30px;
+    margin-right: 18px;
+  }
+}
+
+.form-data {
+  display: block;
+  flex: 1 0;
+}
+
+.login-register-btn {
+  margin: 10px 64px 0;
+  border-radius: 29px;
+  width: 150px;
+  /*background-color: $primary-color1;*/
+}
+
+.registration {
+  width: 100%;
+
+  h6 {
+    margin-bottom: 0.5rem;
+  }
+  p {
+    margin-bottom: 0;
+  }
+
+  * {
+    font-weight: 300;
+    color: v.$header-title-gray;
+    text-align: left;
+    align-items: center;
+  }
+}
+
+.font-italic {
+  font-style: italic;
+}
+
+form#login-form,
+form#register-form {
+  .row {
+    .error-icon {
+      width: 30px;
+      height: 30px;
+      margin-bottom: 0.6rem;
+      visibility: hidden;
+    }
+
+    .error-text {
+      color: v.$error-red;
+      visibility: hidden;
+    }
+
+    img {
+      padding-top: 4px;
+      height: 32px;
+      width: 32px;
+    }
+
+    input {
+      border: none;
+    }
+  }
+}
+
+.logintitle,
+.regtitle {
+  font-weight: 400;
+}
+
+#staticBackdrop {
+  * {
+    font-size: 0.85rem;
+  }
+
+  .loginregisterlabel {
+    font-size: 1.3rem;
+  }
+
+  .rememberloginlabel {
+    font-size: 0.75rem;
+  }
+
+  .row {
+    padding-top: 1rem;
+  }
+
+  button {
+    height: 41px;
+    border-radius: 29px;
+  }
+
+  .forgotten-password {
+    font-size: 0.75rem;
+  }
+}
+
+.loginregisterlabel {
+  -webkit-transition: 0.4s ease-in-out;
+  -moz-transition: 0.4s ease-in-out;
+  -o-transition: 0.4s ease-in-out;
+  transition: 0.4s ease-in-out;
+
+  z-index: 0;
+  position: relative;
+  top: 1.1rem;
+  font-size: 1rem;
+  color: rgba($color: #000000, $alpha: 0.6);
+}
+
+#login-form,
+#register-form {
+  .row {
+  }
+
+  input {
+    z-index: 2;
+    font-size: 1.1rem;
+  }
+}
+
+.pspelogsig-5 {
+}
+
+.input-lr:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+@media screen and (min-width: 756px) {
+  #logreg-mb {
+    #login-form,
+    #register-form {
+      .row {
+        max-width: 550px;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 992px) {
+  #logreg-mb {
+    .pspelogsig-5 {
+      padding-left: 3rem;
+      padding-right: 3rem;
+      #login-form,
+      #register-form {
+        .d-flex-and-align-end {
+          display: flex !important;
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+}

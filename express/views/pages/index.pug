@@ -1,0 +1,49 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/collapsable-comments.js")
+  script(nonce=cspNonce src="/javascripts/comments.js")
+
+block body
+  .index-footer
+    .topContainer
+      //-Navigation Bar
+      .index-nav
+        ul.nav
+          li.nav-item
+            img.logo(src="/images/logo.png" alt="Logo")
+
+          include ../components/navigation/main-navigation-right-mixin
+
+          +main-navigation-right(true,true,true)
+      h1.hero-text #{ portalName }
+      include /components/search-and-filter/small-device-search
+      +mini-searchbar
+
+    .descriptionArea
+      //- p Terminološki portal je samostojna, odprto dostopna spletna storitev, v katero so vključeni terminološki viri na samem portalu, na integriranem iskalniku pa so dostopni tudi zadetki iz spletišča Terminologišče in portala Termania. Registriranim uporabnikom je na voljo tudi <b>luščilnik terminoloških kandidatov</b> iz specializiranih korpusov, <b>konkordančnik</b> za specializirana besedila, označevalnik terminov v strokovnih besedilih, <b>urejevalnik</b> terminoloških virov, <b>terminološka svetovalnica</b> in stran s <b>pomočjo in navodili</b> za uporabo posameznih funkcij portala. Terminološki portal je moderiran.
+      p!= portalDescription
+      p.pt-5.fw-500.d-flex
+        span.d-flex Zadnji objavljeni slovarji
+        span.navigation-text-color.d-flex.flex-grow-1.justify-content-end
+          a.text-decoration-none(href="/slovarji") Vsi slovarji &gt;
+
+      include /components/dictionary/dictionary-list
+      +table(latestDicts)
+      //-  - let count = 0
+        each dict in latestDicts
+          - count++
+          a(href=`/slovarji/${dict.id}/o-slovarju`) #{ dict.name }
+          if count < latestDicts.length
+            span= ', '
+        //- a(href="/slovarji/id_slovarja/o-slovarju") Astronomski slovar
+          span= ', '
+          a(href="/slovarji/id_slovarja/o-slovarju") Davčni slovar
+          span= ', '
+          a(href="/slovarji/id_slovarja/o-slovarju") Glosar akademske integritete
+      p.pt-5
+
+      include /utilities/comments-with-collapsable-pager
+      //- +pager
+
+  include /common/footer

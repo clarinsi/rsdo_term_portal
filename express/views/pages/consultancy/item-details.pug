@@ -1,0 +1,49 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/comments.js")
+  //- script(nonce=cspNonce src="/javascripts/dictionaries.js")
+  script(nonce=cspNonce src="/javascripts/consultancy.js")
+
+block body
+  - const specificUserRights = user && (user.hasRole('consultant') || user.hasRole('consultancy admin'))
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  .consultancy-padding-main.p-squeeze-lg.mx-xxl-auto
+    include /utilities/consultancy-main-panel-header
+    //- const c = { h1: 'Terminološko svetovanje', description: 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj, pa strokovnjaki čutijo potrebo po sistemskem poenotenju oz. izbiri najprimernejše rešitve.', buttons: [{ type: 'link', content: 'Zastavi novo vprašanje', url: '/svetovanje/vprasanje/novo' }] }
+    - const c = { specificRights: specificUserRights, exportButtonPresent: false, h1: 'Terminološko svetovanje', description: 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj.', buttons: [{ type: 'link', content: 'Zastavi novo vprašanje', url: '/svetovanje/vprasanje/novo' }] }
+    +mainHeader(c, false)
+    .content-hold-prerequisites.px-0
+      #offset-main
+        .back-section.mt-4.mb-2
+          a.bg-transparent.border-0.consultancy-back-button(href="/svetovanje")
+            img.float-start(src="/images/chevrons-left.svg")
+            .text-header-description-gray.ps-3.float-start
+              b Nazaj
+        .consultancy-container.mb-2
+          .consultancy-item-detailed
+            .row
+              .col-6.d-flex.justify-content-start
+                span Vprašanje poslano #{ entry.timeCreated }
+              //- .col-6.d-flex.justify-content-end
+                button.me-3.bg-transparent.no-border
+                  img.i1p5rx1p5r(src="/images/copy.svg")
+                button.me-3.bg-transparent.no-border
+                  img.i1p5rx1p5r(src="/images/printer.svg")
+                button.bg-transparent.no-border
+                  img.i1p5rx1p5r(src="/images/share-2.svg")
+            //- placeholder below
+            .row.mb-3
+              .col
+                h4.mt-3.navigation-text-color #{ entry.title }
+
+            .mb-3!= `<b>Opis terminološkega problema:</b> ${entry.question}`
+            .mb-3!= `<b>Odgovor:</b> ${entry.answer}`
+            if entry.domain
+              .mb-3!= `<b>Področje:</b> ${entry.domain}`
+            div!= `<b>${authorString}:</b> ${entry.answerAuthors ? entry.answerAuthors.join(', ') : ''}`
+        //- .mt-3
+          include /utilities/comments-with-pager
+  include /common/footer

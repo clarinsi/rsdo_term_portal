@@ -1,0 +1,23 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-dictionaries
+  - const d = { activeLvl1: 'attributes', activeLvl2: 'structure' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: 'Struktura slovarskega sestavka', description: 'V tem razdelku lahko določite elemente slovarskega sestavka. Z izbiro elementov se vam prikazuje podoba slovarskega sestavka. Izbiro lahko tudi med urejanjem vsebine kadarkoli spremenite.', helpLink: { linkHref: '/pomoc', linkText: 'Več ...' }, buttons: [{ type: 'disabled', content: 'Shrani', form: 'form-dictionary-structure' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container
+      form#form-dictionary-structure.needs-validation(method="post" novalidate)
+        include /utilities/dictionary-structure-input
+  include /utilities/modal-alert-mixin
+  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
+  include /common/footer

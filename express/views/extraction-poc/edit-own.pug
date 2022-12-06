@@ -1,0 +1,20 @@
+h1 Luščenje #{ id } - uredi
+
+form(method="post")
+  label Ime:
+    input(name="name" value=extraction.name)
+  button Potrdi
+
+h2 Lastni dokumenti:
+ul
+  each document in extractionDocuments
+    li DATOTEKA - Ime: #[span.filename= document.filename], velikost: #{ document.size }, datum: #{ new Date(document.timeModified).toLocaleDateString('sl-SL') }
+a(href=`${id}/besedila`) Uredi
+h2 Stop termini:
+ul
+  each file in stopTermsFiles
+    li DATOTEKA - Ime: #[span.filename= file.filename], velikost: #{ file.size }, datum: #{ new Date(file.timeModified).toLocaleDateString('sl-SL') }
+a(href=`${id}/stop-termini`) Uredi
+
+br
+a(href="../poc") Nazaj

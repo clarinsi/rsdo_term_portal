@@ -1,0 +1,47 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+  script(nonce=cspNonce src="/javascripts/comments.js")
+  script(nonce=cspNonce src="/javascripts/mixed-content.js")
+  //- script(nonce=cspNonce src="/javascripts/dictionaries-content.js")
+
+block body
+  section#fixed-top-section.content-fixed-top
+    include /common/main-navigation
+    +main-navigation(false)
+  include /utilities/content-side-menu
+  include /utilities/content-header
+  .content-hold-prerequisites
+    #offset-main.content-main-page.main-container
+      #date-section.collapse
+        include /utilities/content-date-scroller
+      if terms.length
+        #preview-section
+          #content-data-section.mt-2
+            #classic-overview
+              include /utilities/content-classic-overview
+            .mt-2
+              include /utilities/entry-preview
+      else
+        #preview-section
+          #date-section.collapse
+            include /utilities/content-date-scroller
+          #content-data-section.mt-2
+            #no-entries-text.d-flex.justify-content-center
+              .justify-content-center.mt-5
+                p Ni slovarskih sestavkov za urejanje.
+            #entry-preview-section.d-none
+              #classic-overview
+                include /utilities/content-classic-overview
+              include /utilities/entry-preview
+
+      #edit-section.d-none
+        include /utilities/content-edit
+      #comments-section.d-none.mt-2
+        include /utilities/comments-with-pager
+  include /utilities/modal-alert
+  include /utilities/modal-alert-mixin
+  +alertModal("delete-modal", "Izbriši", "Prekliči", "modal-del-btn", "cancel-btn", 'Ali želite izbrisati geslo?')
+  .mb-3
+  //- include /common/footer

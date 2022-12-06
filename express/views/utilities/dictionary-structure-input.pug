@@ -1,0 +1,371 @@
+block input-structure
+  .switches
+    .subject-name.mt-2
+      span.input-name-txt STRUKTURA - ELEMENTI SLOVARSKEGA SESTAVKA:
+
+    .switch-forms-and-key-word
+      .row
+        .d-sm-flex
+          .switch-forms.mb-3.mb-sm-0
+            .form-switch.d-flex
+              input.form-check-input(type="checkbox" disabled checked)
+              label.form-check-label(for="Termin") Termin
+
+            .form-switch.d-flex
+              input.form-check-input(type="checkbox" disabled checked)
+              label.form-check-label(for="headword-ele") Oblike, naglasi, izgovor
+
+            if dictionary
+              if dictionary.hasDomainLabels
+                .form-switch.d-flex
+                  input#domain-labels.form-check-input(
+                    type="checkbox"
+                    name="hasDomainLabels"
+                    checked
+                  )
+                  label.form-check-label.text-nowrap(for="domain-labels") Področna oznaka
+              else
+                .form-switch.d-flex
+                  input#domain-labels.form-check-input(
+                    type="checkbox"
+                    name="hasDomainLabels"
+                  )
+                  label.form-check-label.text-nowrap(for="domain-labels") Področna oznaka
+            else
+              .form-switch.d-flex
+                input#domain-labels.form-check-input(
+                  type="checkbox"
+                  name="hasDomainLabels"
+                )
+                label.form-check-label.text-nowrap(for="domain-labels") Področna oznaka
+
+            if dictionary
+              if dictionary.hasLabel
+                .form-switch.d-flex
+                  input#label-checkbox.form-check-input(
+                    type="checkbox"
+                    name="hasLabel"
+                    checked
+                  )
+                  label.form-check-label(for="label-checkbox") Pojasnilo
+              else
+                .form-switch.d-flex
+                  input#label-checkbox.form-check-input(
+                    type="checkbox"
+                    name="hasLabel"
+                  )
+                  label.form-check-label(for="label-checkbox") Pojasnilo
+
+            else
+              .form-switch.d-flex
+                input#label-checkbox.form-check-input(
+                  type="checkbox"
+                  name="hasLabel"
+                )
+                label.form-check-label(for="label-checkbox") Pojasnilo
+
+            .form-switch.d-flex
+              input#definition-check-box.form-check-input(
+                type="checkbox"
+                name="hasDefinition"
+                checked
+              )
+              label.form-check-label(for="definition-check-box") Definicija
+
+            if dictionary
+              if dictionary.hasSynonyms
+                .form-switch.d-flex
+                  input#synonyms.form-check-input(
+                    type="checkbox"
+                    name="hasSynonyms"
+                    checked
+                  )
+                  label.form-check-label(for="synonyms") Sinonim
+              else
+                .form-switch.d-flex
+                  input#synonyms.form-check-input(
+                    type="checkbox"
+                    name="hasSynonyms"
+                  )
+                  label.form-check-label(for="synonyms") Sinonim
+            else
+              .form-switch.d-flex
+                input#synonyms.form-check-input(
+                  type="checkbox"
+                  name="hasSynonyms"
+                )
+                label.form-check-label(for="synonyms") Sinonim
+
+            if dictionary
+              if dictionary.hasLinks
+                .form-switch.d-flex
+                  input#links.form-check-input(
+                    type="checkbox"
+                    name="hasLinks"
+                    checked
+                  )
+                  label.form-check-label(for="links") Povezani termin
+              else
+                .form-switch.d-flex
+                  input#links.form-check-input(type="checkbox" name="hasLinks")
+                  label.form-check-label(for="links") Povezani termin
+
+            else
+              .form-switch.d-flex
+                input#links.form-check-input(type="checkbox" name="hasLinks")
+                label.form-check-label(for="links") Povezani termin
+
+            //- .form-switch.d-flex
+            //-   input#other.form-check-input(type="checkbox" name="hasOther")
+            //-   label.form-check-label(for="other") Drugo
+
+            if dictionary
+              if dictionary.hasOther
+                .form-switch.d-flex
+                  input#other.form-check-input(
+                    type="checkbox"
+                    name="hasOther"
+                    checked
+                  )
+                  label.form-check-label(for="other") Drugo
+              else
+                .form-switch.d-flex
+                  input#other.form-check-input(type="checkbox" name="hasOther")
+                  label.form-check-label(for="other") Drugo
+            else
+              .form-switch.d-flex
+                input#other.form-check-input(type="checkbox" name="hasOther")
+                label.form-check-label(for="other") Drugo
+
+            if dictionary
+              if dictionary.hasForeignLanguages
+                .form-switch.d-flex
+                  input#language-group.form-check-input(
+                    type="checkbox"
+                    name="hasForeignLanguages"
+                    checked
+                  )
+                  label.form-check-label.text-nowrap(for="language-group") Tuji jezik
+              else
+                .form-switch.d-flex
+                  input#language-group.form-check-input(
+                    type="checkbox"
+                    name="hasForeignLanguages"
+                  )
+                  label.form-check-label.text-nowrap(for="language-group") Tuji jezik
+            else
+              .form-switch.d-flex
+                input#language-group.form-check-input(
+                  type="checkbox"
+                  name="hasForeignLanguages"
+                  checked
+                )
+                label.form-check-label.text-nowrap(for="language-group") Tuji jezik
+
+            if dictionary
+              if !dictionary.hasForeignLanguages
+                .form-switch.d-flex
+                  input#termin-language-subgroup.form-check-input.disabled-input(
+                    type="checkbox"
+                  )
+                  label#termin-subgroup-label.form-check-label.language-subgroups(
+                    for="termin-language-subgroup"
+                  ) Termin
+              else
+                .form-switch.d-flex
+                  input#termin-language-subgroup.form-check-input.disabled-input(
+                    type="checkbox"
+                    checked
+                  )
+                  label#termin-subgroup-label.form-check-label.language-subgroups(
+                    for="termin-language-subgroup"
+                  ) Termin
+            else
+              .form-switch.d-flex
+                input#termin-language-subgroup.form-check-input.disabled-input(
+                  type="checkbox"
+                  checked
+                )
+                label#termin-subgroup-label.form-check-label.language-subgroups(
+                  for="termin-language-subgroup"
+                ) Termin
+
+            if dictionary
+              if !dictionary.hasForeignLanguages
+                .form-switch.d-flex
+                  input#definition-language-subgroup.form-check-input.disabled-input(
+                    type="checkbox"
+                    name="hasForeignDefinitions"
+                  )
+                  label#definition-subgroup-label.form-check-label.language-subgroups(
+                    for="definition-language-subgroup"
+                  ) Definicija
+              else if dictionary.hasForeignDefinitions
+                .form-switch.d-flex
+                  input#definition-language-subgroup.form-check-input(
+                    type="checkbox"
+                    name="hasForeignDefinitions"
+                    checked
+                  )
+                  label#definition-subgroup-label.form-check-label.language-subgroups(
+                    for="definition-language-subgroup"
+                  ) Definicija
+              else
+                .form-switch.d-flex
+                  input#definition-language-subgroup.form-check-input(
+                    type="checkbox"
+                    name="hasForeignDefinitions"
+                  )
+                  label#definition-subgroup-label.form-check-label.language-subgroups(
+                    for="definition-language-subgroup"
+                  ) Definicija
+            else
+              .form-switch.d-flex
+                input#definition-language-subgroup.form-check-input(
+                  type="checkbox"
+                  name="hasForeignDefinitions"
+                )
+                label#definition-subgroup-label.form-check-label.language-subgroups(
+                  for="definition-language-subgroup"
+                ) Definicija
+
+            if dictionary
+              if !dictionary.hasForeignLanguages
+                .form-switch.d-flex
+                  input#synonym-language-subgroup.form-check-input.disabled-input(
+                    type="checkbox"
+                    name="hasForeignSynonyms"
+                  )
+                  label#synonym-subgroup-label.form-check-label.language-subgroups(
+                    for="synonym-language-subgroup"
+                  ) Sinonim
+              else if dictionary.hasForeignSynonyms
+                .form-switch.d-flex
+                  input#synonym-language-subgroup.form-check-input(
+                    type="checkbox"
+                    name="hasForeignSynonyms"
+                    checked
+                  )
+                  label#synonym-subgroup-label.form-check-label.language-subgroups(
+                    for="synonym-language-subgroup"
+                  ) Sinonim
+              else
+                .form-switch.d-flex
+                  input#synonym-language-subgroup.form-check-input(
+                    type="checkbox"
+                    name="hasForeignSynonyms"
+                  )
+                  label#synonym-subgroup-label.form-check-label.language-subgroups(
+                    for="synonym-language-subgroup"
+                  ) Sinonim
+            else
+              .form-switch.d-flex
+                input#synonym-language-subgroup.form-check-input(
+                  type="checkbox"
+                  name="hasForeignSynonyms"
+                )
+                label#synonym-subgroup-label.form-check-label.language-subgroups(
+                  for="synonym-language-subgroup"
+                ) Sinonim
+
+            if dictionary
+              if dictionary.hasImages
+                .form-switch.d-flex
+                  input#images.form-check-input(
+                    type="checkbox"
+                    name="hasImages"
+                    checked
+                  )
+                  label.form-check-label(for="images") Slika
+              else
+                .form-switch.d-flex
+                  input#images.form-check-input(
+                    type="checkbox"
+                    name="hasImages"
+                  )
+                  label.form-check-label(for="images") Slika
+            else
+              .form-switch.d-flex
+                input#images.form-check-input(type="checkbox" name="hasImages")
+                label.form-check-label(for="images") Slika
+
+            if dictionary
+              if dictionary.hasAudio
+                .form-switch.d-flex
+                  input#audio.form-check-input(
+                    type="checkbox"
+                    name="hasAudio"
+                    checked
+                  )
+                  label.form-check-label(for="audio") Zvok
+              else
+                .form-switch.d-flex
+                  input#audio.form-check-input(type="checkbox" name="hasAudio")
+                  label.form-check-label(for="audio") Zvok
+            else
+              .form-switch.d-flex
+                input#audio.form-check-input(type="checkbox" name="hasAudio")
+                label.form-check-label(for="audio") Zvok
+
+            if dictionary
+              if dictionary.hasVideo
+                .form-switch.d-flex
+                  input#video.form-check-input(
+                    type="checkbox"
+                    name="hasVideos"
+                    checked
+                  )
+                  label.form-check-label(for="video") Video
+              else
+                .form-switch.d-flex
+                  input#video.form-check-input(
+                    type="checkbox"
+                    name="hasVideos"
+                  )
+                  label.form-check-label(for="video") Video
+            else
+              .form-switch.d-flex
+                input#video.form-check-input(type="checkbox" name="hasVideos")
+                label.form-check-label(for="video") Video
+          .ms-2.ms-md-5.flex-grow-1
+            include /utilities/entry-preview
+
+    .subject-name.mt-3
+      span.input-name-txt TUJI JEZIKI
+    .row.mb-3
+      if dictionary
+        if dictionary.hasForeignLanguages
+          .col-sm-6.select-languages
+            select#languages-input.without-addition(
+              name="language"
+              multiple
+              required
+            )
+              each language in associatedLanguages
+                option(value=language.id selected)= language.nameSl
+              each language in allLanguages
+                if !associatedLanguages.some(associated => associated.id === language.id)
+                  option(value=language.id)= language.nameSl
+        else
+          .col-sm-6.select-languages
+            select#languages-input.without-addition(
+              name="language"
+              multiple
+              disabled
+              required
+            )
+              each language in allLanguages
+                option(value=language.id)= language.nameSl
+      else
+        .col-sm-6.select-languages
+          select#languages-input.form-control.without-addition(
+            name="language"
+            multiple
+            required
+          )
+            each language in allLanguages
+              option(value=language.id)= language.nameSl
+      .col-sm.d-flex.align-items-center
+        span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Izberite vse tuje jezike, ki jih bo terminološki slovar vseboval.
+      #invalid-language-section.invalid-feedback-selection.hidden-section.mt-3
+        | Niste vpisali tujih jezikov.

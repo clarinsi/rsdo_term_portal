@@ -1,0 +1,53 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /common/side-menu-mixin-admin
+  - const d = { activeLvl1: 'connections', activeLvl2: 'list' }
+  +sideNavigation(d)
+
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Povezani slovarji', description: 'Seznam slovarjev s povezanega portala.', buttons: [{ type: 'button', form: 'all-linked-dictionaries', content: 'Shrani' }] }
+  +mainHeader(c)
+  .content-hold-prerequisites
+    #offset-main.main-container
+      .d-flex.justify-content-between
+        .d-flex.flex-row.mb-4
+          include /components/search-and-filter/inline-search
+        .d-flex.me-3
+          include /utilities/pager
+          +pager
+      input#hidden-portal-id(type="hidden" value=linkedId)
+      form#all-linked-dictionaries(method="post") 
+        .table-responsive
+          table.styled-table
+            thead
+              tr
+                th= ''
+                th= 'Naslov'
+                th= 'Oznaka portala'
+            tbody#page-results 
+              if results.length
+                each result in results
+                  tr
+                    td
+                      .form-check.form-switch.d-flex.align-items-center
+                        input.form-check-input(
+                          type="checkbox"
+                          name=`isEnabled['${result.id}']`
+                          checked=result.isEnabled
+                          id=result.id
+                        )
+                      if result.name
+                        td= result.name
+                      if result.code
+                        td= result.code
+              else
+                p Ni še povezanih portalov
+
+  include /common/footer

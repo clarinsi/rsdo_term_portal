@@ -1,0 +1,20 @@
+.date-scroller.d-flex.me-3.me-xl-4.ms-3.ms-xl-2.ms-md-5
+  #go-left.d-flex.align-items-center.ms-2.pe-2
+    img(src="/images/chevron-left.svg" alt="" srcset="")
+  #date-list.date-list.d-flex.align-items-center
+    .btn-dates-group.ps-1.pe-1(role="group")
+      input#latest-radio.btn-check.date-element.latest-version-el(
+        type="radio"
+        name="date"
+        value="latest-version"
+        checked
+      )
+      label#latest-version-label.btn-outline-dates.latest-version-el.btn.ms-0.date-element(
+        for="latest-radio"
+        data-bs-custom-class="dark-gray-tooltip"
+        data-bs-toggle="tooltip"
+        data-bs-placement="bottom"
+        title="Pokaži verzijo"
+      ) Zadnja verzija
+  #go-right.d-flex.align-items-center.me-2.ms-auto.ps-2
+    img(src="/images/chevron-right-2.svg" alt="")

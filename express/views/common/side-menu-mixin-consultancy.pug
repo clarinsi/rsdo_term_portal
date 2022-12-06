@@ -1,0 +1,90 @@
+mixin sideNavigation(metaData)
+  .admin-nav
+    #admin-nav-mobile.admin-nav-mobile
+      .mobile-left-holder
+        button#nav-button.nav-button
+          img#burger-menu-img(
+            src="/images/burger-menu-button-icon.svg"
+            alt="Meni"
+          )
+        span#nav-title.nav-title= 'Svetovalnica'
+      #mobile-right-holder
+    nav
+      ul.admin-nav-content.slidable.z-20
+        li
+          a(href="/svetovanje") 
+            img(src="/images/chevrons-left.svg")
+            p Nazaj
+        if user.hasRole('consultancy admin')
+          li(class=metaData.new ? 'focused-menu' : '')
+            a(
+              href="/svetovanje/vprasanje/admin/novo"
+              class=metaData.new ? 'active' : ''
+            ) 
+              img(
+                src=metaData.new ? '/images/star-blue.svg' : '/images/star.svg'
+                alt=""
+              )
+              p Novo
+          li(class=metaData.rejected ? 'focused-menu' : '')
+            a(
+              href="/svetovanje/vprasanje/admin/zavrnjeno"
+              class=metaData.rejected ? 'active' : ''
+            ) 
+              img(
+                src=metaData.rejected ? '/images/x-circle-blue.svg' : '/images/x-circle.svg'
+                alt=""
+              )
+              p Zavrnjeno
+        li(class=metaData.inProgress ? 'focused-menu' : '')
+          a(
+            href="/svetovanje/vprasanje/admin/v-delu"
+            class=metaData.inProgress ? 'active' : ''
+          ) 
+            img(
+              src=metaData.inProgress ? '/images/edit-blue.svg' : '/images/edit.svg'
+              alt=""
+            )
+            p V delu
+        if user.hasRole('consultancy admin')
+          li(class=metaData.prepared ? 'focused-menu' : '')
+            a(
+              href="/svetovanje/vprasanje/admin/pripravljeno"
+              class=metaData.prepared ? 'active' : ''
+            ) 
+              img(
+                src=metaData.prepared ? '/images/cog-blue.svg' : '/images/cog.svg'
+                alt=""
+              )
+              p Pripravljeno
+        li(class=metaData.published ? 'focused-menu' : '')
+          a(
+            href="/svetovanje/vprasanje/admin/objavljeno"
+            class=metaData.published ? 'active' : ''
+          ) 
+            img(
+              src=metaData.published ? '/images/book-open-blue.svg' : '/images/book-open.svg'
+              alt=""
+            )
+            p Objavljeno
+        //- li(class=metaData.stats ? 'focused-menu' : '')
+          a(
+            href="/svetovanje/vprasanje/admin/statistika"
+            class=metaData.stats ? 'active' : ''
+          ) 
+            img(
+              src=metaData.stats ? '/images/statistics-blue.svg' : '/images/statistics.svg'
+              alt=""
+            )
+            p Statistika
+        if user.hasRole('consultancy admin')
+          li(class=metaData.users ? 'focused-menu' : '')
+            a(
+              href="/svetovanje/vprasanje/admin/uporabniki"
+              class=metaData.users ? 'active' : ''
+            ) 
+              img(
+                src=metaData.users ? '/images/users-blue.svg' : '/images/users.svg'
+                alt=""
+              )
+              p Svetovalci

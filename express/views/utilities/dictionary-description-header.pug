@@ -1,0 +1,8 @@
+mixin header(headerContent)
+  .header-section-root
+    .header-container-divider-left.pe-5
+      h1= headerContent.h1
+      span.page-title-header= headerContent.title
+      span.d-block.pe-5.pt-2.page-description= headerContent.description
+    .header-container-divider-right
+      button.btn.btn-primary= headerContent.btnTxt

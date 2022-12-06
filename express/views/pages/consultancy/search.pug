@@ -1,0 +1,7 @@
+extends /pages/consultancy/index
+
+block preDefinitions
+  - const resultAmountDisplay = true
+
+block headerConfig
+  - const c = { specificRights: specificUserRights, exportButtonPresent: true, h1: 'Terminološko svetovanje', description: 'Terminološka svetovalnica je namenjena širši strokovni javnosti, ki se sooča s konkretnimi poimenovalnimi problemi, pa naj gre za popolnoma nove pojme, ki jih je v slovenščini šele treba poimenovati, ali že znane pojme, za katere obstaja več poimenovanj.', buttons: [{ type: 'link', content: 'Zastavi novo vprašanje', url: '/svetovanje/vprasanje/novo' }], show5MostRecent: false }
