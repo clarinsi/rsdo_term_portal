@@ -154,6 +154,21 @@ function searchQuery(searchString, searchFilterDOM = {}) {
   document.location.href = url
 }
 
+function searchQueryWithExistingFilters(searchString) {
+  const stringBuilder = `/iskanje?q=${searchString}`
+  const thisUrl = new URL(location)
+  const url = new URL(stringBuilder, location.protocol + '//' + location.host)
+
+  thisUrl.searchParams.forEach((value, key, parent) => {
+    // console.log(`VALUE: ${value}`)
+    if (!(key === 'q' || key === 'p')) {
+      url.searchParams.append(key, value)
+    }
+  })
+
+  document.location.href = url
+}
+
 // end search implementation functions
 
 // search filter functions
@@ -173,7 +188,11 @@ function sbmFn(sbm) {
         inputString = '*'
       }
 
-      searchQuery(inputString, searchFilterDOM)
+      if (sbm === document.querySelector('.search-btn-a')) {
+        searchQuery(inputString, searchFilterDOM)
+      } else {
+        searchQueryWithExistingFilters(inputString)
+      }
     })
   }
 }

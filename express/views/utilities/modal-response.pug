@@ -1,4 +1,4 @@
-mixin responseModal(responseId="response-modal", understandBtn = "Razumem", understandBtnId = "understand-btn", understandMainText = "Ali res želite izbrisati vnos? Dejanja ni mogoče razveljaviti.")
+mixin responseModal(responseId="response-modal", understandBtn = t("Razumem"), understandBtnId = "understand-btn", understandMainText = t("Ali res želite izbrisati vnos? Dejanja ni mogoče razveljaviti."), secondaryText = '')
   .modal.fade(
     id=responseId
     tabindex="-1"
@@ -8,15 +8,16 @@ mixin responseModal(responseId="response-modal", understandBtn = "Razumem", unde
     .modal-dialog.modal-lg
       .modal-content
         .modal-header
-          h5#modal-alert-label.modal-title.modal-title-blue Obvestilo
+          h5#modal-alert-label.modal-title.modal-title-blue #{ t('Obvestilo') }
           button.btn-close(
             type="button"
             data-bs-dismiss="modal"
             aria-label="Close"
           )
         .modal-body.d-flex.justify-content-between.align-items-center
-          .d-flex.modal-alert-content
+          .modal-alert-content
             p#response-modal-text.normal-gray= understandMainText
+            p.normal-gray= secondaryText
         .modal-footer.d-flex.justify-content-end.align-items-center
           button.btn.btn-secondary(
             id=understandBtnId

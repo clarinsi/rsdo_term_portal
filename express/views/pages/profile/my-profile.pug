@@ -11,15 +11,15 @@ block body
   - const d = { selection: 'change-profile-data' }
   +sideNavigation(d)
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h1: 'Osnovni podatki', description: 'Tukaj lahko spremenite ime, priimek in elektronski naslov uporabnika.', buttons: [{ type: 'disabled', content: 'Shrani', form: 'profileForm' }] }
+  - const c = { sideMenu: true, h1: title, description: t('Tukaj lahko spremenite ime, priimek in elektronski naslov uporabnika.'), buttons: [{ type: 'disabled', content: t('Shrani'), form: 'profileForm' }] }
   +mainHeader(c)
 
   .content-hold-prerequisites
-    #offset-main.main-container.mt-2.pe-5
+    #offset-main.main-container.mt-2
       form#profileForm.needs-validation(method="post" novalidate)
         div
           .subject-name
-            label.input-name-txt(for="profile-username") UPORABNIŠKO IME
+            label.input-name-txt(for="profile-username") #{ t('UPORABNIŠKO IME') }
           .row
             .col-sm-6.align-items-center
               input#profile-username.name-input.form-control.d-inline(
@@ -35,7 +35,7 @@ block body
 
         .mt-4
           .subject-name
-            label.input-name-txt(for="profile-name") IME
+            label.input-name-txt(for="profile-name") #{ t('IME') }
           .row
             .col-sm-6
               input#profile-name.name-input.form-control.d-inline(
@@ -44,14 +44,14 @@ block body
                 minLength="1"
                 value=user.firstName
               )
-              .invalid-feedback Niste vpisali imena
+              .invalid-feedback #{ t('Niste vpisali imena') }
 
             .col-sm.d-flex.align-items-center
               span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
 
         .mt-4
           .subject-name
-            label.input-name-txt(for="profile-surname") PRIIMEK
+            label.input-name-txt(for="profile-surname") #{ t('PRIIMEK') }
           .row
             .col-sm-6
               input#profile-surname.name-input.form-control.d-inline(
@@ -60,14 +60,14 @@ block body
                 minLength="1"
                 value=user.lastName
               )
-              .invalid-feedback Niste vpisali priimka.
+              .invalid-feedback #{ t('Niste vpisali priimka.') }
 
             .col-sm.d-flex.align-items-center
               span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
 
         .mt-4
           .subject-name
-            label.input-name-txt(for="profile-surname") ELEKTRONSKI NASLOV
+            label.input-name-txt(for="profile-surname") #{ t('ELEKTRONSKI NASLOV') }
           .row
             .col-sm-6
               input#profile-surname.name-input.form-control.d-inline(
@@ -76,8 +76,8 @@ block body
                 minLength="1"
                 value=user.email
               )
-              .invalid-feedback Neveljavni elektronski naslov.
+              .invalid-feedback #{ t('Neveljavni elektronski naslov.') }
 
             .col-sm.d-flex.align-items-center
               span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
-  include /common/footer
+      include /common/footer

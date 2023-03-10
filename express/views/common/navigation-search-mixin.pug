@@ -15,11 +15,11 @@ mixin navigation-search(search_included)
                     placeholder=""
                     value=`${searchString ? searchString : ''}`
                   )
-                  button#keyboard.search-button-keyboard.me-0
+                  button#keyboard.search-button-keyboard.px-2.mx-2
                     span
                       img.keyboard(src="/images/keyboard.svg" alt="Keys")
                   //- </span>
-                  button#advanced-search.dropdown-btn
+                  button#advanced-search.dropdown-btn.ms-2.px-2.me-3
                     img(src="/images/dropdown.svg" alt="Opt")
               .row
                 .d-flex.justify-content-center
@@ -42,7 +42,7 @@ mixin navigation-search-secondary(search_included)
                 img.search_icon(src="/images/search.svg" alt="OK")
               input#search-query-sec.search-input.focused-for-enter.fw-300.placeholder-gray(
                 type="text"
-                placeholder="Vpišite iskalni niz"
+                placeholder=t('Vpišite iskalni niz')
                 value=`${searchString ? searchString : ''}`
               )
               button#keyboard-sec.search-button-keyboard

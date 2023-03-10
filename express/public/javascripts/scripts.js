@@ -1,4 +1,14 @@
-/* global $, bootstrap */
+/* global $, bootstrap, axios, i18next, i18nextHttpBackend */
+
+// eslint-disable-next-line no-unused-vars
+const isI18nReady = i18next.use(i18nextHttpBackend).init({
+  lng: document.documentElement.lang ?? 'sl',
+  ns: 'core',
+  nsSeparator: false,
+  keySeparator: false,
+  ...(window.inDevEnv && { saveMissing: true }),
+  ...(!window.inDevEnv && { fallbackLng: false })
+})
 
 const windows = ['#suggestions-root', '.advanced-search-root', '.kbd-root']
 
@@ -302,7 +312,7 @@ function renderSuggestions(
 
   ajustElementSettings(preElement, options)
 
-  preElement.textContent = 'Za to besedo še ni podatkov.'
+  preElement.textContent = i18next.t('Za to besedo še ni podatkov.')
   preElement.disabled = true
   preElement.classList = ['w-100']
   preElement.classList += ` ${type}-sugg`
@@ -646,31 +656,53 @@ document.querySelectorAll('.loginregisterlabel').forEach(label => {
 /**
  * Enables pagination logic for the specified pager UI.
  *
- * @param {string} paginationRootElId - Pager element id.
+ * @param {(string|string[])} paginationRootElIds - Pager element id.
  * @param {function} onPageChange - Gets called with the number of the page the user requested.
  * @returns {function} - Call it with (newCurrentPage, newNumOfAllPages) to update the ui. Or without arguments, after handling a potential error.
  */
-function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
-  const rootEl = document.getElementById(paginationRootElId)
-  const btnFirstPage = rootEl.querySelector('.first-page')
-  const btnPreviousPage = rootEl.querySelector('.previous-page')
-  const btnNextPage = rootEl.querySelector('.next-page')
-  const btnLastPage = rootEl.querySelector('.last-page')
-  const formEl = rootEl.querySelector('form')
-  const pageInputEl = formEl.querySelector('input')
-  const pagesCountDisplayEl = formEl.querySelector('.pages-total')
-
+function initPagination(paginationRootElIds, onPageChange, currentPage = 1) {
   let reqLock = false
+  let numOfAllPages
+  const backwardBtnEls = []
+  const forwardBtnEls = []
+  const pageInputEls = []
+  const pagesCountDisplayEls = []
 
-  rootEl.addEventListener('click', handleButtonClick)
-  formEl.addEventListener('submit', handleFormSubmit)
+  if (Array.isArray(paginationRootElIds)) {
+    paginationRootElIds.forEach(id => initControls(id))
+  } else {
+    initControls(paginationRootElIds)
+  }
+  const allControlEls = [...backwardBtnEls, ...forwardBtnEls, ...pageInputEls]
 
-  function handleButtonClick({ target }) {
+  function initControls(paginationRootElId) {
+    const rootEl = document.getElementById(paginationRootElId)
+    const btnFirstPage = rootEl.querySelector('.first-page')
+    const btnPreviousPage = rootEl.querySelector('.previous-page')
+    const btnNextPage = rootEl.querySelector('.next-page')
+    const btnLastPage = rootEl.querySelector('.last-page')
+    const formEl = rootEl.querySelector('form')
+    const pageInputEl = formEl.querySelector('input')
+    const pagesCountDisplayEl = formEl.querySelector('.pages-total')
+
+    numOfAllPages = +pagesCountDisplayEl.textContent
+
+    backwardBtnEls.push(btnFirstPage, btnPreviousPage)
+    forwardBtnEls.push(btnNextPage, btnLastPage)
+    pageInputEls.push(pageInputEl)
+    pagesCountDisplayEls.push(pagesCountDisplayEl)
+
+    rootEl.addEventListener('click', e => {
+      handleButtonClick(e, paginationRootElId)
+    })
+    formEl.addEventListener('submit', e => handleFormSubmit(e, pageInputEl))
+  }
+
+  function handleButtonClick({ target }, paginationRootElId) {
     if (reqLock) return
 
     const buttonEl = target.closest(`#${paginationRootElId} button`)
     if (!buttonEl) return
-    const numOfAllPages = +pagesCountDisplayEl.textContent
 
     if (buttonEl.classList.contains('first-page')) {
       if (currentPage === 1) return
@@ -691,13 +723,13 @@ function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
     }
   }
 
-  function handleFormSubmit(e) {
+  function handleFormSubmit(e, pageInputEl) {
     e.preventDefault()
     if (reqLock) return
 
     const inputValue = +pageInputEl.value
-    if (!(inputValue > 0 && inputValue <= pagesCountDisplayEl.textContent)) {
-      alert('Nepravilna vrednost strani')
+    if (!(inputValue > 0 && inputValue <= numOfAllPages)) {
+      alert(i18next.t('Nepravilna vrednost strani'))
       pageInputEl.value = currentPage
       return
     }
@@ -708,20 +740,12 @@ function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
 
   function enableLock() {
     reqLock = true
-    btnFirstPage.disabled = true
-    btnPreviousPage.disabled = true
-    btnNextPage.disabled = true
-    btnLastPage.disabled = true
-    pageInputEl.disabled = true
+    allControlEls.forEach(el => (el.disabled = true))
   }
 
   function disableLock() {
     reqLock = false
-    btnFirstPage.disabled = false
-    btnPreviousPage.disabled = false
-    btnNextPage.disabled = false
-    btnLastPage.disabled = false
-    pageInputEl.disabled = false
+    allControlEls.forEach(el => (el.disabled = false))
   }
 
   function updatePagerUi(newCurrentPage, newNumOfAllPages) {
@@ -729,23 +753,20 @@ function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
     if (!newCurrentPage) return
 
     currentPage = newCurrentPage
-    pageInputEl.value = newCurrentPage
-    pagesCountDisplayEl.textContent = newNumOfAllPages
+    numOfAllPages = newNumOfAllPages
+    pageInputEls.forEach(el => (el.value = newCurrentPage))
+    pagesCountDisplayEls.forEach(el => (el.textContent = newNumOfAllPages))
 
     if (newCurrentPage === 1) {
-      btnFirstPage.disabled = true
-      btnPreviousPage.disabled = true
+      backwardBtnEls.forEach(el => (el.disabled = true))
     } else {
-      btnFirstPage.disabled = false
-      btnPreviousPage.disabled = false
+      backwardBtnEls.forEach(el => (el.disabled = false))
     }
 
     if (newCurrentPage === newNumOfAllPages) {
-      btnNextPage.disabled = true
-      btnLastPage.disabled = true
+      forwardBtnEls.forEach(el => (el.disabled = true))
     } else {
-      btnNextPage.disabled = false
-      btnLastPage.disabled = false
+      forwardBtnEls.forEach(el => (el.disabled = false))
     }
   }
 
@@ -923,11 +944,11 @@ if (registerSwithcButton) {
 
   function initSelect2(querySelector, placeholder) {
     $(querySelector).select2({
-      allowClear: true,
+      // allowClear: true,
       placeholder: placeholder
     })
 
-    $(querySelector).val(null).trigger('change')
+    // $(querySelector).val(null).trigger('change')
   }
 
   $(document).ready(function () {
@@ -935,7 +956,7 @@ if (registerSwithcButton) {
     $('.select-search-field').select2({})
 
     initSelect2('.select-domain-field', 'Področje')
-    initSelect2('.select-src-lang-field', 'Izvorni jezik')
+    initSelect2('.select-src-lang-field', 'Jezik iskanja')
     initSelect2('.select-dest-lang-field', 'Ciljni jezik')
     initSelect2('.select-dict-field', 'Slovar')
     initSelect2('.select-source-field', 'Vir')
@@ -978,7 +999,7 @@ if (registerSwithcButton) {
     $('.select-search-field').select2({})
 
     initSelect2('.select-domain-field', 'Področje')
-    initSelect2('.select-src-lang-field', 'Izvorni jezik')
+    initSelect2('.select-src-lang-field', 'Jezik iskanja')
     initSelect2('.select-dest-lang-field', 'Ciljni jezik')
     initSelect2('.select-dict-field', 'Slovar')
     initSelect2('.select-source-field', 'Vir')
@@ -1097,7 +1118,7 @@ function transferText(sideMenuText, removeOptionalBreak = false) {
 
   const optionalBreak = document.getElementById('disposable-break')
 
-  if (document.body.clientWidth <= 1200) {
+  if (window.innerWidth < 1200) {
     navTitle.textContent = siteHeadingTextContent
     siteHeading.style.display = 'none'
     if (removeOptionalBreak) {
@@ -1111,3 +1132,140 @@ function transferText(sideMenuText, removeOptionalBreak = false) {
     }
   }
 }
+
+function replaceContainer(id, HTMLContent) {
+  const el = document.getElementById(id)
+  if (el) {
+    el.innerHTML = HTMLContent
+  }
+}
+
+// STATE MANAGER FOR WINDOWS IN FORGOT PASSWORD
+class StateManager {
+  constructor() {
+    this.state = {}
+  }
+
+  setState(newState) {
+    this.state = { ...this.state, ...newState }
+  }
+
+  getState() {
+    return this.state
+  }
+}
+
+class StateManagerInvoker {
+  constructor(stateManager, invokeFunction) {
+    this.stateManager = stateManager
+    this.invokeFn = invokeFunction
+  }
+
+  setState(newState) {
+    this.stateManager.setState(newState)
+    this.invoke()
+  }
+
+  invoke() {
+    this.invokeFn()
+  }
+}
+
+const stateManager = new StateManager()
+const forgottenPasswordInvoker = new StateManagerInvoker(stateManager, () => {
+  function closeAllFPRelatedModals() {
+    $('#staticBackdrop').modal('hide')
+    $('#reset-pass-modal').modal('hide')
+    $('#reset-pass-info').modal('hide')
+  }
+
+  function showLoginModal() {
+    $('#staticBackdrop').modal('show')
+  }
+
+  function showResetPasswordModal() {
+    $('#reset-pass-modal').modal('show')
+  }
+
+  function showResetPasswordModalSuccessOrFail() {
+    $('#reset-pass-info').modal('show')
+  }
+
+  function apllyDescriptionAccordingToState() {
+    $('#alert-text').text(stateManager.getState().fpassWindowDescription)
+  }
+
+  closeAllFPRelatedModals()
+  switch (stateManager.getState().fpassWindowState) {
+    case ForgotPasswordState.LOGIN_SIGNUP:
+      showLoginModal()
+      break
+    case ForgotPasswordState.FORGOT_PASSWORD_MODAL:
+      showResetPasswordModal()
+      break
+    case ForgotPasswordState.FORGOT_PASSWORD_ERROR:
+    case ForgotPasswordState.FORGOT_PASSWORD_SUCCESS:
+      showResetPasswordModalSuccessOrFail()
+      apllyDescriptionAccordingToState()
+      break
+    default:
+      console.log('Unknown state')
+  }
+})
+
+const ForgotPasswordState = {
+  LOGIN_SIGNUP: 1,
+  FORGOT_PASSWORD_MODAL: 2,
+  FORGOT_PASSWORD_ERROR: 3,
+  FORGOT_PASSWORD_SUCCESS: 4
+}
+
+function onForgotPassword() {
+  forgottenPasswordInvoker.setState({
+    fpassWindowState: ForgotPasswordState.FORGOT_PASSWORD_MODAL
+  })
+}
+
+function onCancelForgotPassword() {
+  forgottenPasswordInvoker.setState({
+    fpassWindowState: ForgotPasswordState.LOGIN_SIGNUP
+  })
+}
+
+function onSendForgottenEmailRequest() {
+  axios
+    .post('/REPLACETHISDUMMYURL', {
+      usernameOrEmail: document.getElementById('forgot-pass-input').value
+    })
+    .then(res => {
+      // const EMAIL = 'DUMMY_EMAIL'
+
+      // State manager because we don't want to invoker twice
+      // it is required to update description first before updating state of the invoker
+      stateManager.setState({
+        fpassWindowDescription: i18next.t(
+          'Na vaš elektronski naslov smo vam posredovali povezavo za ponastavitev gesla. Prosimo preverite svoj elektronski predal.'
+        )
+      })
+
+      forgottenPasswordInvoker.setState({
+        fpassWindowState: ForgotPasswordState.FORGOT_PASSWORD_SUCCESS
+      })
+    })
+    .catch(err => {
+      stateManager.setState({
+        fpassWindowDescription: i18next.t(
+          'Prišlo je do napake pri pošiljanju sporočila na vaš elektronski naslov. Poskusite ponovno.'
+        )
+      })
+      forgottenPasswordInvoker.setState({
+        fpassWindowState: ForgotPasswordState.FORGOT_PASSWORD_ERROR
+      })
+      console.log(err)
+    })
+}
+
+$('#modal-fp-cancel-btn').on('click', onCancelForgotPassword)
+$('#modal-fp-use-btn').on('click', onSendForgottenEmailRequest)
+$('#modal-fp-info-close').on('click', () => $('#reset-pass-info').modal('hide'))
+$('#forgotten-password').on('click', onForgotPassword)

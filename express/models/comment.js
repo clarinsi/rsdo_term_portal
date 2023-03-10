@@ -1,6 +1,10 @@
 const db = require('./db')
 const debug = require('debug')('termPortal:models/comment')
 const User = require('../models/user')
+const {
+  portalAdminInitialEmail,
+  portalAdminInitialPassword
+} = require('../config/keys')
 
 class Comment {
   // Deserialize flat data into an organized comment object.
@@ -311,24 +315,21 @@ async function seedMockUsersInDb() {
 }
 
 async function seedPortalAdmin() {
-  const MOCK_ADMIN_BASE = 'admin'
-
   const {
-    rows: [mockAdmin]
-  } = await db.query('SELECT id FROM "user" WHERE username = $1', [
-    MOCK_ADMIN_BASE
-  ])
+    rows: [{ exists }]
+  } = await db.query(
+    "SELECT EXISTS (SELECT 1 FROM user_role WHERE role_name = 'portal admin')"
+  )
 
-  if (mockAdmin) {
-    return `Portal admin already exists (username: ${MOCK_ADMIN_BASE}, password: ${MOCK_ADMIN_BASE})`
-  }
+  if (exists) return 'Skipping creation of portal admin (already exists)'
 
+  const MOCK_ADMIN_BASE = 'admin'
   const adminUser = {
     username: MOCK_ADMIN_BASE,
     firstName: MOCK_ADMIN_BASE,
     lastName: MOCK_ADMIN_BASE,
-    password: MOCK_ADMIN_BASE,
-    email: `${MOCK_ADMIN_BASE}@rsdo.com`
+    password: portalAdminInitialPassword,
+    email: portalAdminInitialEmail
   }
   const userId = await User.create(adminUser)
   const assignAdminRole = db.query(
@@ -345,7 +346,7 @@ async function seedPortalAdmin() {
     [adminUser.username]
   )
   await Promise.all([assignAdminRole, activateAdminUser])
-  return `Successfully seeded portal admin (username: ${MOCK_ADMIN_BASE}, password: ${MOCK_ADMIN_BASE})`
+  return `Successfully created portal admin (username: ${adminUser.username}, password: ${adminUser.password})`
 }
 
 async function seedConsultants() {

@@ -4,6 +4,7 @@ block pageSpecificScipts
   script(nonce=cspNonce src="/javascripts/dictionaries.js")
   script(nonce=cspNonce src="/javascripts/pagination-extensions.js")
   script(nonce=cspNonce src="/javascripts/search-dictionary.js")
+  script(nonce=cspNonce src="/javascripts/query-focus-handler.js")
 
 block body
   section#fixed-top-section
@@ -26,14 +27,14 @@ block body
       .header-container-left-side.d-flex
         .header-container-divider-left
           //- h2#site-header-title 
-          h1#site-heading Seznam slovarjev
-          span#text-description.pe-xl-5.page-description Seznam vseh slovarjev, ki so na tem portalu na voljo uporabnikom.
+          h1#site-heading #{ t('Seznam slovarjev') }
+          span#text-description.pe-xl-5.page-description #{ t('Seznam vseh slovarjev, ki so na tem portalu na voljo uporabnikom.') }
     hr#header-row.mt-1.mb-0
 
   //- - const c = {sideMenu:false, h2: 'Urejanje', h1: 'Nov slovar', description: 'Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.', helpLink: { linkHref: '/pomoc', linkText: 'Več ...' }, buttons: [{ type: 'cancel', content: 'Prekliči', url:"." },{ type: 'button', content: 'Ustvari', form: 'form-dictionary-new' }] }
   //- +mainHeader(c)
   .content-hold-prerequisites.ps-3.pe-3
-    #offset-main.container-fluid.mt-4.ps-sm-3.errc
+    #offset-main.container-fluid.mt-4.px-sm-3.errc
       .p-squeeze-lg
         .row
           .col-md-6

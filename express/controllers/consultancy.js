@@ -8,6 +8,7 @@ const { DEFAULT_HITS_PER_PAGE } = require('../config/settings')
 const generateQuery = require('../models/helpers/search/generate-query')
 const { searchConsultancyEntryIndex } = require('../models/search-engine')
 const { prepareConsultancyEntries } = require('../models/helpers/search')
+const { getInstanceSetting, intoDbArray } = require('../models/helpers')
 // const { minEntriesRequirementCheckAndAct } = require('./helpers/dictionary')
 
 const consultancy = {}
@@ -15,6 +16,9 @@ const consultancyAdmin = {}
 
 consultancy.index = async (req, res) => {
   req.indexHitPageAmount = '5'
+
+  res.locals.isOwnConsultancyEnabled =
+    (await getInstanceSetting('consultancy_type')) === 'own'
 
   return await consultancyRequest(
     req,
@@ -25,17 +29,24 @@ consultancy.index = async (req, res) => {
 }
 
 consultancy.search = async (req, res) => {
+  res.locals.isOwnConsultancyEnabled =
+    (await getInstanceSetting('consultancy_type')) === 'own'
+
+  res.locals.queryKey = req.query.q
+
   return await consultancyRequest(
     req,
     res,
     'published',
-    'pages/consultancy/search'
+    'pages/consultancy/search',
+    req.t('Odgovori')
   )
 }
 
 consultancy.specificQuestion = async (req, res) => {
   const { id } = req.params
 
+  // TODO i18n TIME FORMAT
   const entry = await ConsultancyEntry.fetchByIdWithFormattedTime(id)
   // const author = await User.fetchUser(entry.authorId)
 
@@ -44,12 +55,13 @@ consultancy.specificQuestion = async (req, res) => {
   entry.answerAuthors = entry.answerAuthors.filter(author => author !== '')
 
   let authorString
+  // TODO I18n
   if (entry.answerAuthors.length === 1) {
-    authorString = 'Avtor'
+    authorString = req.t('Avtor')
   } else if (entry.answerAuthors.length === 2) {
-    authorString = 'Avtorja'
+    authorString = req.t('Avtorja')
   } else {
-    authorString = 'Avtorji'
+    authorString = req.t('Avtorji')
   }
 
   entry.domain = allPrimaryDomains.filter(
@@ -62,18 +74,26 @@ consultancy.specificQuestion = async (req, res) => {
     entry.domain = false
   }
 
+  res.locals.isOwnConsultancyEnabled =
+    (await getInstanceSetting('consultancy_type')) === 'own'
+
   res.render('pages/consultancy/item-details', {
     allPrimaryDomains,
     authorString,
-    entry
+    entry,
+    title: req.t('Odgovor')
   })
 }
 
 consultancy.new = async (req, res) => {
   const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
 
+  res.locals.isOwnConsultancyEnabled =
+    (await getInstanceSetting('consultancy_type')) === 'own'
+
   res.render('pages/consultancy/ask', {
-    allPrimaryDomains
+    allPrimaryDomains,
+    title: req.t('Novo vprašanje')
   })
 }
 
@@ -83,6 +103,7 @@ consultancyAdmin.new = async (req, res) => {
     res,
     'new',
     'pages/consultancy/admin/index',
+    req.t('Novo'),
     true,
     false
   )
@@ -95,7 +116,8 @@ consultancyAdmin.users = async (req, res) => {
 
   res.render('pages/consultancy/admin/users', {
     allPrimaryDomains,
-    users
+    users,
+    title: req.t('Svetovalci')
   })
 }
 
@@ -105,6 +127,7 @@ consultancyAdmin.rejected = async (req, res) => {
     res,
     'rejected',
     'pages/consultancy/admin/rejected',
+    req.t('Zavrnjeno'),
     true,
     false
   )
@@ -116,8 +139,10 @@ consultancyAdmin.published = async (req, res) => {
     res,
     'published',
     'pages/consultancy/admin/published',
+    req.t('Objavljeno'),
     true,
-    false
+    false,
+    'published'
   )
 }
 
@@ -127,6 +152,7 @@ consultancyAdmin.prepared = async (req, res) => {
     res,
     'review',
     'pages/consultancy/admin/prepared',
+    req.t('Pripravljeno'),
     true,
     false
   )
@@ -142,6 +168,7 @@ consultancyAdmin.inProgress = async (req, res) => {
     res,
     'in progress',
     'pages/consultancy/admin/in-progress',
+    req.t('V delu'),
     true,
     false
   )
@@ -171,6 +198,7 @@ consultancyAdmin.edit = async (req, res) => {
   } else if (editors.filter(editors => editors.id === req.user.id) < 1) {
     return res.send('You do not have permsisions to edit this answer')
   }
+  // TODO i18n TIME FORMAT
   const entry = await ConsultancyEntry.fetchByIdWithFormattedTime(id)
   const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
   const author = await User.fetchUser(entry.authorId)
@@ -186,7 +214,8 @@ consultancyAdmin.edit = async (req, res) => {
     author,
     isPublished,
     // TODO Luka: I suspect this will not work as intended on staging or production environments. Test.
-    urlPrefix: req.protocol + '://' + req.get('host')
+    urlPrefix: req.protocol + '://' + req.get('host'),
+    title: req.t('Urejanje')
   })
 }
 
@@ -198,14 +227,14 @@ function dateMap(obj) {
   return obj
 }
 
-async function mapDomainIdToDomainNameSlovene(obj) {
+async function mapDomainIdToDomainNameSlovene(obj, t) {
   try {
     const area = await Domain.fetchById(
       obj.domainPrimaryId ? obj.domainPrimaryId : obj.domainPrimaryIdInitial
     )
     obj.area = area.nameSl
   } catch {
-    obj.area = 'Ni področja'
+    obj.area = t('Ni področja')
   }
 
   return obj
@@ -227,14 +256,14 @@ function mapInitialValuesAsEmpty(obj) {
   return obj
 }
 
-async function mapEntryList(list) {
+async function mapEntryList(list, t) {
   return await Promise.all(
     list.map(entry => {
       let entity = utils.compose(dateMap, mapInitialValuesAsEmpty)(entry)
 
       // TODO Each mapDomainIdToDomainNameSlovene call leads to one DB query.
       // TODO Test if and what scenarios can lead to too many calls and how it can be avoided.
-      entity = utils.composeAsync(mapDomainIdToDomainNameSlovene)(entry)
+      entity = utils.composeAsync(mapDomainIdToDomainNameSlovene)(entry, t)
 
       return entity
     })
@@ -283,10 +312,25 @@ async function consultancyRequest(
   res,
   type,
   url,
+  title = req.t('Svetovanje'),
   isAdminPage = false,
   privilegeToSeAll = true // this method seperates consultancy main from admin, so all results get visible TO ALL REGISTERED USERS, not just admins
 ) {
   const searchString = req.query.q?.trim() ?? ''
+
+  let allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+
+  /// filter selected domains for the prompt ///
+  // Not duplicates of this code arise...
+  const pdList = intoDbArray(req.query.pd, 'always')
+
+  allPrimaryDomains = allPrimaryDomains.map(entry => {
+    if (pdList.includes(`${entry.id}`)) {
+      entry.selected = true
+    }
+    return entry
+  })
+  /// //////////////////////////////////////////
 
   let assignedConsultant
 
@@ -333,11 +377,11 @@ async function consultancyRequest(
 
   let entries = prepareConsultancyEntries(hits)
   // console.log({ entries, numberOfAllHits, numberOfAllPages })
-
+  // TODO I18n - nameSl
   entries = entries.map(entry => {
     entry.primaryDomain = entry.primaryDomain
       ? entry.primaryDomain.nameSl
-      : 'nedefinirano'
+      : req.t('nedefinirano')
 
     if (entry.assignedConsultants) {
       entry.firstName = entry.assignedConsultants[0]?.firstName
@@ -364,8 +408,6 @@ async function consultancyRequest(
 
     return entry
   })
-
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
 
   // const entryList = await mapEntryList(inProgressEntryList)
   const userList = await User.fetchConsultants()
@@ -401,7 +443,9 @@ async function consultancyRequest(
     entries, // entryList,
     userList,
     numberOfAllPages,
-    queryCount: numberOfAllHits
+    queryCount: numberOfAllHits,
+    consultancyPageType: type,
+    title
   })
 }
 

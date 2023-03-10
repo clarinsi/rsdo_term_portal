@@ -1,7 +1,7 @@
 block input-structure
   .switches
     .subject-name.mt-2
-      span.input-name-txt STRUKTURA - ELEMENTI SLOVARSKEGA SESTAVKA:
+      span.input-name-txt= t('STRUKTURA - ELEMENTI SLOVARSKEGA SESTAVKA:')
 
     .switch-forms-and-key-word
       .row
@@ -9,11 +9,11 @@ block input-structure
           .switch-forms.mb-3.mb-sm-0
             .form-switch.d-flex
               input.form-check-input(type="checkbox" disabled checked)
-              label.form-check-label(for="Termin") Termin
+              label.form-check-label(for="Termin")= t('Termin')
 
-            .form-switch.d-flex
-              input.form-check-input(type="checkbox" disabled checked)
-              label.form-check-label(for="headword-ele") Oblike, naglasi, izgovor
+            //- .form-switch.d-flex
+            //-   input.form-check-input(type="checkbox" disabled checked)
+            //-   label.form-check-label(for="headword-ele") Oblike, naglasi, izgovor
 
             if dictionary
               if dictionary.hasDomainLabels
@@ -23,21 +23,21 @@ block input-structure
                     name="hasDomainLabels"
                     checked
                   )
-                  label.form-check-label.text-nowrap(for="domain-labels") Področna oznaka
+                  label.form-check-label.text-nowrap(for="domain-labels")= t('Področna oznaka')
               else
                 .form-switch.d-flex
                   input#domain-labels.form-check-input(
                     type="checkbox"
                     name="hasDomainLabels"
                   )
-                  label.form-check-label.text-nowrap(for="domain-labels") Področna oznaka
+                  label.form-check-label.text-nowrap(for="domain-labels")= t('Področna oznaka')
             else
               .form-switch.d-flex
                 input#domain-labels.form-check-input(
                   type="checkbox"
                   name="hasDomainLabels"
                 )
-                label.form-check-label.text-nowrap(for="domain-labels") Področna oznaka
+                label.form-check-label.text-nowrap(for="domain-labels")= t('Področna oznaka')
 
             if dictionary
               if dictionary.hasLabel
@@ -47,14 +47,14 @@ block input-structure
                     name="hasLabel"
                     checked
                   )
-                  label.form-check-label(for="label-checkbox") Pojasnilo
+                  label.form-check-label(for="label-checkbox")= t('Pojasnilo')
               else
                 .form-switch.d-flex
                   input#label-checkbox.form-check-input(
                     type="checkbox"
                     name="hasLabel"
                   )
-                  label.form-check-label(for="label-checkbox") Pojasnilo
+                  label.form-check-label(for="label-checkbox")= t('Pojasnilo')
 
             else
               .form-switch.d-flex
@@ -62,7 +62,7 @@ block input-structure
                   type="checkbox"
                   name="hasLabel"
                 )
-                label.form-check-label(for="label-checkbox") Pojasnilo
+                label.form-check-label(for="label-checkbox")= t('Pojasnilo')
 
             .form-switch.d-flex
               input#definition-check-box.form-check-input(
@@ -70,7 +70,7 @@ block input-structure
                 name="hasDefinition"
                 checked
               )
-              label.form-check-label(for="definition-check-box") Definicija
+              label.form-check-label(for="definition-check-box")= t('Definicija')
 
             if dictionary
               if dictionary.hasSynonyms
@@ -80,21 +80,21 @@ block input-structure
                     name="hasSynonyms"
                     checked
                   )
-                  label.form-check-label(for="synonyms") Sinonim
+                  label.form-check-label(for="synonyms")= t('Sinonim')
               else
                 .form-switch.d-flex
                   input#synonyms.form-check-input(
                     type="checkbox"
                     name="hasSynonyms"
                   )
-                  label.form-check-label(for="synonyms") Sinonim
+                  label.form-check-label(for="synonyms")= t('Sinonim')
             else
               .form-switch.d-flex
                 input#synonyms.form-check-input(
                   type="checkbox"
                   name="hasSynonyms"
                 )
-                label.form-check-label(for="synonyms") Sinonim
+                label.form-check-label(for="synonyms")= t('Sinonim')
 
             if dictionary
               if dictionary.hasLinks
@@ -104,16 +104,16 @@ block input-structure
                     name="hasLinks"
                     checked
                   )
-                  label.form-check-label(for="links") Povezani termin
+                  label.form-check-label(for="links")= t('Povezani termin')
               else
                 .form-switch.d-flex
                   input#links.form-check-input(type="checkbox" name="hasLinks")
-                  label.form-check-label(for="links") Povezani termin
+                  label.form-check-label(for="links")= t('Povezani termin')
 
             else
               .form-switch.d-flex
                 input#links.form-check-input(type="checkbox" name="hasLinks")
-                label.form-check-label(for="links") Povezani termin
+                label.form-check-label(for="links")= t('Povezani termin')
 
             //- .form-switch.d-flex
             //-   input#other.form-check-input(type="checkbox" name="hasOther")
@@ -127,15 +127,15 @@ block input-structure
                     name="hasOther"
                     checked
                   )
-                  label.form-check-label(for="other") Drugo
+                  label.form-check-label(for="other")= t('Drugo')
               else
                 .form-switch.d-flex
                   input#other.form-check-input(type="checkbox" name="hasOther")
-                  label.form-check-label(for="other") Drugo
+                  label.form-check-label(for="other")= t('Drugo')
             else
               .form-switch.d-flex
                 input#other.form-check-input(type="checkbox" name="hasOther")
-                label.form-check-label(for="other") Drugo
+                label.form-check-label(for="other")= t('Drugo')
 
             if dictionary
               if dictionary.hasForeignLanguages
@@ -145,14 +145,14 @@ block input-structure
                     name="hasForeignLanguages"
                     checked
                   )
-                  label.form-check-label.text-nowrap(for="language-group") Tuji jezik
+                  label.form-check-label.text-nowrap(for="language-group")= t('Tuji jezik')
               else
                 .form-switch.d-flex
                   input#language-group.form-check-input(
                     type="checkbox"
                     name="hasForeignLanguages"
                   )
-                  label.form-check-label.text-nowrap(for="language-group") Tuji jezik
+                  label.form-check-label.text-nowrap(for="language-group")= t('Tuji jezik')
             else
               .form-switch.d-flex
                 input#language-group.form-check-input(
@@ -160,7 +160,7 @@ block input-structure
                   name="hasForeignLanguages"
                   checked
                 )
-                label.form-check-label.text-nowrap(for="language-group") Tuji jezik
+                label.form-check-label.text-nowrap(for="language-group")= t('Tuji jezik')
 
             if dictionary
               if !dictionary.hasForeignLanguages
@@ -170,7 +170,7 @@ block input-structure
                   )
                   label#termin-subgroup-label.form-check-label.language-subgroups(
                     for="termin-language-subgroup"
-                  ) Termin
+                  )= t('Termin')
               else
                 .form-switch.d-flex
                   input#termin-language-subgroup.form-check-input.disabled-input(
@@ -179,7 +179,7 @@ block input-structure
                   )
                   label#termin-subgroup-label.form-check-label.language-subgroups(
                     for="termin-language-subgroup"
-                  ) Termin
+                  )= t('Termin')
             else
               .form-switch.d-flex
                 input#termin-language-subgroup.form-check-input.disabled-input(
@@ -188,7 +188,7 @@ block input-structure
                 )
                 label#termin-subgroup-label.form-check-label.language-subgroups(
                   for="termin-language-subgroup"
-                ) Termin
+                )= t('Termin')
 
             if dictionary
               if !dictionary.hasForeignLanguages
@@ -199,7 +199,7 @@ block input-structure
                   )
                   label#definition-subgroup-label.form-check-label.language-subgroups(
                     for="definition-language-subgroup"
-                  ) Definicija
+                  )= t('Definicija')
               else if dictionary.hasForeignDefinitions
                 .form-switch.d-flex
                   input#definition-language-subgroup.form-check-input(
@@ -209,7 +209,7 @@ block input-structure
                   )
                   label#definition-subgroup-label.form-check-label.language-subgroups(
                     for="definition-language-subgroup"
-                  ) Definicija
+                  )= t('Definicija')
               else
                 .form-switch.d-flex
                   input#definition-language-subgroup.form-check-input(
@@ -218,7 +218,7 @@ block input-structure
                   )
                   label#definition-subgroup-label.form-check-label.language-subgroups(
                     for="definition-language-subgroup"
-                  ) Definicija
+                  )= t('Definicija')
             else
               .form-switch.d-flex
                 input#definition-language-subgroup.form-check-input(
@@ -227,7 +227,7 @@ block input-structure
                 )
                 label#definition-subgroup-label.form-check-label.language-subgroups(
                   for="definition-language-subgroup"
-                ) Definicija
+                )= t('Definicija')
 
             if dictionary
               if !dictionary.hasForeignLanguages
@@ -238,7 +238,7 @@ block input-structure
                   )
                   label#synonym-subgroup-label.form-check-label.language-subgroups(
                     for="synonym-language-subgroup"
-                  ) Sinonim
+                  )= t('Sinonim')
               else if dictionary.hasForeignSynonyms
                 .form-switch.d-flex
                   input#synonym-language-subgroup.form-check-input(
@@ -248,7 +248,7 @@ block input-structure
                   )
                   label#synonym-subgroup-label.form-check-label.language-subgroups(
                     for="synonym-language-subgroup"
-                  ) Sinonim
+                  )= t('Sinonim')
               else
                 .form-switch.d-flex
                   input#synonym-language-subgroup.form-check-input(
@@ -257,7 +257,7 @@ block input-structure
                   )
                   label#synonym-subgroup-label.form-check-label.language-subgroups(
                     for="synonym-language-subgroup"
-                  ) Sinonim
+                  )= t('Sinonim')
             else
               .form-switch.d-flex
                 input#synonym-language-subgroup.form-check-input(
@@ -266,7 +266,7 @@ block input-structure
                 )
                 label#synonym-subgroup-label.form-check-label.language-subgroups(
                   for="synonym-language-subgroup"
-                ) Sinonim
+                )= t('Sinonim')
 
             if dictionary
               if dictionary.hasImages
@@ -276,18 +276,18 @@ block input-structure
                     name="hasImages"
                     checked
                   )
-                  label.form-check-label(for="images") Slika
+                  label.form-check-label(for="images")= t('Slika')
               else
                 .form-switch.d-flex
                   input#images.form-check-input(
                     type="checkbox"
                     name="hasImages"
                   )
-                  label.form-check-label(for="images") Slika
+                  label.form-check-label(for="images")= t('Slika')
             else
               .form-switch.d-flex
                 input#images.form-check-input(type="checkbox" name="hasImages")
-                label.form-check-label(for="images") Slika
+                label.form-check-label(for="images")= t('Slika')
 
             if dictionary
               if dictionary.hasAudio
@@ -297,15 +297,15 @@ block input-structure
                     name="hasAudio"
                     checked
                   )
-                  label.form-check-label(for="audio") Zvok
+                  label.form-check-label(for="audio")= t('Zvok')
               else
                 .form-switch.d-flex
                   input#audio.form-check-input(type="checkbox" name="hasAudio")
-                  label.form-check-label(for="audio") Zvok
+                  label.form-check-label(for="audio")= t('Zvok')
             else
               .form-switch.d-flex
                 input#audio.form-check-input(type="checkbox" name="hasAudio")
-                label.form-check-label(for="audio") Zvok
+                label.form-check-label(for="audio")= t('Zvok')
 
             if dictionary
               if dictionary.hasVideo
@@ -315,27 +315,28 @@ block input-structure
                     name="hasVideos"
                     checked
                   )
-                  label.form-check-label(for="video") Video
+                  label.form-check-label(for="video")= t('Video')
               else
                 .form-switch.d-flex
                   input#video.form-check-input(
                     type="checkbox"
                     name="hasVideos"
                   )
-                  label.form-check-label(for="video") Video
+                  label.form-check-label(for="video")= t('Video')
             else
               .form-switch.d-flex
                 input#video.form-check-input(type="checkbox" name="hasVideos")
-                label.form-check-label(for="video") Video
+                label.form-check-label(for="video")= t('Video')
           .ms-2.ms-md-5.flex-grow-1
             include /utilities/entry-preview
 
     .subject-name.mt-3
-      span.input-name-txt TUJI JEZIKI
+      span.input-name-txt= t('TUJI JEZIKI')
     .row.mb-3
       if dictionary
         if dictionary.hasForeignLanguages
           .col-sm-6.select-languages
+            //- TODO I18n 
             select#languages-input.without-addition(
               name="language"
               multiple
@@ -366,6 +367,6 @@ block input-structure
             each language in allLanguages
               option(value=language.id)= language.nameSl
       .col-sm.d-flex.align-items-center
-        span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Izberite vse tuje jezike, ki jih bo terminološki slovar vseboval.
+        span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Izberite vse tuje jezike, ki jih bo terminološki slovar vseboval.')
       #invalid-language-section.invalid-feedback-selection.hidden-section.mt-3
-        | Niste vpisali tujih jezikov.
+        = t('Niste vpisali tujih jezikov.')

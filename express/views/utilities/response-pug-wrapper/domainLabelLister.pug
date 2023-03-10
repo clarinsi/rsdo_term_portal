@@ -1,0 +1,28 @@
+each result in results
+  tr
+    input(type="hidden" name="domainLabelId" value=result.id)
+    th(scope="row")
+      if result.isVisible
+        input.form-check.checkbox-table(
+          type="checkbox"
+          name="isVisible"
+          checked
+          disabled
+        )
+      else
+        input.form-check.checkbox-table(
+          type="checkbox"
+          name="isVisible"
+          disabled
+        )
+    td.tdata-area= result.name
+    td.buttons-group
+      .table-buttons
+        button.p-0.table-button-grp.me-3.edit-row-btn(type="button")
+          img(src="/images/u_edit-alt.svg" alt="")
+        button.p-0.table-button-grp.delete-row-btn(
+          type="button"
+          data-bs-target="#alert-modal"
+          data-bs-toggle="modal"
+        )
+          img(src="/images/red-trash-icon.svg" alt="")

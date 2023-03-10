@@ -16,7 +16,7 @@ BEGIN
 	IF linkedTermaniaId IS NULL THEN
 		INSERT INTO public.linked_portal(
 			is_enabled, time_last_synced, code, name, url_update/*, url_index*/)
-			VALUES (true, NULL, 'AT', 'Amebis/Termania', 'https://api-demo.termania.net/rsdo/1.0/dictionaries/$SOURCE_ID/entries?lastSynced=$SINCE'/*, 'https://api-demo.termania.net/rsdo/1.0/dictionaries'*/)
+			VALUES (true, NULL, 'TA', 'Termania', 'https://api.termania.net/rsdo/1.0/dictionaries/$SOURCE_ID/entries?lastSynced=$SINCE'/*, 'https://api-demo.termania.net/rsdo/1.0/dictionaries'*/)
 			RETURNING id into linkedTermaniaId;
 	END IF;
 	RAISE NOTICE 'Termania linked portal id = %', linkedTermaniaId;
@@ -34,10 +34,9 @@ BEGIN
 		CONSTRAINT importDict_pkey PRIMARY KEY (source_id)
 	);
 	INSERT INTO importDict (source_id, code, description, author, domain_udk_code) VALUES
-    ('OBRSLO', 'ATOBRSLO', 'Vojaški slovar študentov obramboslovja', 'Fakulteta za družbene vede', '355'),
-    ('1000102', 'AT1000102', 'Angleško-slovenski astronomski slovar', 'Raziskovalni program Astrofizika in fizika atmosfere na Fakulteti za matematiko in fiziko Univerze v Ljubljani ', '52'),
-    ('1000126', 'AT1000126', 'Angleško-slovenski glosar s področja konjeništva', 'Sintia Marič', '796/799'),
-    ('1000268', 'AT1000268', 'Terminološki slovar elektronskega kajenja ', 'Žiga Krajnc', '');
+    ('OBRSLO', 'Obramboslovje', 'Vojaški slovar študentov obramboslovja', 'Fakulteta za družbene vede', '355'),
+    ('1000102', 'Astronomija', 'Angleško-slovenski astronomski slovar', 'Raziskovalni program Astrofizika in fizika atmosfere na Fakulteti za matematiko in fiziko Univerze v Ljubljani ', '52'),
+    ('1000126', 'Konjeništvo', 'Angleško-slovenski glosar s področja konjeništva', 'Sintia Marič', '796/799');
 
 	FOR zd IN SELECT z.*, d.id AS domain_id 
 				FROM importDict AS z 

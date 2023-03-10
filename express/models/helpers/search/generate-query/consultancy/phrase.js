@@ -45,7 +45,7 @@ module.exports = function (searchString, filters, hitsPerPage, page) {
         filter: []
       }
     },
-    sort: ['_score', 'timeCreated']
+    sort: ['_score', { timeCreated: 'desc' }]
   }
 
   if (filters.status) {

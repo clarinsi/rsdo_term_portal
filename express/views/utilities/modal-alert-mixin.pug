@@ -1,4 +1,4 @@
-mixin alertModal(modalId="alert-modal", acceptBtn="Uporabi", cancelBtn="Zapri", acceptBtnId= "accept-btn", cancelBtnId= "cancel-btn", alertMainText = "Ali res želite izbrisati vnos? Dejanja ni mogoče razveljaviti.", alertContentTextId = "modal-alert-text")
+mixin alertModal(modalId="alert-modal", acceptBtn=t("Uporabi"), cancelBtn=t("Zapri"), acceptBtnId= "accept-btn", cancelBtnId= "cancel-btn", alertMainText = t("Ali res želite izbrisati vnos? Dejanja ni mogoče razveljaviti."), alertContentTextId = "modal-alert-text")
   .modal.fade(
     id=modalId
     tabindex="-1"
@@ -8,7 +8,7 @@ mixin alertModal(modalId="alert-modal", acceptBtn="Uporabi", cancelBtn="Zapri", 
     .modal-dialog.modal-lg
       .modal-content
         .modal-header
-          h5#modal-alert-label.modal-title.modal-title-blue Pozor
+          h5#modal-alert-label.modal-title.modal-title-blue #{ t('Pozor') }
           button.btn-close(
             type="button"
             data-bs-dismiss="modal"

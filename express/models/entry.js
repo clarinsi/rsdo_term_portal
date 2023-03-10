@@ -184,7 +184,12 @@ Entry.fetchFull = async entryId => {
             SELECT jsonb_strip_nulls(
              jsonb_build_object(
                 'version', version,
-                'version_time', version_time
+                'version_time', version_time,
+                'version_author', (
+                  SELECT username
+                  FROM "user"
+                  WHERE id = (version_snapshot['version_author'])::int
+                )
               )
             )
             FROM entry_version_history
@@ -232,6 +237,7 @@ Entry.fetchFullWithOrderedForeignLanguages = async entryId => {
           'audio', e.audio,
           'video', e.video,
           'time_modified', e.time_modified,
+          'external_url', e.external_url,
           'domain_labels', ARRAY(
             SELECT name
             FROM entry_domain_label edl
@@ -421,6 +427,8 @@ Entry.deleteAllLinks = async dictionaryId => {
 
 // (Re)index specific entry into entry search index.
 Entry.indexIntoSearchEngine = async (entryId, shouldWait) => {
+  // TODO If this method is ever used for linked portals/dictionaries,
+  // TODO rework the source object below (already done in Dictionary.indexIntoSearchEngine).
   const values = [entryId]
   const text = `
     SELECT
@@ -465,7 +473,7 @@ Entry.indexIntoSearchEngine = async (entryId, shouldWait) => {
               )
             )
             FROM entry_foreign ef
-            LEFT JOIN LANGUAGE l ON l.id = ef.language_id
+            LEFT JOIN language l ON l.id = ef.language_id
             WHERE entry_id = e.id
           )
         )
@@ -495,10 +503,11 @@ Entry.indexIntoSearchEngine = async (entryId, shouldWait) => {
 
   const { dictionary, primary_domain: primaryDomain } = dataToIndex
   let { entry } = dataToIndex
-  // TODO Luka: I expect "source" needing a rework once linked portals and dictionaries start working.
+
+  // TODO i18n Luka: index portal name for both languages?
   const source = {
     code: await getInstanceSetting('portal_code'),
-    name: await getInstanceSetting('portal_name')
+    name: await getInstanceSetting('portal_name_sl')
   }
 
   entry = prepareEntryForIndexing(entry)
@@ -618,13 +627,17 @@ Entry.update = async (userId, entry) => {
 // Fetch a single version snapshot of a single entry from DB.
 Entry.fetchVersionSnapshot = async (entryId, version) => {
   const {
-    rows: [{ version_snapshot: historySnapshot }]
+    rows: [{ version_snapshot: historySnapshot, author }]
   } = await db.query(
-    'SELECT version_snapshot FROM entry_version_history WHERE entry_id = $1 and version = $2',
+    `SELECT v.version_snapshot, (
+        SELECT u.username
+        FROM "user" u
+        WHERE u.id = (v.version_snapshot['version_author'])::int) as author
+    FROM entry_version_history v WHERE v.entry_id = $1 and v.version = $2`,
     [entryId, version]
   )
 
-  return historySnapshot
+  return { data: historySnapshot, author }
 }
 
 /* Fetch by language and entry Id. Note that this version includes the language name */

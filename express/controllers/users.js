@@ -12,7 +12,10 @@ const user = {}
 
 user.register = async (req, res) => {
   // TODO Add validation.
-  const userId = await User.create(req.body)
+  const userId = await User.create({
+    ...req.body,
+    language: req.session.language
+  })
   const activationToken = (await RandomBytesAsync(32)).toString('hex')
   await User.saveActivationToken(userId, activationToken)
   const { email: userEmail, username } = req.body
@@ -20,16 +23,16 @@ user.register = async (req, res) => {
   activationLink.searchParams.set('token', activationToken)
   activationLink = activationLink.href
   const renderAsync = promisify(req.app.render.bind(req.app))
-  const emailHtml = await renderAsync('email/user-activation', {
+  const emailHtml = await renderAsync(`email/user-activation_${req.language}`, {
     username,
     activationLink
   })
   await email.send({
     to: userEmail,
-    subject: 'Aktivacija računa',
+    subject: req.t('Aktivacija računa'),
     html: emailHtml
   })
-  res.send('Registracija uspešna')
+  res.send(req.t('Registracija uspešna'))
 }
 
 user.activateAccount = async (req, res) => {
@@ -39,6 +42,12 @@ user.activateAccount = async (req, res) => {
   await User.activateAccount(user)
   const loginAsync = promisify(req.login.bind(req))
   await loginAsync(user)
+
+  if (req.session.language) {
+    await User.updateLanguage(user.id, req.session.language)
+    delete req.session.language
+  }
+
   res.redirect('/')
 }
 
@@ -46,8 +55,9 @@ user.login = async (req, res, next) => {
   passport.authenticate(
     'local',
     {
-      badRequestMessage:
+      badRequestMessage: req.t(
         'Nepravilno uporabniško ime, elektronski naslov ali geslo.'
+      )
     },
     async (err, user, info) => {
       if (err) return next(err)
@@ -69,7 +79,12 @@ user.login = async (req, res, next) => {
         res.cookie('remember_me', rememberMeToken, rememberMeCookieSettings)
       }
 
-      res.send('Prijava uspešna')
+      if (req.session.language) {
+        await User.updateLanguage(user.id, req.session.language)
+        delete req.session.language
+      }
+
+      res.send(req.t('Prijava uspešna'))
     }
   )(req, res, next)
 }
@@ -81,6 +96,8 @@ user.logout = async (req, res) => {
     res.clearCookie('remember_me')
     await User.clearRememberMeToken(rememberMeToken)
   }
+
+  req.session.language = req.user.language
 
   req.logout()
   // Manually clear session.passport due to bug in current passport version.
@@ -96,7 +113,7 @@ user.list = async (req, res) => {
     1
   )
   res.render('pages/admin/user-list', {
-    title: 'Seznam slovarjeva',
+    title: req.t('Seznam uporabnikov'),
     numberOfAllPages,
     results
   })
@@ -104,7 +121,10 @@ user.list = async (req, res) => {
 
 user.listAllWithPortalRoles = async (req, res) => {
   const users = await User.fetchAllWithPortalRoles()
-  res.render('pages/admin/user-portals', { title: 'Seznam slovarjev', users })
+  res.render('pages/admin/user-portals', {
+    title: req.t('Skrbniki portala'),
+    users
+  })
 }
 
 user.findByUsernameOrEmail = async (req, res) => {
@@ -125,7 +145,7 @@ user.adminEdit = async (req, res) => {
     User.fetchUserRoles(userId)
   ])
   res.render('pages/admin/user-edit', {
-    title: 'Urejanje uporabnikov',
+    title: req.t('Uporabnik'),
     userData,
     userRoles
   })

@@ -391,7 +391,7 @@ body {
 
 /*responsive*/
 
-@media (max-width: 1192px) {
+@media (max-width: v.$layout-breakpoint-x-large) {
   .table-users thead {
     display: none;
   }
@@ -709,6 +709,13 @@ textarea.form-control {
 
 .select2-container--default .select2-selection--multiple {
   border-radius: 0;
+}
+
+.select2-container--default.select2-container--focus
+  .select2-selection--multiple {
+  box-shadow: 0 0 0 0.25rem #0d6efd40;
+  border-color: #86b7fe;
+  outline: 0;
 }
 
 .autocomplete {

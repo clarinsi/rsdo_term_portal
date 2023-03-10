@@ -29,8 +29,8 @@ passport.deserializeUser(async (id, done) => {
 
 passport.use(
   new LocalStrategy(
-    { usernameField: 'usernameOrEmail' },
-    async (usernameOrEmail, password, done) => {
+    { passReqToCallback: true, usernameField: 'usernameOrEmail' },
+    async (req, usernameOrEmail, password, done) => {
       try {
         const { rows } = await db.query(
           'SELECT id, status, bcrypt_hash FROM "user" WHERE username = $1 OR email = $1',
@@ -40,14 +40,17 @@ passport.use(
 
         if (!user) {
           return done(null, false, {
-            message: 'Nepravilno uporabniško ime, elektronski naslov ali geslo.'
+            message: req.t(
+              'Nepravilno uporabniško ime, elektronski naslov ali geslo.'
+            )
           })
         }
 
         if (user.status !== 'active') {
           return done(null, false, {
-            message:
+            message: req.t(
               'Uporabniški račun še ni aktiviran. Kliknite aktivacijsko povezavo, katero smo vam poslali po elektronski pošti.'
+            )
           })
         }
 
@@ -57,7 +60,9 @@ passport.use(
         )
         if (!isCorrectPassword) {
           return done(null, false, {
-            message: 'Nepravilno uporabniško ime, elektronski naslov ali geslo.'
+            message: req.t(
+              'Nepravilno uporabniško ime, elektronski naslov ali geslo.'
+            )
           })
         }
 

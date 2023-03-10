@@ -8,27 +8,38 @@ mixin result-section(list, title)
 
 mixin result-sections
   +result-section(entriesByCategory.uncategorized, "")
-  +result-section(entriesByCategory.byTerm, "ISKANI NIZ JE BIL NAJDEN <b class='results-secton-title fw-700'>V IZTOČNICAH</b> SLOVARSKIH SESTAVKOV")
-  +result-section(entriesByCategory.byForeignTerm, "ISKANI NIZ JE BIL NAJDEN <b class='results-secton-title fw-700'>V TUJEJEZIČNIH USTREZNIKIH</b> SLOVARSKIH SESTAVKOV")
-  +result-section(entriesByCategory.byOther, "ISKANI NIZ JE BIL NAJDEN <b class='results-secton-title fw-700'>V DRUGI VSEBINI</b> SLOVARSKIH SESTAVKOV")
+  +result-section(entriesByCategory.byTerm, `${t('ISKANI NIZ JE BIL NAJDEN')} <b class='results-secton-title fw-700'>${t('V IZTOČNICAH')}</b> ${t('SLOVARSKIH SESTAVKOV')}`)
+  +result-section(entriesByCategory.byForeignTerm, `${t('ISKANI NIZ JE BIL NAJDEN')} <b class='results-secton-title fw-700'>${t('V TUJEJEZIČNIH USTREZNIKIH')}</b> ${t('SLOVARSKIH SESTAVKOV')}`)
+  +result-section(entriesByCategory.byOther, `${t('ISKANI NIZ JE BIL NAJDEN')} <b class='results-secton-title fw-700'>${t('V DRUGI VSEBINI')}</b> ${t('SLOVARSKIH SESTAVKOV')}`)
 
 mixin result-panel(rpList)
   #res-panel.results-root.w-100.ms-0
     #chevrons-left.d-flex
     .header-container-divider-left
-      h1#site-heading Seznam zadetkov
+      h1#site-heading= t('Seznam zadetkov')
 
     hr#disposable-break.mt-0
     //- include ./result-panel-decision-mixin
     //- +decision(0)
+    include /utilities/pager
     .results-quickstats.row.align-items-center
       .row.pe-0.align-items-center
-        .col-md-6
-          span.text-header-title-gray Rezultati: #{ numberOfAllHits }
-        .col-md-6.mx-auto.text-center.d-flex.justify-content-end.pe-0
-          include /utilities/pager
-          +pager(page)
+        .col-md-3
+          span.text-header-title-gray= t('Rezultati: ') + numberOfAllHits
+        .col-md-5
+          if (consultancyHits > 0)
+            #consulancy-results-container
+              include /components/search-and-filter/consultancy-results-content
+        .col-md-4.mx-auto.text-center.d-flex.justify-content-end.pe-0
+          +pager(page, 'pagination-top')
 
     #results-data.results-data.mt-4
       include ./result-item
       +result-sections
+
+    .results-quickstats.row.align-items-center.mt-4
+      .row.pe-0.align-items-center
+        .col-md-6
+          span.text-header-title-gray= t('Rezultati: ') + numberOfAllHits
+        .col-md-6.mx-auto.text-center.d-flex.justify-content-end.pe-0
+          +pager(page, 'pagination-bottom')

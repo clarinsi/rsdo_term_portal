@@ -1,3 +1,5 @@
+/* global __ */
+
 const { getInstanceSetting } = require('../../models/helpers')
 const Dictionary = require('../../models/dictionary')
 const cache = require('../../models/cache')
@@ -56,6 +58,7 @@ exports.minEntriesRequirementCheckAndAct = {
     if (!isBelowMinEntriesThreshold || wasEmailAlreadySent) return
 
     // Prepare and send notification emails.
+    // TODO I18n - nameSl
     const [nameSl, adminEmails, dictionariesAdminEmails] = await Promise.all([
       Dictionary.fetchName(dictionaryId),
       Dictionary.fetchAdminEmails(dictionaryId),
@@ -68,14 +71,16 @@ exports.minEntriesRequirementCheckAndAct = {
 
     const type = 'delete'
     const renderAsync = promisify(appRef.render.bind(appRef))
+    // TODO I18n - nameSl
     const emailHtml = await renderAsync('email/dictionary-status-change', {
       type,
       nameSl
     })
 
+    // TODO i18n - What language are the email title and content (we already have email translated)
     await email.send({
       to: allEmails,
-      subject: 'Obvestilo o številu gesel',
+      subject: __('Obvestilo o številu gesel'),
       html: emailHtml
     })
 
@@ -118,6 +123,7 @@ exports.determineNewStatus = async isPublished => {
 // Exports actions related to checking and acting on dictionary status changes.
 exports.statusChangeCheckAndAct = {
   // Notify dictionaries admins by email on dictionary status changes.
+  // TODO I18n - nameSl
   async updateUsers(
     dictionaryId,
     isPublishedNew,
@@ -133,7 +139,7 @@ exports.statusChangeCheckAndAct = {
       const dictionariesAdminEmails =
         await Dictionary.fetchDictionariesAdminEmails()
       const type = 'unpublish'
-
+      // TODO I18n - nameSl
       await renderAndSendStatusChangeEmails(
         appRef,
         type,
@@ -151,6 +157,7 @@ exports.statusChangeCheckAndAct = {
       const type =
         isApprovalRequired === 'T' ? 'publish-approval' : 'publish-no-approval'
 
+      // TODO I18n - nameSl
       await renderAndSendStatusChangeEmails(
         appRef,
         type,
@@ -171,6 +178,7 @@ exports.statusChangeCheckAndAct = {
     user
   ) {
     if (statusOld === 'reviewed' && statusNew !== 'reviewed') {
+      // TODO I18n - nameSl
       const [nameSl, adminEmails] = await Promise.all([
         Dictionary.fetchName(dictionaryId),
         Dictionary.fetchAdminEmails(dictionaryId)
@@ -189,6 +197,7 @@ exports.statusChangeCheckAndAct = {
 }
 
 // Helper function used by statusChangeCheckAndAct methods.
+// TODO I18n - nameSl
 async function renderAndSendStatusChangeEmails(
   appRef,
   type,
@@ -203,9 +212,10 @@ async function renderAndSendStatusChangeEmails(
     nameSl
   })
 
+  // TODO i18n - What language are the email title and content (we already have email translated)
   await email.send({
     to: targetEmails,
-    subject: 'Sprememba stanja slovarja',
+    subject: __('Sprememba stanja slovarja'),
     html: emailHtml
   })
 }

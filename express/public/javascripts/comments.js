@@ -1,6 +1,6 @@
 // TODO Remove no-console ignore rule once things are out of rapid dev phase.
 /* eslint no-console: 0 */
-/* global axios, initPagination */
+/* global axios, initPagination, i18next */
 const pageURL = location.pathname
 
 window.addEventListener('load', () => {
@@ -127,20 +127,21 @@ function renderCommentCount(commentCount) {
   let displayText = `${commentCount} `
 
   // TODO Let a i18n library handle the following logic.
+  // TODO I18n
   switch (commentCount % 100) {
     case 1:
-      displayText += 'komentar'
+      displayText += i18next.t('komentar')
       break
     case 2:
-      displayText += 'komentarja'
+      displayText += i18next.t('komentarja')
       break
     case 3:
     case 4:
-      displayText += 'komentarji'
+      displayText += i18next.t('komentarji')
       break
 
     default:
-      displayText += 'komentarjev'
+      displayText += i18next.t('komentarjev')
       break
   }
 
@@ -309,7 +310,7 @@ function submitComment() {
   let ctxId = null
   if (ctxData.ctxId !== undefined) ctxId = ctxData.ctxId
   if (!message) {
-    alert('Vaš komentar je brez vsebine.')
+    alert(i18next.t('Vaš komentar je brez vsebine.'))
   } else {
     const payload = { message, ctxType, ctxId, quoteId: null }
     createComment(payload)
@@ -326,7 +327,7 @@ function submitCommentReply() {
   let ctxId = null
   if (ctxData.ctxId !== undefined) ctxId = ctxData.ctxId
   if (!message) {
-    alert('Vaš komentar je brez vsebine.')
+    alert(i18next.t('Vaš komentar je brez vsebine.'))
   } else {
     const payload = { message, ctxType, ctxId, quoteId }
     createComment(payload)
@@ -577,11 +578,11 @@ async function onPageChange(newPage) {
     const { page, numberOfAllPages } = await displayComments(newPage)
     updatePager(page, numberOfAllPages)
   } catch (error) {
-    let message = 'Prišlo je do napake.'
+    let message = i18next.t('Prišlo je do napake.')
     if (error.response?.data) {
       message = error.response.data
     } else if (error.request) {
-      message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+      message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
     }
     alert(message)
     updatePager()

@@ -14,6 +14,13 @@ user.enhance = (req, res, next) => {
   next()
 }
 
+user.isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(req.baseUrl || '/')
+}
+
 user.isDictionaryAdmin = (req, res, next) => {
   const { dictionaryId } = req.params
   const isAdmin = req.user.hasDictionaryRole(dictionaryId, 'administration')
@@ -21,7 +28,7 @@ user.isDictionaryAdmin = (req, res, next) => {
   if (isAdmin) return next()
 
   if (req.isAjax) return res.status(400).end()
-  res.redirect(req.baseUrl)
+  res.redirect(req.baseUrl || '/')
 }
 
 user.isDictionaryEditor = (req, res, next) => {
@@ -31,7 +38,18 @@ user.isDictionaryEditor = (req, res, next) => {
   if (isEditor) return next()
 
   if (req.isAjax) return res.status(400).end()
-  res.redirect(req.baseUrl)
+  res.redirect(req.baseUrl || '/')
+}
+
+user.canContentEdit = (req, res, next) => {
+  const { dictionaryId } = req.params
+  const isEditor = req.user.hasAnyDictionaryRole(dictionaryId)
+  const isPortalAdmin = req.user.hasRole('portal admin')
+  const isDictionariesAdmin = req.user.hasRole('dictionaries admin')
+  if (isEditor || isPortalAdmin || isDictionariesAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(req.baseUrl || '/')
 }
 
 /**

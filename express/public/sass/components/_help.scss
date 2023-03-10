@@ -46,7 +46,7 @@ body {
   transition: 0.3s;
   // max-height: calc(100vh - 80px);
   height: 100vh;
-  max-height: calc(100vh - 130px - 75px);
+  max-height: calc(100vh - 130px - 35px);
   overflow-y: auto;
 
   a {
@@ -190,8 +190,15 @@ body {
 
 .nav-pills .nav-link.active {
   background-color: transparent;
-  color: #006cb7;
+  color: v.$navigation-maincolor;
   font-weight: 700;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: transparent;
+  color: v.$navigation-maincolor;
+  // font-weight: 700;
+  opacity: 0.8;
 }
 
 .help-subheader-title {

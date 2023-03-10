@@ -1,0 +1,20 @@
+extends /layout
+
+block body
+  section.sticky-top
+    include /common/main-navigation
+    +main-navigation(false)
+  .consultancy-padding-main.p-squeeze-lg.mt-2
+    h1 TERMS OF USE - SLOVENIAN TERMINOLOGY PORTAL
+    p Welcome to Slovenian Terminology Portal, which was developed as part of the #[i Development of Slovene in a Digital Environment Project], co-financed by the Ministry of Culture of the Republic of Slovenia and the European Regional Development Fund.
+    p The website was created to allow integrated use and editing of Slovenian terminology resources in one place.
+    p We ask all visitors of our website to comply with the Terms of Use listed below. By visiting this website, you agree to accept the Terms of Use in their entirety.
+    p Users can use the Slovenian Terminology Portal under the #[a(href="https://creativecommons.org/licenses/by/4.0/legalcode.sl" target="_blank") CC BY 4.0] licence. All resources you edit and publish on the Slovenian Terminology Portal will also be available to other registered users under the CC BY 4.0 licence.
+    .mt-2
+    h2 Personal Data Protection
+    p Slovenian Terminology Portal uses cookies. You can read more about how we handle personal data in our #[a(href="/politika-zasebnosti" target="_blank") Privacy Policy].
+    p Thank you for visiting Slovenian Terminology Portal.
+    .mt-2
+    h2 Contact
+    p If you have any questions related to our Terms of Use, please contact us at #[a(href="mailto:info@terminoloski.slovenscina.eu") info@terminoloski.slovenscina.eu].
+  include /common/footer

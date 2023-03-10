@@ -6,12 +6,15 @@ const helmet = require('helmet')
 const favicon = require('serve-favicon')
 const cookieParser = require('cookie-parser')
 const createError = require('http-errors')
-const debug = require('debug')('termPortal:app')
+const i18next = require('i18next')
+const i18nextMiddleware = require('i18next-http-middleware')
+// const debug = require('debug')('termPortal:app')
 
 // Import own modules.
 const { isBehindProxy, secret } = require('./config/keys')
 const helmetConfig = require('./config/helmet')
 const session = require('./middleware/session')
+const i18n = require('./middleware/i18n')
 const passport = require('./middleware/auth')
 const user = require('./middleware/user')
 const settings = require('./middleware/settings')
@@ -37,6 +40,7 @@ app.locals.basedir = viewsPath
 // Other settings.
 const inDevEnv = app.get('env') === 'development'
 if (isBehindProxy) app.set('trust proxy', 1) // Trust first proxy.
+app.locals.inDevEnv = inDevEnv
 
 // Mount middleware.
 app.use(logger('dev'))
@@ -50,9 +54,18 @@ app.use(session)
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(passport.authenticate('remember-me'))
+app.use(i18n.determineRequestLanguage)
+app.use(i18nextMiddleware.handle(i18next))
 app.use(user.enhance)
 app.use(settings.prepareRequiredSettings)
 app.use(enhanceLocals)
+
+if (inDevEnv) {
+  app.post(
+    '/locales/add/:lng/:ns',
+    i18nextMiddleware.missingKeyHandler(i18next)
+  )
+}
 
 // Apparently express-debug can't be run inside another middleware and must be run in this file.
 // To help you debug, temporarily uncomment the next line, but comment the helmet line due to strict CSP.
@@ -75,7 +88,8 @@ app.use((req, res, next) => next(createError(404)))
 
 // Error handler.
 app.use((err, req, res, next) => {
-  if (err.status !== 404) debug(err)
+  // eslint-disable-next-line no-console
+  if (err.status !== 404) console.error(err)
 
   // Set error info to be displayed to user depending on environment.
   let message, error
@@ -86,8 +100,8 @@ app.use((err, req, res, next) => {
   } else {
     message =
       err.status === 404
-        ? 'Stran ne obstaja'
-        : 'Prišlo je do strežniške napake. Poskusite kasneje.'
+        ? req.t('Stran ne obstaja')
+        : req.t('Prišlo je do strežniške napake. Poskusite kasneje.')
     error = {}
   }
 
@@ -99,7 +113,7 @@ app.use((err, req, res, next) => {
   }
 
   // Render the error page.
-  res.render('error', { title: 'Napaka', message, error })
+  res.render('error', { title: req.t('Napaka'), message, error })
 })
 
 module.exports = app

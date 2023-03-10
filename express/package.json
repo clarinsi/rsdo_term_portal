@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon --ignore data_files/ --inspect=0.0.0.0:9229 ./bin/www",
-    "devstart-wait": "nodemon --ignore data_files/ --inspect-brk=0.0.0.0:9229 ./bin/www"
+    "devstart": "nodemon --ignore data_files/ --ignore public/locales/dev --inspect=0.0.0.0:9229 ./bin/www",
+    "devstart-wait": "nodemon --ignore data_files/ --ignore public/locales/dev --inspect-brk=0.0.0.0:9229 ./bin/www"
   },
   "dependencies": {
     "@opensearch-project/opensearch": "^2.1.0",
@@ -22,6 +22,9 @@
     "form-data": "^4.0.0",
     "helmet": "^5.0.2",
     "http-errors": "^2.0.0",
+    "i18next": "^22.4.10",
+    "i18next-fs-backend": "^2.1.1",
+    "i18next-http-middleware": "^3.2.2",
     "ioredis": "^4.27.8",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",

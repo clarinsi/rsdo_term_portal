@@ -11,15 +11,15 @@ block body
   - const d = { selection: 'change-profile-settings' }
   +sideNavigation(d)
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h1: 'Nastavitve računa', description: 'Tukaj lahko spremenite nekatere nastavitve, vezane na posameznega uporabnika.', buttons: [{ type: 'disabled', content: 'Shrani', form: 'profileForm' }] }
+  - const c = { sideMenu: true, h1: title, description: t('Tukaj lahko spremenite nekatere nastavitve, vezane na posameznega uporabnika.'), buttons: [{ type: 'disabled', content: t('Shrani'), form: 'profileForm' }] }
   +mainHeader(c)
 
   .content-hold-prerequisites
-    #offset-main.main-container.mt-2.pe-5
+    #offset-main.main-container.mt-2
       form#profileForm.needs-validation(method="post" novalidate)
         div
           .subject-name
-            label.input-name-txt(for="number-of-results") ŠTEVILO ZADETKOV NA STRANI
+            label.input-name-txt(for="number-of-results") #{ t('ŠTEVILO ZADETKOV NA STRANI') }
           .row
             .col-sm-6.align-items-center
               select#numberOfHits.form-control.d-inline(name="numberOfHits")
@@ -31,4 +31,4 @@ block body
             .col-sm.d-flex.align-items-center
               span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
 
-  include /common/footer
+      include /common/footer

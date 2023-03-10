@@ -1,4 +1,4 @@
-/* global currentPagePath */
+/* global currentPagePath, i18next */
 
 // const currentPagePath = location.pathname
 
@@ -103,22 +103,22 @@ function initExtraction() {
       btnStart.type = 'button'
       btnImg.src = '/images/fi_arrow-right-circle.svg'
       btnSpan.className = 'ms-1'
-      btnSpan.textContent = 'Začni'
+      btnSpan.textContent = i18next.t('Začni')
       hr.className = 'mt-2 mb-3'
       divSmFlex2.className = 'd-flex justify-content-between'
       divSmFlexACMb.className = 'd-sm-flex align-items-center mb-0'
       imgAlertCircle.src = '/images/alert-circle.svg'
       spanNew.className = 'normal-gray ms-1'
-      spanNew.textContent = 'Nov'
+      spanNew.textContent = i18next.t('Nov')
       divSmFlexACMbMe.className = 'd-sm-flex align-content-center mb-0 me-3'
       divEditTask.className = 'align-items-center me-3 edit-task'
       imgEditAlt.src = '/images/u_edit-alt.svg'
       spanEdit.className = 'ms-1 normal-gray'
-      spanEdit.textContent = 'Uredi'
+      spanEdit.textContent = i18next.t('Uredi')
       divDeleteTask.className = 'ms-3 align-items-center delete-task'
       imgDeleteAlt.src = '/images/red-trash-icon.svg'
       spanDelete.className = 'ms-1 normal-gray'
-      spanDelete.textContent = 'Briši'
+      spanDelete.textContent = i18next.t('Briši')
 
       taskNewContainer.appendChild(divSmFlex)
       divSmFlex.appendChild(divSmGrid)
@@ -233,7 +233,7 @@ function mobileMoveContent() {
       primaryButton.style.whiteSpace = ''
     }
 
-    navTitle.textContent = 'Urejanje'
+    navTitle.textContent = i18next.t('Urejanje')
     siteHeading.style.display = 'block'
   }
 }

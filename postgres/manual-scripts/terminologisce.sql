@@ -16,7 +16,7 @@ BEGIN
 	IF linkedZrcTermId IS NULL THEN
 		INSERT INTO public.linked_portal(
 			is_enabled, time_last_synced, code, name, url_update/*, url_index*/)
-			VALUES (true, NULL, 'ZT', 'ZRC-SAZU/Terminologišče', 'https://iskalnik4ts.zrc-sazu.si/rsdo/updates?dictionaryId=$SOURCE_ID&since=$SINCE'/*, 'https://iskalnik4ts.zrc-sazu.si/rsdo/dictionaries'*/)
+			VALUES (true, NULL, 'TZ', 'Terminologišče', 'https://tsiskalnik.zrc-sazu.si/rsdo/updates?dictionaryId=$SOURCE_ID&since=$SINCE'/*, 'https://tsiskalnik.zrc-sazu.si/rsdo/dictionaries'*/)
 			RETURNING id into linkedZrcTermId;
 	END IF;
 	RAISE NOTICE 'ZrcTerm linked portal id = %', linkedZrcTermId;
@@ -33,21 +33,23 @@ BEGIN
 		CONSTRAINT dictionary_pkey PRIMARY KEY (source_id)
 	);
 	INSERT INTO zrcTermDic (source_id, code, description, domain_udk_code) VALUES
-		('farmacija','ZTFARMAC','Farmacevtski terminološki slovar ZRC-SAZU/Terminologišče', '61'),
-		('betonske_konstrukcije','ZTBETON','Terminološki slovar betonskih konstrukcij ZRC-SAZU/Terminologišče', '624'),
-		('pravo','ZTPRAVO','Pravni terminološki slovar ZRC-SAZU/Terminologišče', '34'),
-		('avtomatika','ZTAVTOMAT','Terminološki slovar avtomatike ZRC-SAZU/Terminologišče', '621.3'),
-		('urbanizem','ZTURBAN','Urbanistični terminološki slovar ZRC-SAZU/Terminologišče', '711'),
-		('umetnost','ZTUMETN','Terminološki slovar uporabne umetnosti – pohištvo, ure, orožje ZRC-SAZU/Terminologišče', '93/94'),
-		('tolkala','ZTTOLKAL','Tolkalni terminološki slovar ZRC-SAZU/Terminologišče', '93/94'),
-		('botanika','ZTBOTAN','Botanični terminološki slovar ZRC-SAZU/Terminologišče', '58'),
-		('smucanje','ZTSMUČ','Slovenski smučarski slovar ZRC-SAZU/Terminologišče', '796/799'),
-		('gledalisce','ZTGLED','Gledališki terminološki slovar ZRC-SAZU/Terminologišče', '93/94'),
-		('cebelarstvo','ZTCEBEL','Čebelarski terminološki slovar ZRC-SAZU/Terminologišče', '59'),
-		('geologija','ZTGEOLOG','Geološki terminološki slovar ZRC-SAZU/Terminologišče', '55'),
-		('gemologija','ZTGEMOLOG','Gemološki terminološki slovar ZRC-SAZU/Terminologišče', '622'),
-		('geografija','ZTGEOGRAF','Geografski terminološki slovar ZRC-SAZU/Terminologišče', '338'),
-		('planinstvo','ZTPLANIN','Planinski terminološki slovar ZRC-SAZU/Terminologišče', '796/799');
+		('avtomatika','Avtomatika','Terminološki slovar avtomatike', '621.3'),
+		('betonske_konstrukcije','Betonske konst.','Terminološki slovar betonskih konstrukcij', '624'),
+		('botanika','Botanika','Botanični terminološki slovar', '58'),
+		('cebelarstvo','Čebelarstvo','Čebelarski terminološki slovar', '59'),
+		('davcni','Davki','Davčni terminološki slovar', '336'),
+		('farmacija','Farmacija','Farmacevtski terminološki slovar', '61'),
+		('gemologija','Gemologija','Gemološki terminološki slovar', '622'),
+		('geografija','Geografija','Geografski terminološki slovar', '338'),
+		('geologija','Geologija','Geološki terminološki slovar', '55'),
+		('gledalisce','Gledališče','Gledališki terminološki slovar', '93/94'),
+		('kamnarski','Kamnarstvo','Kamnarski terminološki slovar', '622'),
+		('planinski','Planinstvo','Planinski terminološki slovar', '796/799'),
+		('pravni','Pravo','Pravni terminološki slovar', '34'),
+		('smucanje','Smučanje','Slovenski smučarski slovar', '796/799'),
+		('tolkala','Tolkala','Tolkalni terminološki slovar', '93/94'),
+		('umetnost','Umetnost','Terminološki slovar uporabne umetnosti – pohištvo, ure, orožje', '93/94'),
+		('urbanisticni','Urbanizem','Urbanistični terminološki slovar', '711');
 		
 	FOR zd IN SELECT z.*, d.id AS domain_id 
 				FROM zrcTermDic AS z 

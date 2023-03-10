@@ -32,7 +32,7 @@
       tdId.textContent = sequentialCount
       tdName.textContent = candidate.kanonicnaoblika
       tdSize.textContent = candidate.ranking
-      tdDate.textContent = candidate.pogostostpojavljanja
+      tdDate.textContent = candidate.pogostostpojavljanja[0]
       rowEl.append(tdId, tdName, tdSize, tdDate)
       resultsListEl.appendChild(rowEl)
     })

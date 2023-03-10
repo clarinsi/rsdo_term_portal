@@ -97,6 +97,9 @@ router.get(
   dictionary.showImportFromFileForm
 )
 
+// Import dictionary data from file.
+router.post('/slovarji/:dictionaryId/uvoz/datoteka', dictionary.importFromFile)
+
 router.get(
   '/slovarji/:dictionaryId/uvoz/luscenje',
   dictionary.showImportFromExtractionForm

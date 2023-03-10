@@ -1,4 +1,5 @@
 const { readdir, stat } = require('fs/promises')
+const path = require('path')
 const { partial } = require('filesize')
 const { DATA_FILES_PATH } = require('../../config/settings')
 
@@ -43,17 +44,21 @@ exports.getFileNamesInFolder = async folderPath => {
   return filenames
 }
 
+exports.getFileStats = getFileStats
+
 exports.getFileStatsInFolder = async folderPath => {
   const filenames = await readdir(folderPath)
-  const fileStats = await Promise.all(
-    filenames.map(async filename => {
-      const filePath = `${folderPath}/${filename}`
-      const { mtimeMs: timeModified, size } = await stat(filePath)
-      const sizeHumanReadable = formatFileSize(size)
-      const fileStats = { filename, size: sizeHumanReadable, timeModified }
-      return fileStats
-    })
-  )
+  const filePaths = filenames.map(filename => `${folderPath}/${filename}`)
+  const fileStats = await Promise.all(filePaths.map(getFileStats))
+  fileStats.sort((a, b) => a.timeModified - b.timeModified)
+  return fileStats
+}
+
+async function getFileStats(filePath) {
+  const filename = path.basename(filePath)
+  const { mtimeMs: timeModified, size } = await stat(filePath)
+  const sizeHumanReadable = formatFileSize(size)
+  const fileStats = { filename, size: sizeHumanReadable, timeModified }
   return fileStats
 }
 

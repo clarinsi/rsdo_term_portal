@@ -2,12 +2,16 @@ const Entry = require('../models/entry')
 const { getInstanceSetting } = require('../models/helpers')
 const Dictionary = require('../models/dictionary')
 const Comment = require('../models/comment')
-const { searchEntryIndex } = require('../models/search-engine')
+const {
+  searchEntryIndex,
+  searchConsultancyEntryIndex
+} = require('../models/search-engine')
 const { intoDbArray } = require('../models/helpers')
 const {
   prepareEntries,
   prepareAggregation,
-  prepareSeachFilterData
+  prepareSeachFilterData,
+  prepareConsultancyEntries
 } = require('../models/helpers/search')
 const generateQuery = require('../models/helpers/search/generate-query')
 const { DEFAULT_HITS_PER_PAGE } = require('../config/settings')
@@ -16,6 +20,7 @@ const User = require('../models/user')
 
 // TODO Luka (note to self): Measure performance, consider caching.
 exports.index = async (req, res) => {
+  const { language } = req
   const {
     allPrimaryDomains,
     sourceLanguages,
@@ -30,8 +35,10 @@ exports.index = async (req, res) => {
     englishLanguageEnabled
   )
 
-  const portalName = await getInstanceSetting('portal_name')
-  const portalDescription = await getInstanceSetting('portal_description')
+  const portalName = await getInstanceSetting(`portal_name_${language}`)
+  const portalDescription = await getInstanceSetting(
+    `portal_description_${language}`
+  )
 
   const isRoot = true
 
@@ -53,7 +60,9 @@ exports.search = async (req, res) => {
 
   if (!searchString) return res.redirect('/')
 
-  const {
+  const title = req.t('Iskanje')
+
+  let {
     allPrimaryDomains,
     sourceLanguages,
     targetLanguages,
@@ -80,6 +89,32 @@ exports.search = async (req, res) => {
     page,
     true
   )
+
+  // Consultancy
+
+  const hitsQueryConsultancy = generateQuery.consultancy(
+    searchString,
+    {
+      status: 'published',
+      primaryDomain: filters.primaryDomains[0]
+    },
+    hitsPerPage,
+    page
+  )
+
+  const hitsConsultancy = await searchConsultancyEntryIndex(
+    hitsQueryConsultancy
+  )
+
+  const consultancyHits = hitsConsultancy.body.hits.total.value
+
+  const consultancyURL = `/svetovanje/iskanje?q=${searchString}${
+    filters.primaryDomains.length > 0 ? '&pd=' + filters.primaryDomains[0] : '' // consultancy filtering only supports one domain
+  }`
+
+  // console.log(entries)
+
+  //
 
   const [hits, aggregationRaw] = await Promise.all([
     searchEntryIndex(hitsQuery),
@@ -143,6 +178,30 @@ exports.search = async (req, res) => {
     sources: false
   }
 
+  // Keep selected items on refresh
+  sourceLanguages = addSelectedIdentifierToFilters(
+    sourceLanguages,
+    filters.sourceLanguages
+  )
+
+  targetLanguages = addSelectedIdentifierToFilters(
+    targetLanguages,
+    filters.targetLanguages
+  )
+  allPrimaryDomains = addSelectedIdentifierToFilters(
+    allPrimaryDomains,
+    filters.primaryDomains
+  )
+
+  allDictionaryNames = addSelectedIdentifierToFilters(
+    allDictionaryNames,
+    filters.dictionaries
+  )
+
+  /// //////////////
+
+  portals = addSelectedIdentifierToPortals(portals, filters.sources)
+
   if (count < 1) {
     return res.render('pages/search/no-results', {
       allPrimaryDomains,
@@ -154,11 +213,81 @@ exports.search = async (req, res) => {
       entriesByCategory,
       searchFilterData,
       disabledSideMenuFilters,
+      consultancyHits,
+      consultancyURL,
       // allAggregation,
       numberOfAllHits,
       numberOfAllPages,
       page
     })
+  }
+
+  // duplicated code below for filtering foreignentries, optimize later
+  // Below code filters target languages based on source and target filters for each category
+  const categoriesLabels = Object.keys(entriesByCategory)
+  for (
+    let categoryIndex = 0;
+    categoryIndex < categoriesLabels.length;
+    categoryIndex++
+  ) {
+    entriesByCategory[categoriesLabels[categoryIndex]] = entriesByCategory[
+      categoriesLabels[categoryIndex]
+    ].map(entry => {
+      entry.foreignEntries = entry.foreignEntries?.filter(foreignEntry => {
+        if (filters.targetLanguages.length > 0) {
+          if (aggregation.sourceLanguages.length === 1) {
+            filters.sourceLanguages = [aggregation.sourceLanguages[0].id]
+          }
+
+          return (
+            filters.targetLanguages.includes(`${foreignEntry.lang.id}`) ||
+            filters.sourceLanguages?.includes(`${foreignEntry.lang.id}`)
+          )
+        } else {
+          return true
+        }
+      })
+      return entry
+    })
+  }
+
+  // Disable target languages logic
+
+  if (
+    filters.sourceLanguages.length > 1 || // more or equal than 2 source languages
+    (filters.sourceLanguages.length < 1 && // No filters, but more than 1 source language filters returned
+      aggregation.sourceLanguages.length > 1) ||
+    (aggregation.targetLanguages.length === 1 &&
+      aggregation.sourceLanguages.length === 1 &&
+      aggregation.targetLanguages[0].id === aggregation.sourceLanguages[0].id) //
+  ) {
+    // predicate 1 Disable if 2 or more filters in Source languages are selected
+    // predicate 2 If none are selected, then check if displayed filters are more than 2
+    aggregation.targetLanguages = []
+    filters.targetLanguages = []
+    targetLanguages = []
+    searchFilterData.targetLanguages = []
+    disabledSideMenuFilters.targetLanguages = true
+  }
+
+  // remove source language from target language
+  filters.sourceLanguages.forEach(entry => {
+    if (
+      aggregation.targetLanguages.filter(toFilter => toFilter.id === entry)
+        .length > 0
+    ) {
+      aggregation.targetLanguages = aggregation.targetLanguages.filter(
+        toFilter => toFilter.id !== entry
+      )
+      searchFilterData.targetLanguages =
+        searchFilterData.targetLanguages.filter(
+          toFilter => toFilter.id !== entry
+        )
+    }
+  })
+  if (aggregation.targetLanguages.length < 0) {
+    searchFilterData.targetLanguages = []
+    disabledSideMenuFilters.targetLanguages = true
   }
 
   // TODO Add a page title?
@@ -172,15 +301,19 @@ exports.search = async (req, res) => {
     entriesByCategory,
     searchFilterData,
     disabledSideMenuFilters,
+    consultancyHits,
+    consultancyURL,
     // allAggregation,
     numberOfAllHits,
     numberOfAllPages,
-    page
+    page,
+    title
   })
 }
 
 exports.entryDetails = async (req, res) => {
   const termId = req.params.entryId
+  const title = req.t('Termin')
 
   /* const [entry, domainLabels] = await Promise.all([
     Entry.fetchFullWithOrderedForeignLanguages(termId),
@@ -188,11 +321,15 @@ exports.entryDetails = async (req, res) => {
   ]) */
 
   const entry = await Entry.fetchFullWithOrderedForeignLanguages(termId)
-
   /* const entryData = {
     entry
     // allDomainLabelsJoined: domainLabels.map(e => e.name).join(', ')
   } */
+
+  // If external url, just redirect
+  if (entry.external_url) {
+    return res.redirect(entry.external_url)
+  }
 
   // unnecessary legacy assigment, refactor when time is available
   const entryData = entry
@@ -228,8 +365,8 @@ exports.entryDetails = async (req, res) => {
   ///
 
   // check if it is a local dictionary
-  if (!dictionaryData.portalname && !dictionaryData.portalcode) {
-    dictionaryData[0].portalname = await getInstanceSetting('portal_name')
+  if (!dictionaryData.portalnamesl && !dictionaryData.portalcode) {
+    dictionaryData[0].portalname = await getInstanceSetting('portal_name_sl')
     dictionaryData[0].portalcode = await getInstanceSetting('portal_code')
   }
 
@@ -258,7 +395,7 @@ exports.entryDetails = async (req, res) => {
   // struct data contains important data and re-maps for unification (maybe refactor later)
   const structData = {
     termId: termId,
-    prevWindowTitle: 'Iskanje',
+    prevWindowTitle: req.t('Iskanje'),
     prevHref: '/iskanje',
     portalCode: dictionaryData[0].portalcode,
     portalName: dictionaryData[0].portalname,
@@ -270,13 +407,14 @@ exports.entryDetails = async (req, res) => {
     languages: reducedData.languages ? reducedData.languages.join(', ') : ''
   }
 
+  // TODO I18n
   if (reducedData.author) {
     if (reducedData.author.length > 2) {
-      structData.authorLabel = 'Avtorji'
+      structData.authorLabel = req.t('Avtorji')
     } else if (reducedData.author.length === 2) {
-      structData.authorLabel = 'Avtorja'
+      structData.authorLabel = req.t('Avtorja')
     } else if (reducedData.author.length === 1) {
-      structData.authorLabel = 'Avtor'
+      structData.authorLabel = req.t('Avtor')
     }
   }
 
@@ -321,25 +459,61 @@ exports.entryDetails = async (req, res) => {
     selectedDomainLabelsForEntryString,
     numberOfAllPages,
     comments,
-    commentCount
+    commentCount,
+    title
   })
 }
 
 exports.myProfile = async (req, res) => {
-  res.render('pages/profile/my-profile', { title: 'Moj račun' })
+  res.render('pages/profile/my-profile', { title: req.t('Osnovni podatki') })
+}
+
+exports.deleteProfile = async (req, res) => {
+  res.render('pages/profile/delete-profile', { title: req.t('Izbriši račun') })
 }
 
 exports.changePassword = async (req, res) => {
-  res.render('pages/profile/change-password', { title: 'Spremeni geslo' })
+  res.render('pages/profile/change-password', {
+    title: req.t('Spremeni geslo')
+  })
+}
+
+exports.resetPassword = async (req, res) => {
+  const { token } = req.query
+
+  // console.log(token)
+  res.render('pages/reset-password/reset-password', {
+    // title: 'Pozabljeno geslo'
+    isValidToken: token === '123',
+    token
+  })
 }
 
 exports.userSettings = async (req, res) => {
   const hitsPerPageArr = await User.fetchAllowedHitsPerPage()
   res.render('pages/profile/change-profile-settings', {
-    title: 'Nastavitve računa',
+    title: req.t('Nastavitve računa'),
     hitsPerPageArr,
     hitsForUser: req.user?.hitsPerPage
   })
+}
+
+exports.changeUserLanguage = async (req, res) => {
+  const { languageCode } = req.params
+  const validCodes = ['sl', 'en']
+
+  if (!validCodes.includes(languageCode)) {
+    throw Error(`Invalid language: ${languageCode}`)
+  }
+
+  const { user } = req
+  if (user) {
+    await User.updateLanguage(user.id, languageCode)
+  } else {
+    req.session.language = languageCode
+  }
+
+  res.redirect('/')
 }
 
 function mergeDomains(
@@ -383,4 +557,24 @@ function filterResults(entries) {
   })
 
   return [termLst, ftermLst, otherLst]
+}
+
+function addSelectedIdentifierToFilters(source, selectedIDs) {
+  return source.map(entry => {
+    if (selectedIDs.includes(`${entry.id}`)) {
+      entry.selected = true
+    }
+
+    return entry
+  })
+}
+
+function addSelectedIdentifierToPortals(source, selectedIDs) {
+  return source.map(entry => {
+    if (selectedIDs.includes(`${entry.code}`)) {
+      entry.selected = true
+    }
+
+    return entry
+  })
 }

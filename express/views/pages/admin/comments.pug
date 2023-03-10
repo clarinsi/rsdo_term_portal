@@ -12,10 +12,11 @@ block body
   - const d = { activeLvl1: 'comments', activeLvl2: '' }
   +sideNavigation(d)
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Urejanje', h1: 'Komentarji', description: 'Na tem mestu so zbrani vsi komentarji, povezani s terminološkim portalom.' }
+  //- TODO I18n 
+  - const c = { sideMenu: true, h2: t('Urejanje'), h1: t('Komentarji'), description: t('Na tem mestu so zbrani vsi komentarji, povezani s terminološkim portalom.') }
   +mainHeader(c)
 
-  .comments-content.col-12.col-md-12.py-md-3.bd-content.content-hold-prerequisites
+  .comments-content.col-12.col-md-12.pt-md-3.bd-content.content-hold-prerequisites
     #offset-main.main-container
       include /utilities/comments-with-pager
 

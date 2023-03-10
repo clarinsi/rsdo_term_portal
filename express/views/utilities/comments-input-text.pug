@@ -6,20 +6,23 @@ if user
       textarea#comment-message-input(
         contenteditable=""
         type="text"
-        placeholder="Dodaj komentar..."
+        placeholder=t('Dodaj komentar...')
         name="comment"
       )
       .verticalLine.mt-1.mb-1
       button#comment-submit-btn(type="button")
-        img.img-comment-svg(src="/images/comment.svg" alt="Pošlji")
-        | Pošlji
+        img.img-comment-svg(src="/images/comment.svg" alt=t('Pošlji'))
+        = t('Pošlji')
 
   #reply-form-container.hide
     form#comment-reply-form.comment-reply-form
       input#comment-quote-id(type="hidden" name="quoteId")
       #reply-circle.circle.comment-initials-container IP
-      textarea#comment-reply-input(placeholder="Dodaj odgovor..." type="text")
+      textarea#comment-reply-input(
+        placeholder=t('Dodaj odgovor...')
+        type="text"
+      )
       .verticalLine.mt-1.mb-1
       button#comment-submit-reply-btn(type="button")
-        img(src="/images/fi_down_left.svg" alt="Odgovori")
-        | Odgovori
+        img(src="/images/fi_down_left.svg" alt=t('Odgovori'))
+        = t('Odgovori')

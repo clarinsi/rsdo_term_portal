@@ -24,7 +24,7 @@ block body
     +main-navigation(false)
   block config
     - const pageTypeObject = { users: true }
-    - const subHeading = 'Uporabniki'
+    - const subHeading = t('Uporabniki')
 
   +sideMenu(pageTypeObject)
 
@@ -40,9 +40,9 @@ block body
         .header-container-left-side.d-flex.col-sm-10
           #chevrons-left.d-flex.w-100
             .header-container-divider-left
-              h2#site-header-title Uporabniki
-              h1#site-heading Seznam svetovalcev
-              span#text-description.page-description.pe-0 Na tem mestu lahko dodajate svetovalce, ki so registrirani uporabniki terminološkega portala. Če boste pripisali področje, boste lahko svetovalcu dodeljevali samo vprašanja, ki sodijo na izbrano področje, vsem drugim pa vsa.
+              h2#site-header-title #{ t('Uporabniki') }
+              h1#site-heading #{ t('Seznam svetovalcev') }
+              span#text-description.page-description.pe-0 #{ t('Na tem mestu lahko dodajate svetovalce, ki so registrirani uporabniki terminološkega portala. Če boste pripisali področje, boste lahko svetovalcu dodeljevali samo vprašanja, ki sodijo na izbrano področje, vsem drugim pa vsa.') }'
         .header-container-divider-right.d-flex.justify-content-end.col-sm-2
           //- a.btn.btn-primary.header-btn(disabled) Dodaj
 
@@ -60,8 +60,8 @@ block body
         table#all-areas-table.table.areas-table.table-responsive
           thead
             tr
-              th(scope="col") Ime
-              th(scope="col") Področja
+              th(scope="col") #{ t('Ime') }
+              th(scope="col") #{ t('Področja') }
               th(scope="col") 
           tbody
             each user in users
@@ -90,14 +90,14 @@ block body
           .row.mb-5
             .col-sm-3
               .subject-name
-                label.input-name-txt Ime
+                label.input-name-txt #{ t('Ime') }
               input#username.form-control(type="text")
             .col-sm-3
               .subject-name
-                label.input-name-txt Področja
+                label.input-name-txt #{ t('Področja') }
               input#domains.form-control(type="text")
             .col.d-flex.align-items-end.mt-2
-              button#add-area.btn.btn-primary(type="submit") Dodaj
+              button#add-area.btn.btn-primary(type="submit") #{ t('Dodaj') }
 
+        include /common/footer
     include /utilities/modal-alert
-  include /common/footer

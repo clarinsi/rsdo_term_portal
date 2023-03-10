@@ -15,12 +15,13 @@ mixin consultancySM(adminFields=false)
             )
               //- option.d-none(value="-1")= ' '
               each domain in allPrimaryDomains
-                option(value=domain.id) #{ domain.nameSl }
+                option(value=domain.id selected=domain.selected) #{ domain.nameSl }
             span.advanced-input-label
             //- span.advanced-input-label Področje
           //- img#area-img(src="/images/chevron-down-darker.svg" alt="")
         span#area-suggestions.suggs
 
+      //- TODO Miha Stele to himself - good job! You've done it! You've made it!
       if adminFields
         span#consultant 
           .d-flex.w-100
@@ -39,5 +40,5 @@ mixin consultancySM(adminFields=false)
     .advanced-search-final-options
       //- button Počisti filtre
       span
-        button#clear-in-filter-modal.btn.clear-f Počisti filtre
-        button#search-in-filter-modal.btn.search-btn-a Najdi
+        button#clear-in-filter-modal.btn.clear-f #{ t('Počisti filtre') }
+        button#search-in-filter-modal.btn.search-btn-a #{ t('Najdi') }

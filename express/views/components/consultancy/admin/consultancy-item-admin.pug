@@ -41,7 +41,7 @@ mixin consultancyItem(data, section)
       else
         .row.mt-2.mb-2
           span.consultancy-description-text 
-            b.text-p875rem= 'Opis terminološkega problema: '
+            b.text-p875rem= t('Opis terminološkega problema: ')
             span.text-p875rem= data.description
       .row.mt-3.btn-group
         if section.inProgress
@@ -51,57 +51,57 @@ mixin consultancyItem(data, section)
                 type="button"
               )
                 img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-                span.ps-1 DODELI
+                span.ps-1 #{ t('DODELI') }
           .col-md-2
             button.btn.btn-secondary.w-100.consultancy-modal-share(
               type="button"
             )
               img.i1p5rx1p5r(src="/images/users.svg" alt="")
-              span.ps-1 DELI
+              span.ps-1 #{ t('DELI') }
           .col-md-2
             button.btn.btn-secondary.w-100.reject-item
               img.i1p5rx1p5r(src="/images/x-circle-red.svg" alt="")
-              span.ps-1 ZAVRNI
+              span.ps-1 #{ t('ZAVRNI') }
           .col-md-2
             button.edit-button.btn.btn-secondary.w-100
               img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-              span.ps-1 UREDI
+              span.ps-1 #{ t('UREDI') }
           .col-md-2
             button.btn.btn-primary.review-btn.w-100(disabled=!data.title)
               img.i1p5rx1p5r(src="/images/book-open-white.svg" alt="")
-              span.ps-1 OBJAVI
+              span.text-white.ps-1 #{ t('OBJAVI') }
         else if section.new
           .col-md-2
             button.btn.btn-secondary.w-100.consultancy-modal-assign(
               type="button"
             )
               img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-              span.ps-1 DODELI
+              span.ps-1 #{ t('DODELI') }
           .col-md-2
             button.btn.btn-secondary.w-100.delete-item
               img.i1p5rx1p5r(src="/images/trash-2.svg" alt="")
-              span.ps-1 BRIŠI
+              span.ps-1 #{ t('BRIŠI') }
         else if section.rejected
           .col-md-2
             button.btn.btn-secondary.w-100.consultancy-modal-assign(
               type="button"
             )
               img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-              span.ps-1 DODELI
+              span.ps-1 #{ t('DODELI') }
           .col-md-2
             button.btn.btn-secondary.w-100.delete-item
               img.i1p5rx1p5r(src="/images/trash-2.svg" alt="")
-              span.ps-1 BRIŠI
+              span.ps-1 #{ t('BRIŠI') }
         else if section.prepared
           .col-md-2
             button.edit-button.btn.btn-secondary.w-100
               img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-              span.ps-1 UREDI
+              span.ps-1 #{ t('UREDI') }
           if user.hasRole('consultancy admin')
             .col-md-2
               button.btn.btn-primary.publish-btn.w-100(disabled=!data.title)
                 img.i1p5rx1p5r(src="/images/book-open-white.svg" alt="")
-                span.ps-1 OBJAVI
+                span.text-white.ps-1 #{ t('OBJAVI') }
         else if section.published
           if user.hasRole('consultancy admin')
             .col-md-2
@@ -109,15 +109,15 @@ mixin consultancyItem(data, section)
                 type="button"
               )
                 img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-                span.ps-1 DODELI
+                span.ps-1 #{ t('DODELI') }
           .col-md-2
             button.edit-button.btn.btn-secondary.w-100
               img.i1p5rx1p5r(src="/images/u_edit-alt.svg" alt="")
-              span.ps-1 UREDI
+              span.ps-1 #{ t('UREDI') }
           if user.hasRole('consultancy admin')
             .col-md-2
               button.btn.btn-secondary.w-100.delete-item
                 img.i1p5rx1p5r(src="/images/trash-2.svg" alt="")
-                span.ps-1 BRIŠI
+                span.ps-1 #{ t('BRIŠI') }
 
       .hovered.position-absolute

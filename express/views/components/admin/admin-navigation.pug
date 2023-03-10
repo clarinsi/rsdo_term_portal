@@ -4,37 +4,37 @@ extends ../../common/side-navigation-common
   .admin-nav-mobile
     button#nav-button.nav-button
       img#burger-menu-img(src="/images/burger-menu-button-icon.svg" alt="Meni")
-    span.nav-title Administrator
+    span.nav-title= t('Administracija')
   nav
-    ul.admin-nav-content.slidable
+    ul.admin-nav-content.slidable.scroller-style
       li.admin-nav-item
         a(href="#")
           img(src="/images/cog.svg" alt="")
-          p Osnovne nastavitve
+          p= t('Osnovne nastavitve')
       li.admin-nav-item.focused-menu
         a.menu-selected(href="#")
           img(src="/images/link.svg" alt="")
-          p Povezave
+          p= t('Povezave')
         ul.sub-links
           li
-            a.menu-selected(href="#") Portali
+            a.menu-selected(href="#")= t('Portali')
           li
-            a(href="#") Domači slovarji
+            a(href="#")= t('Domači slovarji')
           li
-            a(href="#") Tuji slovarji
+            a(href="#")= t('Tuji slovarji')
       li.admin-nav-item
         a(href="#")
           img(src="/images/book.svg" alt="")
-          p Slovarji
+          p= t('Slovarji')
       li.admin-nav-item
         a(href="#")
           img(src="/images/users.svg" alt="")
-          p Uporabniki
+          p= t('Uporabniki')
       li.admin-nav-item
         a(href="#")
           img(src="/images/areas.svg" alt="")
-          p Področja
+          p= t('Področja')
       li.admin-nav-item
         a(href="#")
           img(src="/images/statistics.svg" alt="")
-          p Statistika
+          p= t('Statistika')

@@ -12,18 +12,18 @@ block body
   - const d = { activeLvl1: 'connections', activeLvl2: 'list' }
   +sideNavigation(d)
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Povezave s portali', description: 'Vnesite podatke terminološkega portala, s katerim želite povezati svoj portal.' }
+  - const c = { sideMenu: true, h2: t('Povezave'), h1: t('Povezave s portali'), description: t('Vnesite podatke terminološkega portala, s katerim želite povezati svoj portal.') }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-2
       .row
         ul.col-sm-5
-          span.smaller-blue-subheading Dodaj povezavo
+          span.smaller-blue-subheading= t('Dodaj povezavo')
 
       form#form-connection-new(method="post")
         .mt-3
           .subject-name
-            label.smaller-black-uppercase(for="portal-name") IME PORTALA *
+            label.smaller-black-uppercase(for="portal-name")= t('IME PORTALA *')
           .row
             .col-sm-5
               input#portal-name.name-input.form-control.autocomplete.d-inline(
@@ -32,11 +32,11 @@ block body
                 required
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Vnesite polno ime terminološkega portala, s katerim se povezujete.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Vnesite polno ime terminološkega portala, s katerim se povezujete.')
 
         .mt-5
           .subject-name
-            label.smaller-black-uppercase(for="portal-label") OZNAKA PORTALA *
+            label.smaller-black-uppercase(for="portal-label")= t('OZNAKA PORTALA *')
           .row
             .col-sm-5
               input#portal-label.name-input.form-control.autocomplete.d-inline(
@@ -46,11 +46,11 @@ block body
                 required
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Unikatna oznaka povezanega terminološkega portala za prikaz na vašem portalu, sestavljena iz dveh črk ali črke in številke.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Unikatna oznaka povezanega terminološkega portala za prikaz na vašem portalu, sestavljena iz dveh črk ali črke in številke.')
 
         .mt-5
           .subject-name
-            label.smaller-black-uppercase(for="index-url") URL za sinhronizacijo slovarjev *
+            label.smaller-black-uppercase(for="index-url")= t('URL za sinhronizacijo slovarjev *')
           .row
             .col-sm-5
               input#index-url.name-input.form-control.autocomplete.d-inline(
@@ -59,11 +59,11 @@ block body
                 required
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 URL naslov terminološkega portala, s katerim želite povezati svoj portal. (API klic)
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('URL naslov terminološkega portala, s katerim želite povezati svoj portal. (API klic)')
 
         .mt-5
           .subject-name
-            label.smaller-black-uppercase(for="update-url") URL za sinhronizacijo slovarskih sestavkov *
+            label.smaller-black-uppercase(for="update-url")= t('URL za sinhronizacijo slovarskih sestavkov *')
           .row
             .col-sm-5
               input#update-url.name-input.form-control.autocomplete.d-inline(
@@ -72,16 +72,16 @@ block body
                 required
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 URL naslov terminološkega portala, s katerim boste sinhronizirali podatke iz terminoloških virov.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('URL naslov terminološkega portala, s katerim boste sinhronizirali podatke iz terminoloških virov.')
 
         .mt-5
           .row
             .col-sm-5
             .col-sm.d-flex.flex-column.flex-sm-row.align-items-center.justify-content-center
-              a.btn.btn-secondary.w-sm-100(href="/admin/povezave/seznam") Prekliči
+              a.btn.btn-secondary.w-sm-100(href="/admin/povezave/seznam")= t('Prekliči')
               button.create-portal-btn.btn.btn-primary.ms-sm-4.mt-2.mt-sm-0(
                 type="submit"
                 form="form-connection-new"
-              ) Dodaj povezavo
+              )= t('Dodaj povezavo')
 
-  include /common/footer
+      include /common/footer

@@ -1,4 +1,4 @@
-mixin searchWithPrimaryDomainFilter(formId, searchId, searchBtnId, initialMarginClass="mt-3")
+mixin searchWithPrimaryDomainFilter(formId, searchId, searchBtnId, initialMarginClass="mt-3", filledText="")
   form.needs-validation.w-100(id=formId class=initialMarginClass)
     - let checkrightSection = headerContent && headerContent.buttons && headerContent.buttons.length
     .header-consultancy-divider.d-flex.d-column.w-100.row.g-0.ms-0
@@ -12,9 +12,10 @@ mixin searchWithPrimaryDomainFilter(formId, searchId, searchBtnId, initialMargin
               .search-bar.height-46p(tabindex="0")
                 button.searchbar-icon-container(id=searchBtnId type="submit")
                   img.search_icon(src="/images/search.svg" alt="OK")
-                input#search-query.search-input(
+                input#search-query.search-input.pdf(
                   type="text"
-                  placeholder=isDictionaryListPage ? 'Ime slovarja' : 'Vpišite iskalni niz'
+                  placeholder=isDictionaryListPage ? t('Ime slovarja') : t('Vpišite iskalni niz')
+                  value=filledText
                 )
                 button#keyboard.search-button-keyboard
                   span

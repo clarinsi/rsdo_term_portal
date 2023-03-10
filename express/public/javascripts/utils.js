@@ -1,4 +1,4 @@
-/* global axios */
+/* global axios, i18next */
 
 function autoGrow(element) {
   element.style.height = '5px'
@@ -156,14 +156,14 @@ function editRowBodyForConsultancy(fieldInfo) {
   fieldInfo.newButtonGroup = newButtonGroup
   fieldInfo.cancelButton = cancelButton
   fieldInfo.saveButton = saveButton
-  cancelButton.textContent = 'Prekliči'
+  cancelButton.textContent = i18next.t('Prekliči')
   cancelButton.className = 'btn btn-secondary me-2'
   cancelButton.style.height = '33px'
   cancelButton.style.width = '105px'
   cancelButton.addEventListener('click', () =>
     abortConsultancyUserEditing(fieldInfo)
   )
-  saveButton.textContent = 'POTRDI'
+  saveButton.textContent = i18next.t('POTRDI')
   saveButton.className = 'btn btn-primary'
   saveButton.style.height = '33px'
   saveButton.style.width = '105px'

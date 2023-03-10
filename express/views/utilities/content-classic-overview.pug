@@ -4,12 +4,12 @@
       .col-12.col-sm-3.flex-fill.me-2
         span.term-id.normal-gray-label
       .col-12.col-sm-3.flex-fill
-        span#preview-version.normal-gray-label Verzija 1
+        span#preview-version.normal-gray-label= t('Verzija 1')
     .d-sm-flex.col-xl-6.col-12.align-items-center
       .col-12.col-sm-3.flex-fill
-        span#preview-author.normal-gray-label Ime Priimek
+        span#preview-author.normal-gray-label= t('Ime Priimek')
       .col-12.col-sm-3.flex-fill.ms-sm-2
-        span.normal-gray-label Zaporedje:
+        span.normal-gray-label= t('Zaporedje:')
         input#preview-homonym.ms-2.homonym-field.form-control.d-inline(
           type="text"
           disabled
@@ -21,9 +21,9 @@
         select#status-overview.form-select.select-content-state.w-auto(
           disabled
         )
-          option(value="preposition" disabled) Predlog
-          option(value="edited") Urejeno
-          option(value="in-editing") V urejanju
+          option(value="preposition" disabled)= t('Predlog')
+          option(value="edited")= t('Urejeno')
+          option(value="in-editing")= t('V urejanju')
 
       .col-12.col-sm-3.flex-fill
         .form-check.form-switch
@@ -32,7 +32,7 @@
             name="isPublished"
             disabled
           )
-          label.normal-gray-label(for="") Objavljeno
+          label.normal-gray-label(for="")= t('Objavljeno')
 
     .d-sm-flex.col-xl-6.col-12.align-items-center
       .col-12.col-sm-3.flex-fill
@@ -41,29 +41,29 @@
           name=""
           disabled
         )
-        label.normal-gray-label(for="") Strokovno pregledano
+        label.normal-gray-label(for="")= t('Strokovno pregledano')
       .col-12.col-sm-3.flex-fill.ms-sm-2
         input#language-overview.form-check-input.special-cbox.me-2(
           type="checkbox"
           name=""
           disabled
         )
-        label.normal-gray-label(for="") Jezikovno pregledano
+        label.normal-gray-label(for="")= t('Jezikovno pregledano')
 
 .d-flex.justify-content-between.align-items-center.collapsible-data
   .collapse-content
     .d-flex.collapsed-text.align-items-center
       .white-background
-        span.status-collapsed.normal-gray.m-2 V urejanju
+        span.status-collapsed.normal-gray.m-2= t('V urejanju')
       .published-collapsed.d-flex.d-none
         span.normal-gray.ms-2 |
-        span.normal-gray.ms-2 Objavljeno
+        span.normal-gray.ms-2= t('Objavljeno')
       .terminology-collapsed.d-flex.d-none
         span.normal-gray.ms-2 |
-        span.normal-gray.ms-2 Strokovno pregledano
+        span.normal-gray.ms-2= t('Strokovno pregledano')
       .lang-collapsed.d-flex.d-none
         span.normal-gray.ms-2 |
-        span.normal-gray.ms-2 Jezikovno pregledano
+        span.normal-gray.ms-2= t('Jezikovno pregledano')
       .homonim-collapse-div.d-flex.d-none
         span.normal-gray.ms-2 |
         span.homonim-collapsed.normal-gray.ms-2
@@ -83,7 +83,7 @@
         .d-grid
           .d-flex.align-items-center
             img(src="/images/alert-triangle-dark-red.svg")
-            span.ms-2.normal-red-note Slovarski sestavek je neveljaven
+            span.ms-2.normal-red-note= t('Slovarski sestavek je neveljaven')
           ul.mt-2.ms-4.mb-2
-            li.error-type-1.heavy-gray-text.d-none Tip napake 1 (ni slovenskega termina)
-            li.error-type-2.heavy-gray-text.d-none Tip napake 2 (ni definicije ali tujejezičnega termina)
+            li.error-type-1.heavy-gray-text.d-none= t('Tip napake 1 (ni slovenskega termina)')
+            li.error-type-2.heavy-gray-text.d-none= t('Tip napake 2 (ni definicije ali tujejezičnega termina)')

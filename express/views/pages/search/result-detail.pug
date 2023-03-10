@@ -4,6 +4,7 @@ block pageSpecificScipts
   script(nonce=cspNonce src="/javascripts/search-results.js")
   script(nonce=cspNonce src="/javascripts/search-results-content.js")
   script(nonce=cspNonce src="/javascripts/comments.js")
+  script(nonce=cspNonce src="/javascripts/collapsable-comments.js")
 
 block body
   section#fixed-top-section
@@ -21,7 +22,7 @@ block body
     #offset-main.main-container.ps-1.mt-2
       #chevrons-left.d-flex
         .header-container-divider-left
-          h1#site-heading O terminu
+          h1#site-heading #{ t("O terminu") }
 
       hr#disposable-break.mt-0
       .d-flex.mb-4.w-100.flex-column
@@ -42,8 +43,10 @@ block body
             +entryPreview
 
       .result-comment-section
-        .comments-content.col-12.col-md-12.py-md-3.bd-content
+        .comments-content.col-12.col-md-12.pt-md-3.mb-0.pb-0.bd-content
           #offset-main
-            include /utilities/comments-with-pager
+            //- include /utilities/comments-with-pager
+            include /utilities/comments-with-collapsable-pager
+            //- +pager
 
-  include /common/footer
+      include /common/footer

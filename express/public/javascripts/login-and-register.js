@@ -1,4 +1,4 @@
-/* global axios, validator, removeJumpLogic */
+/* global axios, validator, $, i18next */
 
 /*
 
@@ -27,6 +27,7 @@ const listenRegisterBtn = event => {
   loginHeader.className = loginHeader.className + ' d-none'
   regDescription.className = regDescription.className.replace('d-none', '')
   loginDescription.className = loginDescription.className + ' d-none'
+  clearErrorView()
 }
 
 const listenLoginBtn = event => {
@@ -38,6 +39,7 @@ const listenLoginBtn = event => {
   regHeader.className = regHeader.className + ' d-none'
   loginDescription.className = loginDescription.className.replace('d-none', '')
   regDescription.className = regDescription.className + ' d-none'
+  clearErrorView()
 }
 
 regBtn.addEventListener('click', listenRegisterBtn)
@@ -106,6 +108,23 @@ function updateLoginRegisterErrorView(
   }
 }
 
+function clearErrorView() {
+  Object.keys(registerErrorIndicatorpairs).forEach(key => {
+    registerErrorIndicatorpairs[key][0].style.visibility = 'hidden'
+    registerErrorIndicatorpairs[key][1].style.visibility = 'hidden'
+  })
+
+  document.querySelectorAll('.error-login-icon').forEach(e => {
+    e.style.visibility = 'hidden'
+  })
+
+  document.querySelector('.error-text').style.visibility = 'hidden'
+
+  document.getElementById('login-remember').checked = false
+  document.getElementById('terms-of-use').checked = false
+  document.getElementById('privacy-policy').checked = false
+}
+
 /*
 Show error message from the label that represents the error returned from the server
 Includes error X icons for login
@@ -152,14 +171,23 @@ function updateRegisterWindowOnSuccess(
   footer.appendChild(document.createElement('button'))
   const btn = footer.firstElementChild
   btn.classList = 'btn btn-secondary text-secondary'
-  btn.textContent = 'ZAPRI'
+  btn.textContent = i18next.t('ZAPRI')
   btn.ariaLabel = 'Close'
   btn.dataset.bsDismiss = 'modal'
   const successDescriptionPararaph = body.children[1]
 
-  successDescriptionPararaph.textContent = `Pozdravljeni ${name} ${surname},
-  na vaš elektronski naslov smo vam poslali sporočilo s povezavo, s katero boste potrdili svoj uporabniški račun na Terminološkem portalu.
-  Povezava za potrditev je veljavna ${days} dni.`
+  // successDescriptionPararaph.textContent = `Pozdravljeni ${name} ${surname},
+  // na vaš elektronski naslov smo vam poslali sporočilo s povezavo, s katero boste potrdili svoj uporabniški račun na Terminološkem portalu.
+  // Povezava za potrditev je veljavna ${days} dni.`
+
+  successDescriptionPararaph.textContent =
+    i18next.t('Pozdravljeni ') +
+    `${name} ${surname}, ` +
+    i18next.t(
+      'na vaš elektronski naslov smo vam poslali sporočilo s povezavo, s katero boste potrdili svoj uporabniški račun na Terminološkem portalu. Povezava za potrditev je veljavna '
+    ) +
+    `${days} ` +
+    i18next.t('dni.')
 }
 
 // login and register
@@ -199,7 +227,7 @@ function updateRegisterWindowOnSuccess(
             updateLoginRegisterErrorView(
               registerErrorLabels[iterator],
               true,
-              'Prazno obvezno polje'
+              i18next.t('Prazno obvezno polje')
             )
             failFrontendValidation = true
           } else {
@@ -215,7 +243,7 @@ function updateRegisterWindowOnSuccess(
           updateLoginRegisterErrorView(
             'error-email',
             true,
-            'Neveljavna e-pošta'
+            i18next.t('Neveljavna e-pošta')
           )
         } else {
           updateLoginRegisterErrorView('error-email', false)
@@ -226,7 +254,7 @@ function updateRegisterWindowOnSuccess(
           updateLoginRegisterErrorView(
             'error-password',
             true,
-            'Geslo je prekratko'
+            i18next.t('Geslo je prekratko')
           )
         } else {
           updateLoginRegisterErrorView('error-password', false)
@@ -237,7 +265,7 @@ function updateRegisterWindowOnSuccess(
           updateLoginRegisterErrorView(
             'error-password-repeat',
             true,
-            'Geslo se ne ujema'
+            i18next.t('Geslo se ne ujema')
           )
         }
       }
@@ -263,11 +291,11 @@ function updateRegisterWindowOnSuccess(
 
       // event.target.messageBind.textContent = data
     } catch (error) {
-      let message = 'Prišlo je do napake.'
+      let message = i18next.t('Prišlo je do napake.')
       if (error.response) {
         message = error.response.data
       } else if (error.request) {
-        message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+        message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
       }
 
       showErrorReturnedFromServer(
@@ -279,3 +307,28 @@ function updateRegisterWindowOnSuccess(
     }
   }
 }
+
+function registerConditions() {
+  // Requirement 1: Terms of Use Checkbox checked
+  const requirement1 = document.getElementById('terms-of-use')
+  // Requirement 2: Privacy Policy checked
+  const requirement2 = document.getElementById('privacy-policy')
+
+  const registerButton = document.getElementById('regbtnmain')
+  if (requirement1.checked && requirement2.checked) {
+    registerButton.disabled = false
+  } else {
+    registerButton.disabled = true
+  }
+}
+
+document
+  .getElementById('terms-of-use')
+  .addEventListener('change', registerConditions)
+document
+  .getElementById('privacy-policy')
+  .addEventListener('change', registerConditions)
+
+$('#staticBackdrop').on('hidden.bs.modal', function () {
+  clearErrorView()
+})

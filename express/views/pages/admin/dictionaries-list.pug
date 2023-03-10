@@ -12,13 +12,11 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Slovarji', h1: 'Seznam slovarjev', description: 'Seznam vseh slovarjev, ki jih uredniki, sicer registrirani uporabniki, urejajo na tem portalu.', buttons: [{ type: 'link', content: 'Dodaj slovar', url: '/slovarji/nov' }] }
+  - const c = { sideMenu: true, h2: t('Slovarji'), h1: t('Seznam slovarjev'), description: t('Seznam vseh slovarjev, ki jih uredniki, sicer registrirani uporabniki, urejajo na tem portalu.'), buttons: [{ type: 'link', content: t('Dodaj slovar'), url: '/slovarji/nov' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-3
-      .d-flex.justify-content-between
-        .d-flex.flex-row.mb-4
-          include /components/search-and-filter/inline-search
+      .d-flex.justify-content-end
         .d-flex
           include /utilities/pager
           +pager
@@ -34,28 +32,34 @@ block body
       .table-responsive
         table.styled-table
           thead
-            tr
+            tr#thead
               th= 'ID'
-              th= 'NASLOV'
-              th= 'STATUS'
-              th= 'USTVARJEN'
-              th= 'SPREMENJEN'
+              th= t('NASLOV')
+              th= t('STATUS')
+              th= t('USTVARJEN')
+              th= t('SPREMENJEN')
               th= ''
           tbody#page-results 
             each result in results
               tr
-                each el in result
-                  if result.timeCreated===el || result.timeModified===el
-                    - const date = new Date(el).toLocaleDateString('sl-SL', localeOptions)
-                    td= date
-                  else
-                    td= el
+                td= result.id
+                td= result.name
+                if result.status === 'closed'
+                  td= t('zaprt')
+                else if result.status ==='reviewed'
+                  td= t('v predogledu')
+                else
+                  td= t('odprt')
+                - const dateC = new Date(result.timeCreated).toLocaleDateString('sl-SL', localeOptions)
+                - const dateM = new Date(result.timeModified).toLocaleDateString('sl-SL', localeOptions)
+                td= dateC
+                td= dateM
                 td
                   a.image-link(
                     type="link"
                     href=`/admin/slovarji/${result.id}/podatki`
                   )
-                    img(src="/images/u_edit-alt.svg" alt="Uredi")
-                    span.normal-gray.ms-1 Uredi
+                    img(src="/images/u_edit-alt.svg" alt=t('Uredi'))
+                    span.normal-gray.ms-1= t('Uredi')
 
-  include /common/footer
+      include /common/footer

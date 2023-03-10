@@ -13,11 +13,12 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Komentarji', description: 'Na tem mestu so zbrani vsi komentarji, povezani z izbranim terminološkim slovarjem.' }
+  //- TODO I18n
+  - const c = { sideMenu: true, h2: dictionaryName, h1: t('Komentarji'), description: t('Na tem mestu so zbrani vsi komentarji, povezani z izbranim terminološkim slovarjem.') }
   +mainHeader(c)
 
-  .comments-content.col-12.col-md-12.py-md-3.bd-content.content-hold-prerequisites
+  .comments-content.col-12.col-md-12.pt-md-3.bd-content.content-hold-prerequisites
     #offset-main.main-container
       include /utilities/comments-with-pager
 
-  include /common/footer
+      include /common/footer

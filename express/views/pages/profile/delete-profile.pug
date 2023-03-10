@@ -1,0 +1,94 @@
+extends /layout
+
+block pageSpecificScipts
+  script(nonce=cspNonce src="/javascripts/admin.js")
+  script(nonce=cspNonce src="/javascripts/profile-scripts.js")
+
+block body
+  section#fixed-top-section
+    include /common/main-navigation
+    +main-navigation(false)
+  include /pages/profile/my-profile-side-menu-mixin
+  - const d = { selection: 'delete-profile' }
+  +sideNavigation(d)
+  include /utilities/dictionaries-main-panel-header
+  - const c = { sideMenu: true, h1: title, description: t('Tukaj lahko izbrišete svoj račun.'), buttons: [{ type: 'disabled', content: t('Shrani'), form: 'profileForm' }] }
+  +mainHeader(c)
+
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-2
+      form#profileForm.needs-validation(method="post" novalidate)
+        div
+          .subject-name
+            label.input-name-txt(for="profile-username") #{ t('UPORABNIŠKO IME') }
+          .row
+            .col-sm-6.align-items-center
+              input#profile-username.name-input.form-control.d-inline(
+                type="text"
+                name="username"
+                disabled
+                value=user.userName
+              )
+              .invalid-feedback
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+        .mt-4
+          .subject-name
+            label.input-name-txt(for="profile-name") #{ t('IME') }
+          .row
+            .col-sm-6
+              input#profile-name.name-input.form-control.d-inline(
+                type="text"
+                name="name"
+                minLength="1"
+                disabled
+                value=user.firstName
+              )
+              .invalid-feedback #{ t('Niste vpisali imena') }
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+        .mt-4
+          .subject-name
+            label.input-name-txt(for="profile-surname") #{ t('PRIIMEK') }
+          .row
+            .col-sm-6
+              input#profile-surname.name-input.form-control.d-inline(
+                type="text"
+                name="surname"
+                minLength="1"
+                disabled
+                value=user.lastName
+              )
+              .invalid-feedback #{ t('Niste vpisali priimka.') }
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+
+        //- .mt-4
+          .subject-name
+            label.input-name-txt(for="profile-surname") ELEKTRONSKI NASLOV
+          .row
+            .col-sm-6
+              input#profile-surname.name-input.form-control.d-inline(
+                type="text"
+                name="email"
+                minLength="1"
+                value=user.email
+              )
+              .invalid-feedback Neveljavni elektronski naslov.
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0
+        .mt-5.delete-btn-section
+          button.btn.btn-delete-style(
+            data-bs-target="#alert-modal"
+            data-bs-toggle="modal"
+          )
+            img.i32x32(src="/images/exclamation-triangle-white.svg" alt="DEL")
+            span.ps-2.text-white #{ t('IZBRIŠI') }
+      include /common/footer
+  include /utilities/modal-alert

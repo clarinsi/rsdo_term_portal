@@ -1,0 +1,13 @@
+if isAdminPage
+  include /components/consultancy/admin/consultancy-item-admin
+else
+  include /components/consultancy/consultancy-item
+
+.consultancy-container
+  // To remove duplicates
+  //- - const moderatorList = entryList.filter(a => a.isModerator) // All published questions have a moderator...
+  each entry in entries
+    if isAdminPage
+      +consultancyItem(entry, section)
+    else
+      +consultancyItem(entry)

@@ -1,0 +1,10 @@
+-
+  let resultString = t("rezultatov")
+  if( consultancyHits == 3 || consultancyHits == 4 ) resultString = t("rezultati")
+  if( consultancyHits == 2) resultString = t("rezultata")
+  if( consultancyHits == 1) resultString = t("rezultat")
+span.text-header-title-gray
+  span!= `<a href=${consultancyURL}>${t('Svetovalnica')}</a>&nbsp`
+  span= `- ${consultancyHits} ${resultString}`
+a.mt-minus-p3(href=consultancyURL)
+  img.ms-2.px-1.mt-minus-p3(src="/images/fi_copy.svg")

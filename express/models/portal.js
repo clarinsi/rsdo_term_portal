@@ -12,9 +12,11 @@ Portal.fetchInstanceSettings = async () => {
     WHERE
       name
     IN (
-      'portal_name',
+      'portal_name_sl',
+      'portal_name_en',
       'portal_code',
-      'portal_description',
+      'portal_description_sl',
+      'portal_description_en',
       'is_consultancy_enabled',
       'is_dictionaries_enabled',
       'is_extraction_enabled')`
@@ -32,9 +34,11 @@ Portal.updateInstaceSettings = async payload => {
   const isConsultancyEnabled = payload.isConsultancyEnabled ? 'T' : 'F'
 
   const values = [
-    payload.portalName,
+    payload.portalNameSl,
+    payload.portalNameEn,
     payload.portalCode,
-    payload.portalDescription,
+    payload.portalDescriptionSl,
+    payload.portalDescriptionEn,
     isExtractionEnabled,
     isDictionariesEnabled,
     isConsultancyEnabled
@@ -47,17 +51,21 @@ Portal.updateInstaceSettings = async payload => {
       value
     = CASE name
     WHEN
-      'portal_name' THEN $1
+      'portal_name_sl' THEN $1
     WHEN
-      'portal_code' THEN $2
+      'portal_name_en' THEN $2
     WHEN
-      'portal_description' THEN $3
+      'portal_code' THEN $3
     WHEN
-      'is_extraction_enabled' THEN $4
+      'portal_description_sl' THEN $4
     WHEN
-      'is_dictionaries_enabled' THEN $5
+      'portal_description_en' THEN $5
     WHEN
-      'is_consultancy_enabled' THEN $6
+      'is_extraction_enabled' THEN $6
+    WHEN
+      'is_dictionaries_enabled' THEN $7
+    WHEN
+      'is_consultancy_enabled' THEN $8
     ELSE value
     END`
 

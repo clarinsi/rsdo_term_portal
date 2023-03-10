@@ -1,0 +1,228 @@
+mixin dictionary-description(dictionaryId)
+  .content-hold-prerequisites
+    #offset-main.main-container.mt-1
+      if dictionaryId
+        .title
+          .subject-name
+            label.input-name-txt(for="")= t('ID Slovarja')
+          .row
+            .col-sm-6
+              span.page-title-header= dictionary.id
+      form#admin-description.needs-validation.mt-3(method="post" novalidate)
+        .title
+          .subject-name
+            label.input-name-txt(for="dictionary-title")= t('NASLOV SLOVARJA *')
+          .row
+            .col-sm-6
+              input#dictionary-title.name-input.form-control(
+                type="text"
+                name="nameSl"
+                required
+                maxlength="120"
+                value=dictionary.nameSl
+              )
+            .invalid-feedback= t('Niste vpisali naslova slovarja.')
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Celotni naslov slovarja, ki bo zabeležen v bibliografskih podatkih.')
+
+        .english-title.mt-4
+          .subject-name
+            label.input-name-txt(for="dictionary-title-en")= t('ANGLEŠKI NASLOV SLOVARJA *')
+          .row
+            .col-sm-6
+              input#dictionary-title-en.name-input.form-control(
+                type="text"
+                name="nameEn"
+                maxlength="120"
+                value=dictionary.nameEn ? dictionary.nameEn : ''
+                required
+              )
+              .invalid-feedback= t('Niste vpisali angleškega naslova slovarja.')
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Celotni naslov slovarja v angleščini.')
+
+        .short-title.mt-4
+          .subject-name
+            label.input-name-txt(for="short-dictionary-title")= t('SKRAJŠANI NASLOV SLOVARJA')
+          .row
+            .col-sm-6
+              input#short-dictionary-title.name-input.d-inline.form-control(
+                type="text"
+                name="nameSlShort"
+                maxlength="15"
+                value=dictionary.nameSlShort ? dictionary.nameSlShort : ''
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Zaradi organizacije podatkov na portalu za skrajšani naslov slovarja predlagamo poenobesede	nje, ki se bo izpisovalo ob slovarju, npr. Davčni terminološki slovar &rarr; Davki.')
+        //- TODO enable field when slug is in DB
+        //- .mt-4
+        //-   .subject-name
+        //-     label.input-name-txt(for="slug") Slug
+        //-   .row
+        //-     .col-sm-6
+        //-       input#slug.name-input.d-inline.form-control(
+        //-         type="text"
+        //-         placeholder="V razvoju ..."
+        //-         disabled
+        //-       )
+        //-     .col-sm.d-flex.align-items-center
+        //-       span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Slug
+
+        if dictionary.author
+          each ele, index in dictionary.author
+            .author.mt-4.added-field
+              .subject-name
+                label.input-name-txt(for="author")= t('AVTOR SLOVARJA')
+              .row
+                .col-sm-6
+                  .input-group
+                    input(
+                      class=index != 0 ? 'name-input d-inline form-control icon-trash' : 'name-input d-inline form-control'
+                      type="text"
+                      name="author"
+                      maxlength="64"
+                      value=ele ? ele : ''
+                    )
+                    if (index != 0)
+                      button.input-group-text.delete-author-btn(type="button")
+                        img.delete-author.p-0(
+                          src="/images/red-trash-icon.svg"
+                          alt="Delete"
+                        )
+                .col-sm.d-flex.align-items-center
+                  span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.')
+        else
+          #first-author.author.mt-4
+            .subject-name
+              label.input-name-txt(for="author")= t('AVTOR SLOVARJA')
+            .row
+              .col-sm-6
+                input#author.name-input.d-inline.form-control(
+                  type="text"
+                  name="author"
+                  maxlength="64"
+                )
+              .col-sm.d-flex.align-items-center
+                span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.')
+
+        #add-new-author.author.mt-4
+          .subject-name
+            label.input-name-txt(for="input-new-author")= t('NOV AVTOR SLOVARJA')
+          .row
+            .col-sm-6
+              button#input-new-author.form-control(type="button")
+                span.new-author-text-btn= t('Nov avtor')
+
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Dodajte ime in priimek naslednjega avtorja slovarja..')
+        //- TODO enable field when weight is in DB
+        //- .mt-4
+        //-   .subject-name
+        //-     label.input-name-txt(for="weight") TEŽA
+        //-   .row
+        //-     .col-sm-6.d-flex.align-items-center
+        //-       input#weight.name-input.form-control.autocomplete.d-inline(
+        //-         disabled
+        //-         placeholder="V razvoju ..."
+        //-       )
+
+        //-     .col-sm.d-flex.align-items-center
+        //-       span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Statična teža.
+
+        if dictionaryId
+          .mt-4
+            .subject-name
+              label.input-name-txt(for="status")= t('STATUS')
+            .row
+              .col-sm-6.d-flex.align-items-center
+                select#status.name-input.form-select.d-inline(name="status")
+                  option(
+                    value="closed"
+                    selected=status === 'closed' ? true : false
+                  )= t('Zaprt')
+                  option(
+                    value="reviewed"
+                    selected=status === 'reviewed' ? true : false
+                    disabled=status === 'reviewed' ? false : true
+                  )= t('V odpiranju')
+                  option(
+                    value="published"
+                    selected=status === 'published' ? true : false
+                  )= t('Odprt')
+
+              .col-sm.d-flex.align-items-center
+                span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Terminološkemu slovarju določite status. Izbirate lahko med zaprt, v urejanju in odprt.')
+
+        .cerif-area.mt-4
+          .subject-name
+            label.input-name-txt(for="select-cerif")= t('PODROČJE *')
+          .row
+            .col-sm-6
+              select.name-input.d-inline.form-select(
+                name="domainPrimary"
+                required
+              )
+                each domain in allPrimaryDomains
+                  option(
+                    value=domain.id
+                    selected=domain.id === dictionary.domainPrimary
+                  )= domain.nameSl
+            #invalid-section.invalid-feedback-selection.hidden-section.mt-3= t('Nimate izbranega področja CERIF.')
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Izberite področje svojega terminološkega slovarja na seznamu področij.')
+
+        .small-name-area.mt-4
+          .subject-name
+            label.input-name-txt(for="domain-secondary")= t('PODPODROČJE')
+          .row
+            .col-sm-6
+              select#domain-secondary.name-input.d-inline.form-control.without-addition(
+                name="domainSecondary"
+                multiple
+              )
+                each domain in allSecondaryDomains
+                  if associatedSecondaryDomains.some(associatedDomain => associatedDomain.id === domain.id)
+                    option(value=domain.id selected)= domain.nameSl
+                  else
+                    option(value=domain.id)= domain.nameSl
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Podpodročje.')
+
+        #add-new-area.author.mt-4
+          .subject-name
+            label.input-name-txt= t('NOVO PODPODROČJE')
+          .row
+            .col-sm-6
+              button#input-new-area.form-control(type="button")
+                span.new-author-text-btn= t('Novo podpodročje')
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Vpišite novo podpodročje. Na seznamu podpodročij bo vidno takoj po potrditvi administratorja portala.')
+          #text-editor.mt-4
+            .subject-name
+              span.input-name-txt= t('OPIS SLOVARJA')
+            .container-xxl.ps-0.ms-0
+              textarea.summernote(
+                name="description"
+                value=dictionary.description
+              )
+                if dictionary.description
+                  p= dictionary.description
+            .col-sm-6.smaller-gray-info.mt-2
+              |
+        #issn-field.mt-4
+          .subject-name
+            label.input-name-txt(for="issn")= t('ISSN OZNAKA')
+          .row
+            .col-sm-6
+              input#issn.name-input.d-inline.form-control(
+                type="text"
+                name="issn"
+                maxlength="20"
+                value=dictionary.issn ? dictionary.issn : ''
+              )
+            .col-sm.d-flex.align-items-center
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('ISSN oznaka.')
+              a.ms-1.smaller-gray-info(href="/pomoc" target="_blank")= t('Več ...')
+      include /common/footer

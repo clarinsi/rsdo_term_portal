@@ -1,6 +1,6 @@
 -
-  const registration_login_label = "registracija"
-  const registration_suggestion_label = "Še niste registriran uporabnik, registrirajte se."
+  const registration_login_label = t("registracija")
+  const registration_suggestion_label = t("Še niste registriran uporabnik, registrirajte se.")
 
 
 
@@ -14,8 +14,8 @@
   .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down.modal-lg
     .modal-content.ps-4.pe-4
       .modal-header.mt-3
-        h2.logintitle.modal-title.color-primary-text.fs-2 Prijava
-        h2.regtitle.d-none.modal-title.color-primary-text.fs-2 Registracija
+        h2.logintitle.modal-title.color-primary-text.fs-2= t('Prijava')
+        h2.regtitle.d-none.modal-title.color-primary-text.fs-2= t('Registracija')
         button.no-bg-and-borders(
           type="button"
           data-bs-dismiss="modal"
@@ -23,8 +23,8 @@
         )
           img(src="/images/x.svg" alt="Zapri")
       #logreg-mb.modal-body.pt-0.pe-5
-        p.logindesc.text-header-description-gray S prijavo pridobite možnost uporabe vseh funkcij terminološkega portala.
-        p.regdesc.d-none.text-header-description-gray Z registracijo pridobite možnost uporabe vseh funkcij terminološkega portala.
+        p.logindesc.text-header-description-gray= t('S prijavo pridobite možnost uporabe vseh funkcij terminološkega portala.')
+        p.regdesc.d-none.text-header-description-gray= t('Z registracijo pridobite možnost uporabe vseh funkcij terminološkega portala.')
         .pspelogsig-5
           form#login-form(
             action="/api/v1/users/login"
@@ -35,7 +35,7 @@
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/user.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="login-username-or-email") UPORABNIK
+                label.loginregisterlabel(for="login-username-or-email")= t('UPORABNIK')
                 input#login-username-or-email.d-block.w-100.input-lr(
                   name="usernameOrEmail"
                 )
@@ -48,7 +48,7 @@
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/lock.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="login-password") GESLO
+                label.loginregisterlabel(for="login-password")= t('GESLO')
                 input#login-password.d-block.w-100.input-lr(
                   name="password"
                   type="password"
@@ -71,17 +71,17 @@
                     )
                     label.ps-2.align-middle.rememberloginlabel.text-header-description-gray.pe-2(
                       for="login-remember-me"
-                    ) Zapomni si prijavo
+                    )= t('Zapomni si prijavo')
                   .col-5.pt-2.d-flex-and-align-end.pe-0
-                    a.ms-auto.forgotten-password.gray1-text.no-text-decoration.align-middle(
+                    a#forgotten-password.ms-auto.forgotten-password.gray1-text.no-text-decoration.align-middle(
                       href="#"
-                    ) Pozabljeno geslo
+                    )= t('Pozabljeno geslo')
                 .row.pt-0
                   .col 
-                    p#error-description.error-text.pt-3.mb-1 Nepravilno uporabniško ime, elektronski naslov ali geslo.
+                    p#error-description.error-text.pt-3.mb-1= t('Nepravilno uporabniško ime, elektronski naslov ali geslo.')
                 .row.pt-3
                   .col
-                    button.btn.btn-primary.h41.w151 PRIJAVA
+                    button.btn.btn-primary.h41.w151= t('PRIJAVA')
                 .row.pt-3
                   .col
                     p#login-message-container
@@ -95,7 +95,7 @@
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/user.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="register-username") UPORABNIK
+                label.loginregisterlabel(for="register-username")= t('UPORABNIK')
                 input#register-username.w-100.input-lr(name="username")
 
               .col-2.input-floor.d-flex.justify-content-end.pe-0 
@@ -105,12 +105,12 @@
                 )
             .row.pt-1
               .col.pe-0
-                p#error-username.mb-0.error-text.text-end Uporabniško ime že obstaja
+                p#error-username.mb-0.error-text.text-end= t('Uporabniško ime že obstaja')
             .row.pt-0
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/user.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="register-name") IME
+                label.loginregisterlabel(for="register-name")= t('IME')
                 input#register-name.w-100.input-lr(name="firstName")
               .col-2.input-floor.d-flex.justify-content-end.pe-0 
                 img.error-icon.error-name.align-self-end.d-flex(
@@ -119,12 +119,12 @@
                 )
             .row.pt-1
               .col.pe-0
-                p#error-name.mb-0.error-text.text-end Prazno obvezno polje
+                p#error-name.mb-0.error-text.text-end= t('Prazno obvezno polje')
             .row.pt-1
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/user.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="register-surname") PRIIMEK
+                label.loginregisterlabel(for="register-surname")= t('PRIIMEK')
                 input#register-surname.w-100.input-lr(name="lastName")
               .col-2.input-floor.d-flex.justify-content-end.pe-0 
                 img.error-icon.error-surname.align-self-end.d-flex(
@@ -133,12 +133,12 @@
                 )
             .row.pt-1
               .col.pe-0
-                p#error-surname.mb-0.error-text.text-end Prazno obvezno polje
+                p#error-surname.mb-0.error-text.text-end= t('Prazno obvezno polje')
             .row.pt-1
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/user.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="register-email") ELEKTRONSKI NASLOV
+                label.loginregisterlabel(for="register-email")= t('ELEKTRONSKI NASLOV')
                 input#register-email.w-100.input-lr(name="email")
               .col-2.input-floor.d-flex.justify-content-end.pe-0 
                 img.error-icon.error-email.align-self-end.d-flex(
@@ -147,12 +147,12 @@
                 )
             .row.pt-1
               .col.pe-0
-                p#error-email.mb-0.error-text.text-end Elektronski naslov že obstaja
+                p#error-email.mb-0.error-text.text-end= t('Elektronski naslov že obstaja')
             .row.pt-1
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/lock.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="register-password") GESLO
+                label.loginregisterlabel(for="register-password")= t('GESLO')
                 input#register-password.w-100.input-lr(
                   name="password"
                   type="password"
@@ -164,12 +164,12 @@
                 )
             .row.pt-1
               .col.pe-0
-                p#error-password.mb-0.error-text.text-end Geslo je prekratko
+                p#error-password.mb-0.error-text.text-end= t('Geslo je prekratko')
             .row.pt-1
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
                 img(src="/images/lock.svg" alt="")
               .col-8.input-floor.ps-0
-                label.loginregisterlabel(for="register-password-repeat") PONOVI GESLO
+                label.loginregisterlabel(for="register-password-repeat")= t('PONOVI GESLO')
                 input#register-password-repeat.w-100.input-lr(
                   name="passwordRepeat"
                   type="password"
@@ -181,21 +181,21 @@
                 )
             .row.pt-1
               .col.pe-0
-                p#error-password-repeat.mb-0.repeat.error-text.text-end Geslo se ne ujema
+                p#error-password-repeat.mb-0.repeat.error-text.text-end= t('Geslo se ne ujema')
             .row.mt-1.pt-0
               .col-2.d-flex.align-items-center.justify-content-center.pe-4
               .col-8.ps-0
                 .mb-2
                   input#terms-of-use.me-3(type="checkbox")
-                  span Strinjam se s <a href="/pogoji-uporabe">pogoji uporabe</a>
+                  span!= t('Strinjam se s <a target="_blank" href="/pogoji-uporabe">pogoji uporabe</a>')
                 .mb-2
                   input#privacy-policy.me-3(type="checkbox")
-                  span Soglašam s <a href="/politika-zasebnosti">politiko zasebnosti</a>
+                  span!= t('Soglašam s <a target="_blank" href="/politika-zasebnosti">politiko zasebnosti</a>')
               .col-2.d-flex.justify-content-end.pe-0
             .row
               .col-2.d-flex.ps-4.align-items-center.pe-4
               .col-10.ps-0
-                button.btn.btn-primary.h41.w151 Registracija
+                button#regbtnmain.btn.btn-primary.h41.w151(disabled)= ('Registracija')
             .row
               .col-sm-2.d-flex.ps-4.align-items-center
               .col-sm-10
@@ -214,8 +214,8 @@
                       //-<i class="bi-person-plus"></i>
                       img(src="/images/icon-user-x.svg" alt="")
                     span.form-data
-                      h6 Registracija
-                      p Še niste registriran uporabnik, registrirajte se.
+                      h6= t('Registracija')
+                      p= t('Še niste registriran uporabnik, registrirajte se.')
               #loginbtn.registration.register-login-form.login.d-none
                 button(
                   style="border: none; background: none; text-decoration: none"
@@ -225,7 +225,7 @@
                       //-<i class="bi-person-plus"></i>
                       img(src="/images/icon-user-x.svg" alt="")
                     span.form-data
-                      h6 Prijava
-                      p Nazaj na prijavo
+                      h6= t('Prijava')
+                      p= t('Nazaj na prijavo')
 
 script(nonce=cspNonce src="/javascripts/login-and-register.js")

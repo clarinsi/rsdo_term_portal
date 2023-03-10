@@ -66,6 +66,27 @@ exports.listMainEntries = async (req, res) => {
     {}
   )
 
+  // duplicated code below for filtering foreignent, optimize later
+  const categoriesLabels = Object.keys(entriesByCategory)
+  for (
+    let categoryIndex = 0;
+    categoryIndex < categoriesLabels.length;
+    categoryIndex++
+  ) {
+    entriesByCategory[categoriesLabels[categoryIndex]] = entriesByCategory[
+      categoriesLabels[categoryIndex]
+    ].map(entry => {
+      entry.foreignEntries = entry.foreignEntries?.filter(foreignEntry => {
+        if (filters.targetLanguages.length > 0) {
+          return filters.targetLanguages.includes(`${foreignEntry.lang.id}`)
+        } else {
+          return true
+        }
+      })
+      return entry
+    })
+  }
+
   // res.send({ page, numberOfAllPages, entries })
   res.append('page', page)
   res.append('number-of-all-pages', numberOfAllPages)

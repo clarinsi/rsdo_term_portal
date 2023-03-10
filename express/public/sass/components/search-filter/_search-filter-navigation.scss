@@ -15,7 +15,7 @@ $sfPanelWidth: 24rem;
   box-shadow: none;
   left: 0;
   background-color: v.$nav-white;
-  z-index: 5;
+  z-index: 100;
 }
 
 @media (min-width: v.$layout-breakpoint-medium) {
@@ -33,6 +33,7 @@ $sfPanelWidth: 24rem;
 v.$padding-left-nav: 1rem;
 
 .clear-filter-section {
+  margin: 0.1rem 0 0 0.1rem; // corrects the outline cetting cropped from absolute layout
   display: flex;
   align-items: center;
   // margin-top: 16px;
@@ -40,9 +41,7 @@ v.$padding-left-nav: 1rem;
   color: v.$navigation-maincolor !important;
   align-content: center;
   font-weight: 200;
-
-  img {
-  }
+  width: fit-content;
 
   span {
     padding-left: 8px;
@@ -87,15 +86,22 @@ v.$padding-left-nav: 1rem;
       background: none;
       padding-right: 0;
       justify-content: flex-end;
+      align-self: center;
 
       button {
         display: flex;
-        width: 32px;
-        height: 24px;
+        // width: 32px;
+        // height: 24px;
         padding: 0;
         margin: 0;
         background: none;
         box-shadow: none;
+        justify-content: flex-end;
+        flex: 0 0 auto;
+
+        &:disabled {
+          opacity: 0.3;
+        }
 
         .select-more-text,
         div {
@@ -103,6 +109,9 @@ v.$padding-left-nav: 1rem;
           /*padding-right: 10px;*/
           justify-content: flex-end;
           align-items: center;
+          width: max-content;
+          flex-grow: 0;
+          flex-shrink: 1;
         }
 
         .select-more-text {
@@ -136,6 +145,7 @@ v.$padding-left-nav: 1rem;
   }
 
   .nav-section-content {
+    margin-left: 0.1rem;
     display: flex;
     flex-direction: column;
     padding-left: 0;
@@ -203,19 +213,4 @@ v.$padding-left-nav: 1rem;
 .sf-min-h {
   min-height: 600px;
   background-color: v.$nav-white;
-}
-
-@media (min-width: v.$layout-breakpoint-medium) {
-  /*.nav-section {
-    padding-top: 28px;
-  }*/
-
-  //.search-filter-nav-content {
-  //position: fixed;
-  //}
-
-  .clear-filter-section {
-    // margin-top: 43px;
-    // padding-left: v.$padding-left-nav;
-  }
 }

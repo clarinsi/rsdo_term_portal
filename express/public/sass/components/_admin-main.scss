@@ -73,7 +73,7 @@
 
 /*responsive*/
 
-@media (max-width: 1192px) {
+@media (max-width: v.$layout-breakpoint-x-large) {
   .table-users thead {
     display: none;
   }
@@ -106,6 +106,23 @@
     font-size: 1rem;
     // font-weight: bold;
     text-align: left;
+  }
+}
+
+#page-results {
+  td {
+    min-width: 32px;
+    &.tdata-area {
+      width: 40%;
+    }
+
+    &.tdata-translation {
+      width: 40%;
+    }
+
+    &.buttons-group {
+      min-width: 48px;
+    }
   }
 }
 

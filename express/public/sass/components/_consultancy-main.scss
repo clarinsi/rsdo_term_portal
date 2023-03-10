@@ -9,6 +9,12 @@
   // margin: 0 1rem;
 }
 
+#text-description.page-description.pe-0 {
+  a {
+    font-size: 0.875rem;
+  }
+}
+
 .consultancy-padding-admin {
   display: flex;
   flex-grow: 1;
@@ -42,6 +48,12 @@
         div {
           span.question-asked-time {
             font-size: 0.75rem;
+          }
+          .title-cons {
+            color: v.$navigation-maincolor;
+            * {
+              color: v.$navigation-maincolor;
+            }
           }
         }
       }

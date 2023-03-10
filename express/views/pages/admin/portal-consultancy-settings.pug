@@ -12,7 +12,7 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Osnovne nastavitve', h1: 'Svetovalnica', description: 'Portal lahko povežete s Terminološko svetovalnico ZRC SAZU in tako prikazujete terminološke odgovore na svojem portalu, lahko pa vklopite lastno svetovalnico. V tem primeru morate med registriranimi uporabniki izbrati svetovalce in urednika svetovalnice, ki  bodo odgovarjali na terminološka vprašanja uporabnikov.', buttons: [{ form: 'admin-settings-consult', type: 'disabled', content: 'Shrani' }] }
+  - const c = { sideMenu: true, h2: t('Osnovne nastavitve'), h1: t('Svetovalnica'), description: t('Portal lahko povežete s Terminološko svetovalnico ZRC SAZU in tako prikazujete terminološke odgovore na svojem portalu, lahko pa vklopite lastno svetovalnico. V tem primeru morate med registriranimi uporabniki izbrati svetovalce in urednika svetovalnice, ki  bodo odgovarjali na terminološka vprašanja uporabnikov.'), buttons: [{ form: 'admin-settings-consult', type: 'disabled', content: t('Shrani') }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-2
@@ -26,14 +26,14 @@ block body
                 value="own"
                 checked
               )
-              label.normal-gray.ms-2(for="own-consultancy") Lastna svetovalnica
+              label.normal-gray.ms-2(for="own-consultancy")= t('Lastna svetovalnica')
             .mt-3
               input#zrc-consultancy.form-check-input(
                 type="radio"
                 name="consultancyType"
                 value="ZRC"
               )
-              label.normal-gray.ms-2(for="zrc-consultancy") Terminološka svetovalnica ZRC SAZU
+              label.normal-gray.ms-2(for="zrc-consultancy")= t('Terminološka svetovalnica ZRC SAZU')
           else
             .button-type
               input#own-consultancy.form-check-input(
@@ -41,7 +41,7 @@ block body
                 name="consultancyType"
                 value="own"
               )
-              label.normal-gray.ms-2(for="own-consultancy") Lastna svetovalnica
+              label.normal-gray.ms-2(for="own-consultancy")= t('Lastna svetovalnica')
             .mt-3
               input#zrc-consultancy.form-check-input(
                 type="radio"
@@ -49,11 +49,11 @@ block body
                 value="ZRC"
                 checked
               )
-              label.normal-gray.ms-2(for="zrc-consultancy") Terminološka svetovalnica ZRC SAZU
+              label.normal-gray.ms-2(for="zrc-consultancy")= t('Terminološka svetovalnica ZRC SAZU')
 
         .mt-4
           .subject-name
-            label.smaller-black-uppercase(for="zrc-email") E-NASLOV
+            label.smaller-black-uppercase(for="zrc-email")= t('E-NASLOV')
           .row
             .col-sm-5
               input#zrc-email.name-input.form-control.autocomplete.d-inline(
@@ -62,11 +62,11 @@ block body
                 value=consultancy.zrcEmail
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Vnesite e-naslov, ki ga za obveščanje o novih terminoloških vprašanjih uporabljajo terminološki svetovalci.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Vnesite e-naslov, ki ga za obveščanje o novih terminoloških vprašanjih uporabljajo terminološki svetovalci.')
 
         .mt-3
           .subject-name
-            label.smaller-black-uppercase(for="zrc-url") POVEZAVA
+            label.smaller-black-uppercase(for="zrc-url")= t('POVEZAVA')
           .row
             .col-sm-5
               input#zrc-url.name-input.form-control.autocomplete.d-inline(
@@ -75,7 +75,7 @@ block body
                 value=consultancy.zrcURL
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Vnesite naslov spletnega mesta, kjer so zbrani vsi odgovori terminološke svetovalnice.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Vnesite naslov spletnega mesta, kjer so zbrani vsi odgovori terminološke svetovalnice.')
+      include /common/footer
   include /utilities/modal-alert-mixin
-  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
-  include /common/footer
+  +alertModal('unsaved-data', t('Shrani'), t('Ne'), 'modal-save-btn', 'modal-dont-save-btn', t('Imate neshranjene spremebe. Ali jih želite shraniti?'))

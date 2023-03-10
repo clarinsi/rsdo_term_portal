@@ -88,7 +88,7 @@ router.get(
 // Show a page to preview, create or edit dictionary entries and their comments.
 router.get(
   '/:dictionaryId/vsebina',
-  user.isDictionaryEditor,
+  user.canContentEdit,
   dictionary.showContent
 )
 
@@ -126,5 +126,8 @@ router.get(
   user.isDictionaryEditor,
   dictionary.showImportFromExtractionForm
 )
+
+// Download dictionary export file.
+router.get('/export-download/:exportId', dictionary.exportDownload)
 
 module.exports = router

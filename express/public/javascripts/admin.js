@@ -1,6 +1,8 @@
-/* global $, axios, bootstrap,  currentPagePath, initPagination, removeAllChildNodes, unsavedData */
+/* global $, axios, bootstrap, currentPagePath, initPagination, removeAllChildNodes, unsavedData, replaceContainer, i18next */
 
 // const currentPagePath = location.pathname
+
+let queryBattery = ''
 
 window.addEventListener('load', () => {
   initAdmin()
@@ -62,11 +64,11 @@ function initAdmin() {
         renderResults(results)
         updatePager(page, numberOfAllPages)
       } catch (error) {
-        let message = 'Prišlo je do napake.'
+        let message = i18next.t('Prišlo je do napake.')
         if (error.response?.data) {
           message = error.response.data
         } else if (error.request) {
-          message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
         }
         alert(message)
         updatePager()
@@ -130,11 +132,11 @@ function initAdmin() {
         ifUserExists(data, type)
         event.target.reset()
       } catch (error) {
-        let message = 'Prišlo je do napake.'
+        let message = i18next.t('Prišlo je do napake.')
         if (error.response) {
           message = error.response.data
         } else if (error.request) {
-          message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
         }
         console.log(message)
       }
@@ -155,11 +157,11 @@ function initAdmin() {
         renderResults(results)
         updatePager(page, numberOfAllPages)
       } catch (error) {
-        let message = 'Prišlo je do napake.'
+        let message = i18next.t('Prišlo je do napake.')
         if (error.response?.data) {
           message = error.response.data
         } else if (error.request) {
-          message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
         }
         alert(message)
         updatePager()
@@ -189,9 +191,9 @@ function initAdmin() {
         aEl.type = 'link'
         aEl.href = `/admin/uporabniki/${result.id}/urejanje`
         imgEl.src = '/images/u_edit-alt.svg'
-        imgEl.alt = 'Uredi'
+        imgEl.alt = i18next.t('Uredi')
         spanEl.className = 'normal-gray ms-1'
-        spanEl.textContent = 'Uredi'
+        spanEl.textContent = i18next.t('Uredi')
         td4.append(aEl)
         aEl.append(imgEl, spanEl)
         rowEl.append(td1, td2, td3, td4)
@@ -214,11 +216,11 @@ function initAdmin() {
         renderResults(results)
         updatePager(page, numberOfAllPages)
       } catch (error) {
-        let message = 'Prišlo je do napake.'
+        let message = i18next.t('Prišlo je do napake.')
         if (error.response?.data) {
           message = error.response.data
         } else if (error.request) {
-          message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
         }
         alert(message)
         updatePager()
@@ -267,9 +269,9 @@ function initAdmin() {
         aEl.type = 'link'
         aEl.href = `/admin/slovarji/${result.id}/podatki`
         imgEl.src = '/images/u_edit-alt.svg'
-        imgEl.alt = 'Uredi'
+        imgEl.alt = i18next.t('Uredi')
         spanEl.className = 'normal-gray ms-1'
-        spanEl.textContent = 'Uredi'
+        spanEl.textContent = i18next.t('Uredi')
         td6.append(aEl)
         aEl.append(imgEl, spanEl)
         rowEl.append(td1, td2, td3, td4, td5, td6)
@@ -343,18 +345,20 @@ function initAdmin() {
 
       async function onPageChange(newPage) {
         try {
-          const { page, numberOfAllPages, results } = await getDataForPage(
-            newPage
-          )
+          const results = await getDataForPage(newPage)
+
+          const numberOfAllPages = +results.headers['number-of-all-pages']
+          const page = +results.headers.page
+
           removeAllChildNodes(resultsListEl)
-          renderResults(results)
+          renderResults(results.data)
           updatePager(page, numberOfAllPages)
         } catch (error) {
-          let message = 'Prišlo je do napake.'
+          let message = i18next.t('Prišlo je do napake.')
           if (error.response?.data) {
             message = error.response.data
           } else if (error.request) {
-            message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+            message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
           }
           alert(message)
           updatePager()
@@ -362,56 +366,46 @@ function initAdmin() {
       }
 
       async function getDataForPage(page) {
-        const url = `/api/v1/dictionaries/listSecondaryDomains?p=${page}`
-        const { data } = await axios.get(url)
-        return data
+        const url = `/api/v1/dictionaries/secondaryDomains?q=${queryBattery}&p=${page}`
+        return await axios.get(url)
       }
 
       function renderResults(results) {
-        results.forEach(result => {
-          const rowEl = document.createElement('tr')
-          const input = document.createElement('input')
-          const th = document.createElement('th')
-          const input2 = document.createElement('input')
-          const td1 = document.createElement('td')
-          const tdTrans = document.createElement('td')
-          const td2 = document.createElement('td')
-          const div = document.createElement('div')
-          const editBtn = document.createElement('button')
-          const deleteBtn = document.createElement('button')
-          const imgEditEl = document.createElement('img')
-          const imgDelEl = document.createElement('img')
-          input.value = result.id
-          input.type = 'hidden'
-          input.name = 'domainLabelId'
-          th.scope = 'row'
-          input2.className = 'form-check checkbox-table'
-          input2.type = 'checkbox'
-          input2.name = 'isVisible'
-          input2.disabled = true
-          input2.checked = !!result.isApproved
-          th.append(input2)
-          td1.className = 'tdata-area'
-          td1.textContent = result.nameSl
-          tdTrans.className = 'tdata-translation'
-          tdTrans.textContent = result.nameEn
-          td2.classList.add('buttons-group')
-          div.classList.add('table-buttons')
-          editBtn.className = 'p-0 table-button-grp me-3 edit-row-btn'
-          editBtn.type = 'button'
-          imgEditEl.src = '/images/u_edit-alt.svg'
-          deleteBtn.className = 'p-0 table-button-grp delete-row-btn'
-          deleteBtn.dataset.bsTarget = '#alert-modal'
-          deleteBtn.dataset.bsToggle = 'modal'
-          deleteBtn.type = 'button'
-          imgDelEl.src = '/images/red-trash-icon.svg'
-          td2.append(div)
-          div.append(editBtn, deleteBtn)
-          editBtn.append(imgEditEl)
-          deleteBtn.append(imgDelEl)
+        replaceContainer('page-results', results)
+      }
 
-          rowEl.append(input, th, td1, tdTrans, td2)
-          resultsListEl.appendChild(rowEl)
+      const updatePaginationOnFilter = axiosResult => {
+        const numberOfAllPages = +axiosResult.headers['number-of-all-pages']
+        const page = +axiosResult.headers.page
+        // removeAllChildNodes(resultsListEl)
+        // renderResults(results.data)
+        // console.log(numberOfAllPages)
+        // console.log(page)
+        // console.log(updatePager)
+        updatePager(page, numberOfAllPages)
+      }
+
+      /// / Due to unsual design, the function was moved inside
+      function searchController() {
+        // if (window.location.pathname.includes('podrocne-oznake')) { // No if required since already checkek above
+        queryBattery = document.getElementById('input-search').value
+        // console.log(queryBattery)
+        axios
+          .get(`/api/v1/dictionaries/secondaryDomains?q=${queryBattery}`)
+          .then(result => {
+            updatePaginationOnFilter(result)
+            replaceContainer('page-results', result.data)
+          })
+        // }
+      }
+      const inlineSearchButton = document.getElementById('inline-search-btn')
+
+      if (inlineSearchButton) {
+        inlineSearchButton.addEventListener('click', searchController)
+        $('#input-search').on('keyup', function (e) {
+          if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+            searchController()
+          }
         })
       }
     }
@@ -450,7 +444,7 @@ function initAdmin() {
         ifUserExists(data, type)
         event.target.reset()
       } catch (error) {
-        const message = 'Prišlo je do napake.'
+        const message = i18next.t('Prišlo je do napake.')
       }
     }
   }
@@ -458,17 +452,6 @@ function initAdmin() {
   if (/\/admin\/uporabniki\/\d+\/urejanje/.test(currentPagePath)) {
     const formEditUser = document.getElementById('form-edit-user')
     formEditUser.addEventListener('input', enableButton)
-  }
-
-  if (/\/slovarji\/\d+\/struktura/.test(currentPagePath)) {
-    changePreview()
-    const switchForm = document.querySelector('.switch-forms')
-    switchForm.addEventListener('click', () => changePreview())
-    const wholeForm = document.getElementById('form-dictionary-structure')
-    wholeForm.addEventListener('input', enableButton)
-    const dictSideMenu = document.querySelector('.admin-nav-content')
-    unsavedData(wholeForm, dictSideMenu)
-    $('#languages-input').on('change', enableButton)
   }
 
   if (currentPagePath === '/admin/nastavitve/portal') {
@@ -537,7 +520,7 @@ function createNewAuthorInput(pageForm) {
   divAuthor.className = 'author mt-sm-4 added-field'
   divSubjectName.className = 'subject-name'
   spanName.className = 'smaller-gray-uppercase'
-  spanName.textContent = 'AVTOR'
+  spanName.textContent = i18next.t('AVTOR')
   divRow.className = 'row align-items-center'
   divColSm5.className = 'col-sm-6'
   inputGroup.className = 'input-group'
@@ -553,7 +536,7 @@ function createNewAuthorInput(pageForm) {
   divColSm.className = 'col-sm'
   spanNameInfoTxt.className =
     'd-md-inline d-block name-info-txt ms-xxl-3 ms-md-3 mt-3 mt-ms-0'
-  spanNameInfoTxt.textContent = 'Dodaten avtor.'
+  spanNameInfoTxt.textContent = i18next.t('Dodaten avtor.')
 
   divAuthor.appendChild(divSubjectName)
   divSubjectName.appendChild(spanName)
@@ -594,9 +577,9 @@ function createNewAreaInput(pageForm) {
   divSmallNameArea.className = 'author mt-4 added-field'
   divSubjectName.className = 'subject-name'
   spanInputNameTxtSlo.className = 'smaller-gray-uppercase'
-  spanInputNameTxtSlo.textContent = 'NOVO PODPODROČJE (slovensko)'
+  spanInputNameTxtSlo.textContent = i18next.t('NOVO PODPODROČJE (slovensko)')
   spanInputNameTxtEng.className = 'smaller-gray-uppercase mt-4'
-  spanInputNameTxtEng.textContent = 'NOVO PODPODROČJE (angleško)'
+  spanInputNameTxtEng.textContent = i18next.t('NOVO PODPODROČJE (angleško)')
   divRow.className = 'row align-items-center'
   divRow2.className = 'row align-items-center'
   divEnglishInput.className = 'mt-4'
@@ -617,11 +600,12 @@ function createNewAreaInput(pageForm) {
   divColSm.className = 'col-sm  mt-3 mt-sm-0'
   divColSm2.className = 'col-sm mt-3 mt-sm-0'
   spanNameInfoTxt.className = 'd-sm-inline name-info-txt ms-xxl-3 ms-md-3'
-  spanNameInfoTxt.textContent =
+  spanNameInfoTxt.textContent = i18next.t(
     'Vpišite novo podpodročje. Na seznamu podpodročij bo vidno takoj po potrditvi administratorja portala.'
+  )
   spanNameInfoTxtEng.className =
     'd-sm-inline name-info-txt ms-xxl-3 ms-md-3 mt-4'
-  spanNameInfoTxtEng.textContent = 'Novo podpodročje (angleško).'
+  spanNameInfoTxtEng.textContent = i18next.t('Novo podpodročje (angleško).')
 
   divSmallNameArea.appendChild(divSubjectName)
   divSubjectName.appendChild(spanInputNameTxtSlo)
@@ -782,7 +766,7 @@ function handleAreasClick({ target }) {
     const newButtonGroup = document.createElement('div')
     const cancelButton = document.createElement('button')
     const saveButton = document.createElement('button')
-    cancelButton.textContent = 'Prekliči'
+    cancelButton.textContent = i18next.t('Prekliči')
     cancelButton.type = 'button'
     cancelButton.className = 'btn btn-secondary me-2'
     cancelButton.style.height = '33px'
@@ -790,7 +774,7 @@ function handleAreasClick({ target }) {
     cancelButton.addEventListener('click', () =>
       abortEditing(newButtonGroup, tableButtons, tDataArea, tDataTranslation)
     )
-    saveButton.textContent = 'POTRDI'
+    saveButton.textContent = i18next.t('POTRDI')
     saveButton.type = 'button'
     saveButton.className = 'btn btn-primary'
     saveButton.style.height = '33px'
@@ -986,74 +970,10 @@ function mobileMoveContent() {
       currentPagePath.includes('slovarji') &&
       !currentPagePath.includes('admin')
     )
-      navTitle.textContent = 'Urejanje'
-    else navTitle.textContent = 'Administrator'
+      navTitle.textContent = i18next.t('Urejanje')
+    else navTitle.textContent = i18next.t('Administracija')
     siteHeading.style.display = 'block'
   }
-}
-
-function changePreview() {
-  const switchDomainLabel = document.getElementById('domain-labels')
-  const switchLabel = document.getElementById('label-checkbox')
-  const switchDefinition = document.getElementById('definition-check-box')
-  const switchSynonym = document.getElementById('synonyms')
-  const switchLink = document.getElementById('links')
-  const switchForeignLang = document.getElementById('language-group')
-  const switchForeignTerm = document.getElementById('termin-language-subgroup')
-  const switchForeignDef = document.getElementById(
-    'definition-language-subgroup'
-  )
-  const switchForeignSyn = document.getElementById('synonym-language-subgroup')
-  const switchImage = document.getElementById('images')
-  const switchAudio = document.getElementById('audio')
-  const switchVideo = document.getElementById('video')
-
-  const previewDomainSecondary = document.querySelector(
-    '.preview-domain-secondary'
-  )
-  const selectedLabel = document.querySelector('.preview-label')
-  const selectedDef = document.querySelector('.preview-definition')
-  const selectedSynonyms = document.querySelector('.preview-synonym')
-  const linkedTerms = document.getElementById('linked-terms')
-  const foreignLanguages = document.querySelector(
-    '.preview-languages-container'
-  )
-  const listForeignTerm = document.querySelector('.preview-f-term')
-  const listForeignDefinitions = document.querySelector(
-    '.preview-foreign-definition'
-  )
-  const foreignSynonyms = document.querySelector('.preview-foreign-synonyms')
-  const selectedImages = document.querySelector('.preview-images')
-  const selectedAudio = document.querySelector('.preview-audio')
-  const selectedVideo = document.querySelector('.preview-video')
-
-  if (!switchDomainLabel.checked)
-    previewDomainSecondary.classList.add('hide-preview')
-  else previewDomainSecondary.classList.remove('hide-preview')
-  if (!switchLabel.checked) selectedLabel.classList.add('hide-preview')
-  else selectedLabel.classList.remove('hide-preview')
-  if (!switchDefinition.checked) selectedDef.classList.add('hide-preview')
-  else selectedDef.classList.remove('hide-preview')
-  if (!switchSynonym.checked) selectedSynonyms.classList.add('hide-preview')
-  else selectedSynonyms.classList.remove('hide-preview')
-  if (!switchLink.checked) linkedTerms.classList.add('hide-preview')
-  else linkedTerms.classList.remove('hide-preview')
-  if (!switchForeignLang.checked) foreignLanguages.classList.add('hide-preview')
-  else foreignLanguages.classList.remove('hide-preview')
-  if (!switchForeignSyn.checked) foreignSynonyms.classList.add('hide-preview')
-  else foreignSynonyms.classList.remove('hide-preview')
-  if (!switchForeignTerm.checked) listForeignTerm.classList.add('hide-preview')
-  else listForeignTerm.classList.remove('hide-preview')
-  if (!switchForeignDef.checked)
-    listForeignDefinitions.classList.add('hide-preview')
-  else listForeignDefinitions.classList.remove('hide-preview')
-
-  if (!switchImage.checked) selectedImages.classList.add('hide-preview')
-  else selectedImages.classList.remove('hide-preview')
-  if (!switchAudio.checked) selectedAudio.classList.add('hide-preview')
-  else selectedAudio.classList.remove('hide-preview')
-  if (!switchVideo.checked) selectedVideo.classList.add('hide-preview')
-  else selectedVideo.classList.remove('hide-preview')
 }
 
 function checkUserRightsCb(el) {
@@ -1109,12 +1029,18 @@ function ifUserExists(data, type) {
         }
       }
       if (bool === true && data[0] !== undefined) {
-        modalText.textContent = `Uporabnik ${data[0].username} je že v tabeli.`
+        // modalText.textContent = `Uporabnik ${data[0].username} je že v tabeli.`
+        modalText.textContent =
+          i18next.t('Uporabnik') +
+          `${data[0].username}` +
+          i18next.t('je že v tabeli.')
         modalEl.toggle()
       } else createNewUserArea(data, type)
     } else createNewUserArea(data, type)
   } else {
-    modalText.textContent = `Preverite, če ste pravilno vpisali uporabniško ime. Bodite pozorni na velike in male črke.`
+    modalText.textContent = i18next.t(
+      'Preverite, če ste pravilno vpisali uporabniško ime. Bodite pozorni na velike in male črke.'
+    )
     modalEl.toggle()
   }
 }
@@ -1172,24 +1098,24 @@ function createNewUserArea(data, type) {
     inputConsultAdmin.type = 'checkbox'
 
     if (type === 'portal') {
-      tdPortAdminOrAdmin.dataset.label = 'Skrbnik portala'
+      tdPortAdminOrAdmin.dataset.label = i18next.t('Skrbnik portala')
       inputPortAdminOrAdmin.name = `rolesPerUser['${data[0].id}'][isPortalAdmin]`
-      tdDictAdmin.dataset.label = 'Skrbnik slovarjev'
+      tdDictAdmin.dataset.label = i18next.t('Skrbnik slovarjev')
       inputDictAdmin.name = `rolesPerUser['${data[0].id}'][isDictionariesAdmin]`
-      tdConsultAdmin.dataset.label = 'Skrbnik svetovalnice'
+      tdConsultAdmin.dataset.label = i18next.t('Skrbnik svetovalnice')
       inputConsultAdmin.name = `rolesPerUser['${data[0].id}'][isConsultancyAdmin]`
     } else {
-      tdPortAdminOrAdmin.dataset.label = 'Administrator'
+      tdPortAdminOrAdmin.dataset.label = i18next.t('Administrator')
       inputPortAdminOrAdmin.classList.add('administration-cb')
       inputPortAdminOrAdmin.name = `rightsPerUser['${data[0].id}'][isAdministration]`
-      tdDictAdmin.dataset.label = 'Urejanje'
+      tdDictAdmin.dataset.label = i18next.t('Urejanje')
       inputDictAdmin.name = `rightsPerUser['${data[0].id}'][isEditing]`
       inputDictAdmin.classList.add('edit-cb')
-      tdConsultAdmin.dataset.label = 'Strokovni pregled'
+      tdConsultAdmin.dataset.label = i18next.t('Strokovni pregled')
       inputConsultAdmin.classList.add('terminology-review-cb')
       inputConsultAdmin.name = `rightsPerUser['${data[0].id}'][isTerminologyReview]`
       tdLanguageRev.className = 'pt-1 pb-1'
-      tdLanguageRev.dataset.label = 'Jezikovni pregled'
+      tdLanguageRev.dataset.label = i18next.t('Jezikovni pregled')
       divLanguageRev.className =
         'form-check d-flex justify-content-left justify-content-xl-center'
       inputLanguageRev.className = 'language-review-cb form-check-input'
@@ -1235,7 +1161,7 @@ function createNewUserArea(data, type) {
 // Summernote
 
 $('.summernote').summernote({
-  placeholder: 'Na kratko opišite zasnovo in namen slovarja.',
+  placeholder: i18next.t('Na kratko opišite zasnovo in namen slovarja.'),
   height: 300,
   minheight: 150,
   toolbar: [

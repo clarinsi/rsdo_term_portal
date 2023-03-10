@@ -8,7 +8,7 @@ section.filter-modal-root
       .modal-content
         .modal-header.flex-wrap.pb-2
           h5#modal-filter-label.modal-title.maincolor-text
-            | #{ "PLACEHOLDER" }
+            | #{ "Filter" }
           button.btn-close(
             type="button"
             data-bs-dismiss="modal"
@@ -16,13 +16,13 @@ section.filter-modal-root
           )
           .flex.w-100.search-modal-header-root
             span.search-modal-filter
-              input(type="text")
-              span
+              input#filterSfmText.rm-outline.onEnterListener(type="text")
+              button#filter-sfm.no-border.no-bg
                 img(src="/images/search_blue.svg" alt="")
             span.d-flex.flex-grow-1.align-content-center
               a#ccf.clear-filter-modal-section(href="#")
                 img(src="/images/square-minus.svg" alt="")
-                span POČISTI FILTRE
+                span.ps-2 POČISTI FILTRE
         .modal-body.pb-2
           ul#modal-list.nav-modal-section-content.mb-0.pb-0
             // Added dynamically...

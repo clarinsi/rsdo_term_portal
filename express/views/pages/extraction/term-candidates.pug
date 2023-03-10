@@ -12,13 +12,11 @@ block body
   include /common/side-menu-fake
   +sideNavigationFake
   include /utilities/dictionaries-main-panel-header
-  - const c = { noSidebar: false, hrefurl: '.', h2: 'Luščenje', h1: 'Terminološki kandidati', description: 'Seznam terminoloških kandidatov, ki so rezultat izbranega luščenja.', buttons: [{ type: 'cancel', url: '/luscenje', content: 'Nazaj', classAtr: 'btn btn-secondary header-btn-secondary' }] }
+  - const c = { noSidebar: false, hrefurl: '.', h2: t('Luščenje'), h1: t('Terminološki kandidati'), description: t('Seznam terminoloških kandidatov, ki so rezultat izbranega luščenja.'), buttons: [{ type: 'cancel', url: '/luscenje', content: t('Naprej'), classAtr: 'btn border-header header-btn-secondary' }] }
   +mainHeader(c)
   .content-hold-prerequisites.me-2
     #offset-main.mt-3
-      .d-flex.w-100.justify-content-between.mb-4
-        .d-flex
-          include /components/search-and-filter/inline-search
+      .d-flex.w-100.justify-content-end.mb-4
         .d-flex
           include /utilities/pager
           +pager
@@ -26,30 +24,30 @@ block body
       .table-responsive
         table.styled-table
           thead
-            tr
-              th= '#'
-              th= 'KANONIČNA OBLIKA'
-              th= 'RANKING'
-              th= 'POGOSTOST OBJAVLJANJA'
+            tr#thead
+              th.td-index= '#'
+              th.td-cannon= t('KANONIČNA OBLIKA')
+              th= t('UTEŽ')
+              th= t('POJAVITVE')
           tbody#page-results
             each termCandidate, index in firstPageOfTermCandidates
               tr
                 td= index + 1
                 td= termCandidate.kanonicnaoblika
                 td= termCandidate.ranking
-                td= termCandidate.pogostostpojavljanja
+                td= termCandidate.pogostostpojavljanja[0]
 
       form(action=`/api/v1/extraction/${extractionId}/term-candidates-export`)
         .row.mt-4
           .me-0.pe-0.d-flex.align-items-center
-            span.radio-button-labels Izvozi termine od številke
+            span.radio-button-labels= t('Izvozi termine od številke')
             input.without-arrows.form-control.terminology-input.ms-1(
               type="number"
               name="from"
               maxlength="5"
               min="0"
             )
-            span.radio-button-labels.ms-1 do številke
+            span.radio-button-labels.ms-1= t('do številke')
             input.without-arrows.form-control.terminology-input.ms-1(
               type="number"
               name="to"
@@ -99,7 +97,7 @@ block body
         //-         span.name-info-txt.ms-5 Navodilo k posamičnemu polju. Anim duis ullamco Lorem reprehenderit.
         .d-sm-flex.mt-4
           button.btn.btn-primary.me-2
-            | Izvozi
+            = t('Izvozi')
 
   include /common/footer
 

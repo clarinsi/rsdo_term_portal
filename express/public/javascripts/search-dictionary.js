@@ -1,4 +1,5 @@
-/* global $, axios, initPagination, removeAllChildNodes, closeUtilityContainers, prepareQueryArrayForArrayWithIDs, getDataFromURLSearchParams, prepareQueryParams, focusOnCompletePrompt */
+/* global $, axios, initPagination, removeAllChildNodes, closeUtilityContainers, prepareQueryArrayForArrayWithIDs,
+getDataFromURLSearchParams, prepareQueryParams, focusOnCompletePrompt, i18next */
 
 {
   /*
@@ -117,11 +118,11 @@
 
       return page
     } catch (error) {
-      let message = 'Prišlo je do napake.'
+      let message = i18next.t('Prišlo je do napake.')
       if (error.response?.data) {
         message = error.response.data
       } else if (error.request) {
-        message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+        message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
       }
       alert(message)
       updatePager()

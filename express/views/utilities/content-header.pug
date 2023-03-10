@@ -2,18 +2,19 @@
   .d-flex.justify-content-between.flex-wrap.flex-md-nowrap
     .cont-header-container-left-side.d-flex
       #chevrons-left.d-flex.align-items-start.justify-content-start
+      //- TODO I18n 
       .header-container-divider-left
         h1.ms-1= dictionaryName
     .header-container-divider-right
   .d-xxl-flex.justify-content-between
     .d-flex.site-links
-      button#content-preview.site-link.active-site-link Predogled
+      button#content-preview.site-link.active-site-link= t('Predogled')
       if terms.length
-        button#content-edit.site-link Urejanje
-        button#content-comments.site-link Komentarji
+        button#content-edit.site-link= t('Urejanje')
+        button#content-comments.site-link= t('Komentarji')
       else
-        button#content-edit.site-link.disabled(disabled) Urejanje
-        button#content-comments.site-link.disabled(disabled) Komentarji
+        button#content-edit.site-link.disabled(disabled)= t('Urejanje')
+        button#content-comments.site-link.disabled(disabled)= t('Komentarji')
 
     if (terms.length)
       #preview-buttons
@@ -26,7 +27,7 @@
             title="Ustari novo geslo"
           )
             img(src="/images/u_edit-alt.svg")
-            span Nov
+            span= t('Nov')
           button#show-dates.ms-1.btn.border-header.ps-2.pe-2(
             type="button"
             data-bs-toggle="collapse"
@@ -39,20 +40,20 @@
               data-bs-custom-class="gray-tooltip"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              title="Prikaži datume"
+              title=t('Prikaži datume')
             )
           button#duplicate-entry.ms-1.btn.border-header.ps-2.pe-2(
             data-bs-custom-class="gray-tooltip"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            title="Podvoji"
+            title=t('Podvoji')
           )
             img(src="/images/copy.svg")
           button#delete-entry.ms-1.btn.border-header.ps-2.pe-2(
             data-bs-custom-class="red-tooltip"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            title="Briši"
+            title=t('Briši')
           )
             img(src="/images/red-trash-icon.svg")
 
@@ -60,7 +61,7 @@
             form="form-edit-content"
             disabled
           )
-            | Shrani
+            = t('Shrani')
     else
       #preview-buttons
         .d-flex.align-items-center.my-2
@@ -73,7 +74,7 @@
             data-term="1"
           )
             img(src="/images/u_edit-alt.svg")
-            span Nov
+            span= t('Nov')
           button#show-dates.ms-1.btn.border-header.ps-2.pe-2(
             type="button"
             data-bs-toggle="collapse"
@@ -87,14 +88,14 @@
               data-bs-custom-class="gray-tooltip"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              title="Prikaži datume"
+              title=t('Prikaži datume')
             )
           button#duplicate-entry.ms-1.btn.border-header.ps-2.pe-2(
             href="#"
             data-bs-custom-class="gray-tooltip"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            title="Podvoji"
+            title=t('Podvoji')
             disabled
           )
             img(src="/images/copy.svg")
@@ -103,7 +104,7 @@
             data-bs-custom-class="red-tooltip"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            title="Briši"
+            title=t('Briši')
             disabled
           )
             img(src="/images/red-trash-icon.svg")
@@ -112,7 +113,7 @@
             form="form-edit-content"
             disabled
           )
-            | Shrani
+            = t('Shrani')
 
     #comments-buttons.d-flex.d-none.align-items-center.ms-2.ms-xl-0.me-2
       .form-check
@@ -121,10 +122,10 @@
           name="comments-type"
           checked
         )
-        label.ms-0.form-check-label(for="internal") Interni
+        label.ms-0.form-check-label(for="internal")= t('Interni')
 
       .form-check.ms-2
         input#external.form-check-input(type="radio" name="comments-type")
-        label.ms-0.form-check-label(for="external") Zunanji
+        label.ms-0.form-check-label(for="external")= t('Zunanji')
 
   hr#header-row.mt-0.ms-0.mb-0

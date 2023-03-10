@@ -11,7 +11,7 @@ block body
   include /common/side-menu-fake
   +sideNavigationFake
   include /utilities/dictionaries-main-panel-header
-  - const c = {sideMenu:false, h2: 'Urejanje', h1: 'Nov slovar', description: 'Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.', helpLink: { linkHref: '/pomoc#help-editor', linkText: 'Več ...' }, buttons: [{ type: 'cancel', content: 'Prekliči', classAtr:"btn btn-secondary header-btn-secondary link-back" },{ type: 'button', content: 'Ustvari', form: 'form-dictionary-new' }] }
+  - const c = {sideMenu:false, h2: t('Urejanje'), h1: t('Nov slovar'), description: t('Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.'), helpLink: { linkHref: '/pomoc#help-editor', linkText: 'Več ...' }, buttons: [{ type: 'cancel', content: 'Prekliči', classAtr:"btn btn-secondary header-btn-secondary link-back" },{ type: 'button', content: t('Ustvari'), form: 'form-dictionary-new' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.container-fluid.mt-4.ps-sm-3

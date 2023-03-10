@@ -13,14 +13,12 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Vsi povezani slovarji', description: 'Poiščite naslove terminoloških slovarjev, s katerimi želite dopolniti iskalne zadetke na svojem portalu. Lahko izberete vse slovarje ali le nekatere. Svoje izbire morate shraniti. Vse vaše izbire mora potrditi administrator povezanega portala.', buttons: [{ type: 'button', form: 'all-linked-dictionaries', content: 'Shrani' }] }
+  - const c = { sideMenu: true, h2: t('Povezave'), h1: t('Vsi povezani slovarji'), description: t('Poiščite naslove terminoloških slovarjev, s katerimi želite dopolniti iskalne zadetke na svojem portalu. Lahko izberete vse slovarje ali le nekatere. Svoje izbire morate shraniti. Vse vaše izbire mora potrditi administrator povezanega portala.'), buttons: [{ type: 'button', form: 'all-linked-dictionaries', content: t('Shrani') }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-2
       if results.length
-        .d-flex.justify-content-between
-          .d-flex.flex-row.mb-4
-            include /components/search-and-filter/inline-search
+        .d-flex.justify-content-end
           .d-flex.me-3
             include /utilities/pager
             +pager
@@ -29,10 +27,10 @@ block body
           .table-responsive
             table.styled-table
               thead
-                tr
+                tr#thead
                   th= ''
-                  th= 'Naslov'
-                  th= 'Oznaka portala'
+                  th= t('Naslov')
+                  th= t('Oznaka portala')
                   th= ''
               tbody#page-results
                 each result in results
@@ -51,6 +49,6 @@ block body
                         td= result.code
       else
         .d-flex.justify-content-center
-          p Ni še povezanih portalov
+          p= t('Ni še povezanih portalov')
 
-  include /common/footer
+      include /common/footer

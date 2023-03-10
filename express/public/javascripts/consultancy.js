@@ -1,4 +1,5 @@
-/* global $, handleDomainsClickForConsultancy, inputFieldsChecker, currentPagePath, axios, nthParent, tooltipListWOL, tooltipTriggerList */
+/* global $, bootstrap, handleDomainsClickForConsultancy, initPagination, inputFieldsChecker, currentPagePath,
+axios, nthParent, tooltipListWOL, tooltipTriggerList, removeAllChildNodes, i18next */
 
 /*
 author: Miha Stele, 2022
@@ -9,6 +10,10 @@ let selectedID = -1
 
 // consultancy FORM
 let offsetMain
+let OFFSET_PADDING_MASK = 16
+if (window.location.pathname === '/svetovanje/vprasanje/admin/svetovalci') {
+  OFFSET_PADDING_MASK = 0
+}
 function adjustOffsetBy() {
   offsetMain = document.querySelector('#offset-main')
   const fixedTopSection = document.querySelector('#fixed-top-section')
@@ -22,15 +27,21 @@ function adjustOffsetBy() {
     if (offsetHeaderPadding !== null) offsetMain.style.paddingTop = `0px`
   } else {
     for (let i = 0; i < offsetHeader.length; i++) {
-      offsetHeader[i].style.paddingTop = `${referenceHeight}px`
+      offsetHeader[i].style.paddingTop = `${
+        referenceHeight - OFFSET_PADDING_MASK
+      }px`
     }
     if (headerPadding !== null) {
       const headerPaddingHeight = headerPadding.offsetHeight
-      offsetMain.style.paddingTop = `${headerPaddingHeight}px`
+      offsetMain.style.paddingTop = `${
+        headerPaddingHeight - OFFSET_PADDING_MASK
+      }px`
     }
     if (offsetHeaderPadding !== null) {
       const offsetHeaderHeight = offsetHeaderPadding.offsetHeight
-      offsetMain.style.paddingTop = `${referenceHeight + offsetHeaderHeight}px`
+      offsetMain.style.paddingTop = `${
+        referenceHeight + offsetHeaderHeight - OFFSET_PADDING_MASK
+      }px`
     }
   }
 }
@@ -46,7 +57,7 @@ window.addEventListener('load', () => {
   window.adminElements = ce
   /* copy source admin.js in case of refactoring */
 
-  if (currentPagePath === '/svetovanje/vprasanje/admin/uporabniki') {
+  if (currentPagePath === '/svetovanje/vprasanje/admin/svetovalci') {
     offsetMain.addEventListener('click', handleDomainsClickForConsultancy)
     ce.name = document.getElementById('name-input')
     if (ce.name) {
@@ -108,7 +119,7 @@ try {
 const summernote = $('.summernote')
 if (summernote) {
   summernote.summernote({
-    placeholder: 'Na kratko opišite zasnovo in namen slovarja.',
+    placeholder: i18next.t('Na kratko opišite zasnovo in namen slovarja.'),
     height: 300,
     minheight: 150,
     toolbar: [
@@ -383,7 +394,17 @@ if (createAnswerForm) {
     // console.log(data)
 
     if (res.status === 201) {
-      window.location.href = '/svetovanje'
+      const infoModal = document.getElementById('begin-response')
+      if (infoModal) {
+        const responseModal = new bootstrap.Modal(infoModal)
+        responseModal.toggle()
+      }
+
+      document
+        .getElementById('understand-btn')
+        .addEventListener('click', () => {
+          window.location.href = '/svetovanje'
+        })
     }
   }
 
@@ -407,7 +428,7 @@ if (insertConsultantForm) {
       })
       .then(result => {
         console.log(result)
-        window.location.href = '/svetovanje/vprasanje/admin/uporabniki'
+        window.location.href = '/svetovanje/vprasanje/admin/svetovalci'
       })
   })
 }
@@ -420,6 +441,243 @@ try {
 } catch (e) {
   console.log(e)
 }
+
+/// Frontend Pagination (as in other pages in this project)
+
+function onResultClick(e) {
+  const entryEl = e.target.closest(`#${this.id} a.rl`)
+  if (!entryEl) return
+
+  const anchorId = entryEl.querySelector('.anchor').id
+  const anchoredUrl = new URL(location)
+  anchoredUrl.hash = anchorId
+  history.replaceState(null, '', anchoredUrl)
+}
+
+const resultsListEl = document.getElementById('results-data')
+if (resultsListEl) {
+  resultsListEl.addEventListener('click', onResultClick)
+}
+
+const initialPage = +new URL(location).searchParams.get('p') || 1
+
+let updatePager
+try {
+  updatePager = initPagination('pagination', onPageChange, initialPage)
+} catch (e) {}
+
+async function onPageChange(newPage) {
+  const receivedPageNumber = await changePage(newPage)
+  updateUrlAndHistory(receivedPageNumber)
+}
+
+async function changePage(newPage) {
+  try {
+    const res = await getDataForPage(newPage)
+
+    const page = +res.headers.page
+    const numberOfAllPages = +res.headers['number-of-all-pages']
+    const resultsMarkup = res.data
+
+    removeAllChildNodes(resultsListEl)
+    renderResults(resultsMarkup)
+    updatePager(page, numberOfAllPages)
+
+    return page
+  } catch (error) {
+    // console.log(error)
+    let message = i18next.t('Prišlo je do napake.')
+    if (error.response?.data) {
+      message = error.response.data
+    } else if (error.request) {
+      return // return to bypass error caused (assumed) by popstate on iOS/MacOS
+      message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+    }
+
+    alert(message)
+    updatePager()
+  }
+}
+
+async function getDataForPage(page) {
+  const qParams = new URL(location).searchParams
+  qParams.set('p', page)
+
+  // const url = `/api/v1/search/main?${qParams}`
+
+  // let url = `/api/v1/consultancy/entry-pagination?${qParams}`
+  // URL PATTERN PARSING
+  const PATH = window.location.pathname
+  if (PATH.includes('/admin/')) {
+    // todo ADMIN URL handling
+    qParams.set('isAdmin', 'true')
+    // url = `/api/v1/consultancy/entry-pagination?${qParams}` // required due to updated queryParams
+
+    if (PATH.includes('/novo')) {
+      qParams.set('type', 'new')
+    } else if (PATH.includes('/pripravljeno')) {
+      qParams.set('type', 'review')
+    } else if (PATH.includes('/zavrnjeno')) {
+      qParams.set('type', 'rejected')
+    } else if (PATH.includes('/v-delu')) {
+      qParams.set('type', 'in progress')
+    } else if (PATH.includes('/objavljeno')) {
+      qParams.set('type', 'published')
+    } else {
+      // Invalid case
+      console.log('INVALID CASE, CHECK URL')
+      return
+    }
+  }
+  // const url = `/api/v1/search/main?${qParams}`
+
+  const url = `/api/v1/consultancy/entry-pagination?${qParams}`
+  console.log(url)
+
+  return await axios.get(url)
+}
+
+function renderResults(resultsMarkup) {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = resultsMarkup
+  resultsListEl.appendChild(wrapper)
+}
+
+function updateUrlAndHistory(page) {
+  const newUrl = new URL(location)
+  newUrl.searchParams.set('p', page)
+  history.pushState(null, '', newUrl)
+}
+
+window.addEventListener('popstate', () => {
+  const page = +new URL(location).searchParams.get('p') || 1
+  changePage(page)
+})
+
+/// // PAGINATION (backend only) /////
+
+/* const updatePager = initPaginationBE('pagination', onPageChangeBE)
+
+function onPageChangeBE(newPage) {
+  const newUrl = new URL(location)
+  newUrl.searchParams.set('p', newPage)
+  history.pushState(null, '', newUrl)
+  window.location.href = newUrl
+}
+
+function initPaginationBE(paginationRootElId, onPageChange, currentPage = 1) {
+  const rootEl = document.getElementById(paginationRootElId)
+  const btnFirstPage = rootEl.querySelector('.first-page')
+  const btnPreviousPage = rootEl.querySelector('.previous-page')
+  const btnNextPage = rootEl.querySelector('.next-page')
+  const btnLastPage = rootEl.querySelector('.last-page')
+  const formEl = rootEl.querySelector('form')
+  const pageInputEl = formEl.querySelector('input')
+  const pagesCountDisplayEl = formEl.querySelector('.pages-total')
+
+  let reqLock = false
+
+  rootEl.addEventListener('click', handleButtonClick)
+  formEl.addEventListener('submit', handleFormSubmit)
+
+  function handleButtonClick({ target }) {
+    if (reqLock) return
+
+    const buttonEl = target.closest(`#${paginationRootElId} button`)
+    if (!buttonEl) return
+    const numOfAllPages = +pagesCountDisplayEl.textContent
+
+    if (buttonEl.classList.contains('first-page')) {
+      if (currentPage === 1) return
+      enableLock()
+      onPageChange(1)
+    } else if (buttonEl.classList.contains('previous-page')) {
+      if (currentPage === 1) return
+      enableLock()
+      onPageChange(currentPage - 1)
+    } else if (buttonEl.classList.contains('next-page')) {
+      if (currentPage === numOfAllPages) return
+      enableLock()
+      onPageChange(currentPage + 1)
+    } else if (buttonEl.classList.contains('last-page')) {
+      if (currentPage === numOfAllPages) return
+      enableLock()
+      onPageChange(numOfAllPages)
+    }
+  }
+
+  function handleFormSubmit(e) {
+    e.preventDefault()
+    if (reqLock) return
+
+    const inputValue = +pageInputEl.value
+    if (!(inputValue > 0 && inputValue <= pagesCountDisplayEl.textContent)) {
+      alert('Nepravilna vrednost strani')
+      pageInputEl.value = currentPage
+      return
+    }
+
+    enableLock()
+    onPageChange(inputValue)
+  }
+
+  function enableLock() {
+    reqLock = true
+    btnFirstPage.disabled = true
+    btnPreviousPage.disabled = true
+    btnNextPage.disabled = true
+    btnLastPage.disabled = true
+    pageInputEl.disabled = true
+  }
+
+  function disableLock() {
+    reqLock = false
+    btnFirstPage.disabled = false
+    btnPreviousPage.disabled = false
+    btnNextPage.disabled = false
+    btnLastPage.disabled = false
+    pageInputEl.disabled = false
+  }
+
+  function updatePagerUi(newCurrentPage, newNumOfAllPages) {
+    disableLock()
+    if (!newCurrentPage) return
+
+    currentPage = newCurrentPage
+    pageInputEl.value = newCurrentPage
+    pagesCountDisplayEl.textContent = newNumOfAllPages
+
+    if (newCurrentPage === 1) {
+      btnFirstPage.disabled = true
+      btnPreviousPage.disabled = true
+    } else {
+      btnFirstPage.disabled = false
+      btnPreviousPage.disabled = false
+    }
+
+    if (newCurrentPage === newNumOfAllPages) {
+      btnNextPage.disabled = true
+      btnLastPage.disabled = true
+    } else {
+      btnNextPage.disabled = false
+      btnLastPage.disabled = false
+    }
+  }
+
+  updatePagerUi(
+    +new URL(location).searchParams.get('p') || 1,
+    +document.querySelector('.pages-total').innerHTML
+  )
+
+  return updatePagerUi
+}
+
+window.addEventListener('popstate', () => {
+  const page = +new URL(location).searchParams.get('p') || 1
+  onPageChangeBE(page)
+})
+ */
+/// ///////////////////
 
 /*
 if (tooltipList) {
@@ -438,3 +696,10 @@ $(document).ready(() => {
     focused.focus()
   }
 })
+
+const askBackButton = document.querySelector('#cancel-cons-btn')
+if (askBackButton) {
+  askBackButton.addEventListener('click', () => {
+    history.back()
+  })
+}

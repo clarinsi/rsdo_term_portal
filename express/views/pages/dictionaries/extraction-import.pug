@@ -13,54 +13,8 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Uvoz iz luščilnika', description: 'Rezultat luščenja so terminološki kandidati. Z uvozom rezultatov posameznega luščenja lahko dopolnite geslovnik terminološkega slovarja, ki ga urejate.', buttons: [] }
+  //- TODO I18n
+  - const c = { sideMenu: true, h2: dictionaryName, h1: t('Uvoz iz luščilnika'), description: t('Rezultat luščenja so terminološki kandidati. Z uvozom rezultatov posameznega luščenja lahko dopolnite geslovnik terminološkega slovarja, ki ga urejate.'), buttons: [] }
   +mainHeader(c)
-  .content-hold-prerequisites
-    #offset-main.main-container.mt-3
-      .small-name-area
-        .subject-name
-          span.input-name-txt IME LUŠČENJA
-        .row
-          .col-lg-6
-            select#select-extraction-name.name-input.d-inline.form-control
-              option(selected value="" disabled hidden)= 'Izberite luščenje'
-              each el in extractions
-                option(value=el.id)= el.name
-          .col-sm.d-flex.align-items-center
-            span.name-info-txt.ms-lg-3.mt-2.mt-lg-0 Izberite enega od rezultatov luščenja s seznama.
-      .list-terminology-candidates.mt-4.me-2
-        .d-flex.w-100.justify-content-between
-          .d-flex.align-items-center
-            span.info-text-for-button Seznam terminoloških kandidatov
-          .d-flex
-            include /utilities/pager
-            +pager
-        .table-responsive.mt-2.me-2
-          table.styled-table
-            thead
-              tr
-                th= '#'
-                th= 'KANONIČNA OBLIKA'
-                th= 'RANKING'
-                th= 'POGOSTOST OBJAVLJANJA'
-            tbody#page-results
-        .row.mt-4
-          .me-0.pe-0.d-flex.align-items-center
-            span.radio-button-labels Uvozi termine od številke
-            input.without-arrows.form-control.terminology-input.ms-1(
-              type="number"
-              maxlength="5"
-              name="from"
-              min="0"
-            )
-            span.radio-button-labels.ms-1 do številke
-            input.without-arrows.form-control.terminology-input.ms-1(
-              type="number"
-              maxlength="5"
-              name="to"
-              min="0"
-            )
-
-        button.btn.btn-primary.mt-4(disabled) UVOZI
-
-  include /common/footer
+  include /utilities/dictionary-extraction-import-mixin
+  +dictionary-extraction-import

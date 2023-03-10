@@ -7,9 +7,15 @@
 
   // Paginacijo inicializiraš s klicem funkcije initPagination:
   // 1. parameter: id pager elementa. V demo-paginacija.pug je to #pagination.
+  //    UPDATE: Sedaj sprejme tudi array idjev, če je pager kontrolerjev več (npr. en zgoraj (#pagination-top), en spodaj (#pagination-bottom)).
   // 2. parameter: callback funkcijo, ki jo pager pokliče vsakič, ko uporabnik zahteva novo stran. Poliče jo s številko zahtevane strani.
   // vrnjena vrednost: funkcija, ki jo (kasneje) kličeš za posodobitev pagerja. Tu jo poimenujem updateDemoPager.
-  const updateDemoPager = initPagination('pagination', onPageChange)
+  const updateDemoPager = initPagination(
+    ['pagination-top', 'pagination-bottom'],
+    onPageChange
+  )
+  // Za samo en kontroler je bilo:
+  // const updateDemoPager = initPagination('pagination', onPageChange)
 
   // Fukncija, prejme številko nove strani in naj:
   // 1. Pridobi podatke nove strani.
@@ -62,27 +68,49 @@
  *                          Na vsaki strani, kjer bo paginacija, jo inicializiraj in uporabljaj po zgledu zgornje kode.                          *
 \** ****************************************************************************************************************************************** **/
 
-function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
-  const rootEl = document.getElementById(paginationRootElId)
-  const btnFirstPage = rootEl.querySelector('.first-page')
-  const btnPreviousPage = rootEl.querySelector('.previous-page')
-  const btnNextPage = rootEl.querySelector('.next-page')
-  const btnLastPage = rootEl.querySelector('.last-page')
-  const formEl = rootEl.querySelector('form')
-  const pageInputEl = formEl.querySelector('input')
-  const pagesCountDisplayEl = formEl.querySelector('.pages-total')
-
+function initPagination(paginationRootElIds, onPageChange, currentPage = 1) {
   let reqLock = false
+  let numOfAllPages
+  const backwardBtnEls = []
+  const forwardBtnEls = []
+  const pageInputEls = []
+  const pagesCountDisplayEls = []
 
-  rootEl.addEventListener('click', handleButtonClick)
-  formEl.addEventListener('submit', handleFormSubmit)
+  if (Array.isArray(paginationRootElIds)) {
+    paginationRootElIds.forEach(id => initControls(id))
+  } else {
+    initControls(paginationRootElIds)
+  }
+  const allControlEls = [...backwardBtnEls, ...forwardBtnEls, ...pageInputEls]
 
-  function handleButtonClick({ target }) {
+  function initControls(paginationRootElId) {
+    const rootEl = document.getElementById(paginationRootElId)
+    const btnFirstPage = rootEl.querySelector('.first-page')
+    const btnPreviousPage = rootEl.querySelector('.previous-page')
+    const btnNextPage = rootEl.querySelector('.next-page')
+    const btnLastPage = rootEl.querySelector('.last-page')
+    const formEl = rootEl.querySelector('form')
+    const pageInputEl = formEl.querySelector('input')
+    const pagesCountDisplayEl = formEl.querySelector('.pages-total')
+
+    numOfAllPages = +pagesCountDisplayEl.textContent
+
+    backwardBtnEls.push(btnFirstPage, btnPreviousPage)
+    forwardBtnEls.push(btnNextPage, btnLastPage)
+    pageInputEls.push(pageInputEl)
+    pagesCountDisplayEls.push(pagesCountDisplayEl)
+
+    rootEl.addEventListener('click', e => {
+      handleButtonClick(e, paginationRootElId)
+    })
+    formEl.addEventListener('submit', e => handleFormSubmit(e, pageInputEl))
+  }
+
+  function handleButtonClick({ target }, paginationRootElId) {
     if (reqLock) return
 
     const buttonEl = target.closest(`#${paginationRootElId} button`)
     if (!buttonEl) return
-    const numOfAllPages = +pagesCountDisplayEl.textContent
 
     if (buttonEl.classList.contains('first-page')) {
       if (currentPage === 1) return
@@ -103,12 +131,12 @@ function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
     }
   }
 
-  function handleFormSubmit(e) {
+  function handleFormSubmit(e, pageInputEl) {
     e.preventDefault()
     if (reqLock) return
 
     const inputValue = +pageInputEl.value
-    if (!(inputValue > 0 && inputValue <= pagesCountDisplayEl.textContent)) {
+    if (!(inputValue > 0 && inputValue <= numOfAllPages)) {
       alert('Nepravilna vrednost strani')
       pageInputEl.value = currentPage
       return
@@ -120,20 +148,12 @@ function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
 
   function enableLock() {
     reqLock = true
-    btnFirstPage.disabled = true
-    btnPreviousPage.disabled = true
-    btnNextPage.disabled = true
-    btnLastPage.disabled = true
-    pageInputEl.disabled = true
+    allControlEls.forEach(el => (el.disabled = true))
   }
 
   function disableLock() {
     reqLock = false
-    btnFirstPage.disabled = false
-    btnPreviousPage.disabled = false
-    btnNextPage.disabled = false
-    btnLastPage.disabled = false
-    pageInputEl.disabled = false
+    allControlEls.forEach(el => (el.disabled = false))
   }
 
   function updatePagerUi(newCurrentPage, newNumOfAllPages) {
@@ -141,23 +161,19 @@ function initPagination(paginationRootElId, onPageChange, currentPage = 1) {
     if (!newCurrentPage) return
 
     currentPage = newCurrentPage
-    pageInputEl.value = newCurrentPage
-    pagesCountDisplayEl.textContent = newNumOfAllPages
+    pageInputEls.forEach(el => (el.value = newCurrentPage))
+    pagesCountDisplayEls.forEach(el => (el.textContent = newNumOfAllPages))
 
     if (newCurrentPage === 1) {
-      btnFirstPage.disabled = true
-      btnPreviousPage.disabled = true
+      backwardBtnEls.forEach(el => (el.disabled = true))
     } else {
-      btnFirstPage.disabled = false
-      btnPreviousPage.disabled = false
+      backwardBtnEls.forEach(el => (el.disabled = false))
     }
 
     if (newCurrentPage === newNumOfAllPages) {
-      btnNextPage.disabled = true
-      btnLastPage.disabled = true
+      forwardBtnEls.forEach(el => (el.disabled = true))
     } else {
-      btnNextPage.disabled = false
-      btnLastPage.disabled = false
+      forwardBtnEls.forEach(el => (el.disabled = false))
     }
   }
 

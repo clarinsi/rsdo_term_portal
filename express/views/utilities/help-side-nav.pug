@@ -1,66 +1,76 @@
 .help-nav
   .help-nav-mobile
-    .mt-0.help-nav-title Pomoč
+    .mt-0.help-nav-title= t('helpPageTitleHelp', { ns: 'extended' })
     button#nav-button.nav-button
-      img#burger-menu-img(src="/images/burger-menu-button-icon.svg" alt="Meni")
+      img#burger-menu-img(
+        src="/images/burger-menu-button-icon.svg"
+        alt=t('Meni')
+      )
     .nav-title.d-xl-none
-      span.nav-title.ms-0 Pomoč
+      span.nav-title.ms-0= t('helpPageTitleHelp', { ns: 'extended' })
 
-  nav.d-block.navbar.flex-column.py-0.slidable
+  nav.d-block.navbar.flex-column.py-0.slidable.scroller-style
     nav#help-nav-scrollspy.d-block.nav.nav-pills.help-nav-content.scroller-style
       .help-links-subgroup
-        a.help-collapsible.subarea-link.nav-link(href="#help-general") Splošno o portalu
-      .help-links-subgroup
-        a.help-collapsible.subarea-link.nav-link(href="#help-search") Iskanje
+        a.help-collapsible.subarea-link.nav-link(href="#help-general")= t('helpPageTitleAbout', { ns: 'extended' })
         nav.d-block.collapsed-content.nav-pills.nav.d-flex.flex-column
-          a.nav-link.ms-2(href="#help-basic-search") Osnovno iskanje
-          a.nav-link.ms-2(href="#help-advanced-search") Napredno iskanje
+          a.nav-link.ms-2(href="#help-registration")= t('helpPageTitleRegistration', { ns: 'extended' })
       .help-links-subgroup
-        a.help-collapsible.subarea-link.nav-link(href="#help-extraction") Luščenje
-        nav.d-block.collapsed-content.nav-pills.nav.flex-column
-          a.nav-link.ms-2(href="#help-specialized-corpuses") Specializirani korpusi
-          a.nav-link.ms-2(href="#help-my-corpuses") Lastni uporabniški korpus
-          a.nav-link.ms-2(href="#help-corpus-oss") Korpus OSS
-          a.nav-link.ms-2(href="#help-stop-lists") Seznam neželenih besed
-          a.nav-link.ms-2(href="#help-extraction-areas") Področja
-          a.nav-link.ms-2(href="#help-terminology-candidates") Terminološki kandidati
+        a.help-collapsible.subarea-link.nav-link(href="#help-search")= t('helpPageTitleSearchIndex', { ns: 'extended' })
+        nav.d-block.collapsed-content.nav-pills.nav.d-flex.flex-column
+          a.nav-link.ms-2(href="#help-basic-search")= t('helpPageTitleSearchBasic', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-advanced-search")= t('helpPageTitleSearchAdvanced', { ns: 'extended' })
       .help-links-subgroup
-        a.help-collapsible.subarea-link.nav-link(href="#help-editor") Urejanje
+        a.help-collapsible.subarea-link.nav-link(href="#help-extraction")= t('helpPageTitleExtractionIndex', { ns: 'extended' })
         nav.d-block.collapsed-content.nav-pills.nav.flex-column
-          a.nav-link.ms-2(href="#help-new-dict") Nov slovar
-          a.nav-link.ms-2(href="#help-edit-dict") Urejanje lastnosti slovarja
-          a.nav-link.ms-2(href="#help-users-dict") Uporabniki
-          a.nav-link.ms-2(href="#help-structure-dict") Struktura slovarskega sestavka
-          a.nav-link.ms-2(href="#help-comments-dict") Komentiranje
-          a.nav-link.ms-2(href="#help-content-dict") Urejanje vsebine slovarja
-          a.nav-link.ms-2(href="#help-import-dict") Uvoz podatkov
+          a.nav-link.ms-2(href="#help-specialized-corpuses")= t('helpPageTitleExtractionSpecializedCorpora', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-my-corpuses")= t('helpPageTitleExtractionPersonalCorpus', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-corpus-oss")= t('helpPageTitleExtractionOssCorpus', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-stop-lists")= t('helpPageTitleExtractionStopTerms', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-extraction-areas")= t('helpPageTitleExtractionDomains', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-terminology-candidates")= t('helpPageTitleExtractionTermCandidates', { ns: 'extended' })
+      .help-links-subgroup
+        a.help-collapsible.subarea-link.nav-link(href="#help-editor")= t('helpPageTitleEditingIndex', { ns: 'extended' })
+        nav.d-block.collapsed-content.nav-pills.nav.flex-column
+          a.nav-link.ms-2(href="#help-new-dict")= t('helpPageTitleEditingNewDictionary', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-edit-dict")= t('helpPageTitleEditingDictionaryProperties', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-users-dict")= t('helpPageTitleEditingUsers', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-structure-dict")= t('helpPageTitleEditingStructure', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-comments-dict")= t('helpPageTitleEditingComments', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-content-dict")= t('helpPageTitleEditingDictionaryContent', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-import-dict")= t('helpPageTitleEditingImportingData', { ns: 'extended' })
           a#help-nav-small-font.help-collapsible.subarea-link.nav-link.ms-2.pt-1(
             href="#help-content-add"
-          ) Dodajanje slovarskih sestavkov
+          )= t('helpPageTitleEditingEntriesIndex', { ns: 'extended' })
           nav.d-block.collapsed-content.nav-pills.nav.flex-column
-            a.nav-link.ms-3(href="#help-content-headword") Oblike, naglasi, izgovor
-            a.nav-link.ms-3(href="#help-content-domains") Področne oznake
-            a.nav-link.ms-3(href="#help-content-label") Pojasnilo
-            a.nav-link.ms-3(href="#help-content-def") Definicja
-            a.nav-link.ms-3(href="#help-content-syn") Sinonimi
-            a.nav-link.ms-3(href="#help-content-links") Povezani termini
-            a.nav-link.ms-3(href="#help-content-other") Drugo
-            a.nav-link.ms-3(href="#help-content-flang") Tuji jeziki (elementi)
-            a.nav-link.ms-3(href="#help-content-history") Zgodovina urejanja
-            a.nav-link.ms-3(href="#help-content-comments") Komentarji
-
+            //- a.nav-link.ms-3(href="#help-content-headword") Oblike, naglasi, izgovor
+            a.nav-link.ms-3(href="#help-content-domains")= t('helpPageTitleEditingEntriesDomainLabels', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-label")= t('helpPageTitleEditingEntriesLabel', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-def")= t('helpPageTitleEditingEntriesDefinition', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-syn")= t('helpPageTitleEditingEntriesSynonyms', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-links")= t('helpPageTitleEditingEntriesRelatedTerms', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-flang")= t('helpPageTitleEditingEntriesOtherLanguages', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-other")= t('helpPageTitleEditingEntriesOther', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-history")= t('helpPageTitleEditingEntriesEditingHistory', { ns: 'extended' })
+            a.nav-link.ms-3(href="#help-content-comments")= t('helpPageTitleEditingEntriesComments', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-export-dict")= t('helpPageTitleEditingEntriesDataExport', { ns: 'extended' })
       .help-links-subgroup
-        a.help-collapsible.subarea-link.nav-link(href="#help-consulting") Svetovanje
+        a.help-collapsible.subarea-link.nav-link(href="#help-consulting")= t('helpPageTitleConsultancyIndex', { ns: 'extended' })
         nav.d-block.collapsed-content.nav-pills.nav.flex-column
-          a.nav-link.ms-2(href="#help-consult-questions") Pošiljanje vprašanj
-          a.nav-link.ms-2(href="#help-consult-principles") Terminološka načela
-          a.nav-link.ms-2(href="#help-consult-link") Povezava
-          a.nav-link.ms-2(href="#help-consult-answers") Objava odgovorov
+          a.nav-link.ms-2(href="#help-consult-questions")= t('helpPageTitleConsultancyQuestions', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-consult-principles")= t('helpPageTitleConsultancyTerminologyPrinciples', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-consult-link")= t('helpPageTitleConsultancyLink', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-consult-answers")= t('helpPageTitleConsultancyAnswers', { ns: 'extended' })
       .help-links-subgroup
-        a.help-collapsible.subarea-link.nav-link(href="#help-administration") Administracija
+        a.help-collapsible.subarea-link.nav-link(href="#help-administration")= t('helpPageTitleAdministrationIndex', { ns: 'extended' })
         nav.d-block.collapsed-content.nav-pills.nav.flex-column
-          a.nav-link.ms-2(href="#help-administration-settings") Osnovne nastavitve
-          a.nav-link.ms-2(href="#help-administration-link") Povezave s portali
-          a.nav-link.ms-2(href="#help-administration-dictionaries") Slovarji
-          a.nav-link.ms-2(href="#help-administration-list") Seznam slovarjev
-          a.nav-link.ms-2(href="#help-administration-basics") Osnovni podatki
+          a.nav-link.ms-2(href="#help-administration-settings")= t('helpPageTitleAdministrationBasicSettingsIndex', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-settings-portal")= t('helpPageTitleAdministrationBasicSettingsPortal', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-settings-dictionaries")= t('helpPageTitleAdministrationBasicSettingsDictionaries', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-settings-consulting")= t('helpPageTitleAdministrationBasicSettingsConsultancy', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-link")= t('helpPageTitleAdministrationLinksToOtherPortalsIndex', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-link-list")= t('helpPageTitleAdministrationLinksToOtherPortalsList', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-link-dictionaries")= t('helpPageTitleAdministrationLinksToOtherPortalsDictionaries', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-dictionaries")= t('helpPageTitleAdministrationDictionaries', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-users")= t('helpPageTitleAdministrationUsers', { ns: 'extended' })
+          a.nav-link.ms-2(href="#help-administration-subfileds")= t('helpPageTitleAdministrationSecondaryDomains', { ns: 'extended' })

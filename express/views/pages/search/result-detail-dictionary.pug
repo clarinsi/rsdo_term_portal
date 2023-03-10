@@ -4,6 +4,7 @@ block pageSpecificScipts
   script(nonce=cspNonce src="/javascripts/search-results.js")
   script(nonce=cspNonce src="/javascripts/search-results-content.js")
   script(nonce=cspNonce src="/javascripts/comments.js")
+  script(nonce=cspNonce src="/javascripts/collapsable-comments.js")
 
 block body
   section#fixed-top-section
@@ -16,7 +17,7 @@ block body
   //- include /utilities/dictionaries-main-panel-header
 
   include /utilities/dictionary-info-panel
-  - const c = { sideMenu: true, h2: '', h1: finalData.dictName, description: '', buttons: [{ type: 'link', url: `/iskanje?q=*&d=${dictId}`, content: 'Išči po slovarju' }] }
+  - const c = { sideMenu: true, h2: '', h1: finalData.dictName, description: '', buttons: [{ type: 'link', url: `/iskanje?q=*&d=${dictId}`, content: t('Išči po slovarju') }] }
   +mainHeader(c)
 
   //- empty header for code to work
@@ -32,13 +33,14 @@ block body
                 //- span SL
             //- .col-md-9
             .col
-              span!= finalData.description ? finalData.description : 'Ta slovar nima opisa'
+              span!= finalData.description ? finalData.description : t('Ta slovar nima opisa')
 
             //- .col-md-2
 
       .result-comment-section
-        .comments-content.col-12.col-md-12.py-md-3.bd-content
+        .comments-content.col-12.col-md-12.pt-md-3.bd-content
           #offset-main
-            include /utilities/comments-with-pager
+            //- include /utilities/comments-with-pager
+            include /utilities/comments-with-collapsable-pager
 
-  include /common/footer
+      include /common/footer

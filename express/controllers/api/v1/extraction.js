@@ -1,22 +1,27 @@
-const { unlink, rm, mkdir } = require('fs/promises')
+const { unlink, rm, mkdir, writeFile } = require('fs/promises')
 const { promisify } = require('util')
 const { URLSearchParams } = require('url')
 const multer = require('multer')
+const i18next = require('i18next')
 const validator = require('validator')
 const axios = require('axios')
 const {
   getExtractionFilesPath,
   getDocumentsPath,
   getStopTermsPath,
-  getConllusPath
+  getConllusPath,
+  getFileStats
 } = require('../../../models/helpers/extraction')
 const { checkIfcanBegin } = require('../../helpers/extraction')
 const Extraction = require('../../../models/extraction')
 const Domain = require('../../../models/domain')
 const email = require('../../../models/email')
 const { intoDbArray } = require('../../../models/helpers')
-const { origin } = require('../../../config/keys')
-const { DEFAULT_HITS_PER_PAGE } = require('../../../config/settings')
+const { origin, extractionApiOrigin } = require('../../../config/keys')
+const {
+  DEFAULT_HITS_PER_PAGE,
+  TEMP_EXPORT_PATH
+} = require('../../../config/settings')
 
 const MAX_FILE_NAME_LENGTH = 100
 const MAX_FILE_SIZE = 10 ** 9 // 1 GB
@@ -77,16 +82,19 @@ extraction.docsList = async (req, res) => {
 extraction.docsUpdate = async (req, res) => {
   try {
     await parseExtractionFileBody(req, res)
+    const fileStats = await getFileStats(req.file.path)
+    res.send(fileStats)
   } catch (error) {
     if (
       error instanceof multer.MulterError &&
       error.code === 'LIMIT_FILE_SIZE'
     ) {
-      throw Error('File too large. Must not be over 1 GB.')
+      const customError = Error('File too large. Must not be over 1 GB.')
+      customError.displayInProd = true
+      throw customError
     }
     throw error
   }
-  res.end()
 }
 
 extraction.docDelete = async (req, res) => {
@@ -108,16 +116,19 @@ extraction.stopTermsList = async (req, res) => {
 extraction.stopTermsUpdate = async (req, res) => {
   try {
     await parseExtractionFileBody(req, res)
+    const fileStats = await getFileStats(req.file.path)
+    res.send(fileStats)
   } catch (error) {
     if (
       error instanceof multer.MulterError &&
       error.code === 'LIMIT_FILE_SIZE'
     ) {
-      throw Error('File too large. Must not be over 1 GB.')
+      const customError = Error('File too large. Must not be over 1 GB.')
+      customError.displayInProd = true
+      throw customError
     }
     throw error
   }
-  res.end()
 }
 
 extraction.stopTermDelete = async (req, res) => {
@@ -141,7 +152,7 @@ extraction.ossSearch = [
       ...(ossParams.keywords && { kljucneBesede: ossParams.keywords }),
       ...(ossParams.domainUdk && { udk: ossParams.domainUdk })
     })
-    const searchApiUrl = `http://rsdo.lhrs.feri.um.si:8080/oss/steviloBesedilPoIskanju?${searchParams}`
+    const searchApiUrl = `${extractionApiOrigin}/oss/steviloBesedilPoIskanju?${searchParams}`
 
     const { data: documentCount } = await axios.get(searchApiUrl)
     const canSave = documentCount && documentCount <= MAX_OSS_DOCUMENT_COUNT
@@ -183,28 +194,39 @@ extraction.begin = async (req, res) => {
 
   res.send(timeStarted)
 
-  if (ossParams) {
-    // TODO This next method is only a temporary solution.
-    // TODO It should be called before response and its execution delegated to a seperate process or at least a seperate thread.
-    await Extraction.processOss(extractionId, ossParams.params)
-  } else {
-    // TODO This next method is only a temporary solution.
-    // TODO It should be called before response and its execution delegated to a seperate process or at least a seperate thread.
-    await Extraction.processOwn(extractionId, extractionName)
-  }
+  // Explicitcly catch any errors after the response has been sent
+  // since the the final error handler won't be able to send another.
+  try {
+    if (ossParams) {
+      // TODO This next method is only a temporary solution.
+      // TODO It should be called before response and its execution delegated to a seperate process or at least a seperate thread.
+      await Extraction.processOss(extractionId, ossParams.params)
+    } else {
+      // TODO This next method is only a temporary solution.
+      // TODO It should be called before response and its execution delegated to a seperate process or at least a seperate thread.
+      await Extraction.processOwn(extractionId, extractionName)
+    }
 
-  const extractionLink = new URL('/luscenje', origin)
-  const renderAsync = promisify(req.app.render.bind(req.app))
-  const authorEmail = await Extraction.fetchAuthorEmail(extractionId)
-  const emailHtml = await renderAsync('email/extraction-done', {
-    extractionName,
-    extractionLink
-  })
-  await email.send({
-    to: authorEmail,
-    subject: 'Luščenje končano',
-    html: emailHtml
-  })
+    const extractionLink = new URL('/luscenje', origin)
+    const renderAsync = promisify(req.app.render.bind(req.app))
+    const { email: authorEmail, language: authorLanguage } =
+      await Extraction.fetchAuthorData(extractionId)
+    const emailHtml = await renderAsync(
+      `email/extraction-done_${authorLanguage}`,
+      {
+        extractionName,
+        extractionLink
+      }
+    )
+    await email.send({
+      to: authorEmail,
+      subject: i18next.t('Luščenje končano', { lng: authorLanguage }),
+      html: emailHtml
+    })
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error)
+  }
 }
 
 extraction.duplicate = async (req, res) => {
@@ -214,13 +236,36 @@ extraction.duplicate = async (req, res) => {
 }
 
 extraction.termCandidatesExport = async (req, res) => {
-  // TODO CSV logic (Luka's task)
-  // const extractionId = req.params.id
-  // const { from, to } = req.query
-  // const fromIndex = +from > 1 ? Math.floor(from) - 1 : 0
-  // const toIndex = Number.isInteger(+to) ? Math.abs(to) : undefined
-  // console.log({ extractionId, fromIndex, toIndex })
-  res.download('public/images/help-amebis-logo-pug-demo.png')
+  // TODO More formats (CSV, TSV, TXT, ...)
+
+  const extractionId = req.params.id
+  const { from, to } = req.query
+  const fromIndex = +from > 1 ? Math.floor(from) - 1 : 0
+  const toIndex = Number.isInteger(+(to === '' ? undefined : to))
+    ? Math.abs(to)
+    : undefined
+
+  // TODO Authentication, authorization, validation.
+
+  const termCandidatesToExport = await Extraction.fetchTermCandidatesSlice(
+    extractionId,
+    fromIndex,
+    toIndex
+  )
+
+  const exportFileName = `term_candidates_${extractionId}`
+  const exportFilePath = `${TEMP_EXPORT_PATH}/${exportFileName}`
+  await writeFile(
+    exportFilePath,
+    JSON.stringify({ terminoloski_kandidati: termCandidatesToExport })
+  )
+
+  const downloadAsync = promisify(res.download.bind(res))
+  try {
+    await downloadAsync(exportFilePath, 'term_candidates.json')
+  } finally {
+    await unlink(exportFilePath)
+  }
 }
 
 extraction.listFinishedForUser = async (req, res) => {
@@ -251,8 +296,11 @@ function extractionFileFilter(req, file, cb) {
       fileType = 'stopTerms'
       break
 
-    default:
-      return cb(Error('Invalid API endpoint'))
+    default: {
+      const customError = Error('Invalid API endpoint')
+      customError.displayInProd = true
+      return cb(customError)
+    }
   }
 
   const filenamePartsArray = file.originalname.split('.')
@@ -264,30 +312,32 @@ function extractionFileFilter(req, file, cb) {
     (fileType === 'stopTerms' &&
       fileExtension !== VALID_STOP_TERMS_FILE_EXTENSION)
   ) {
-    return cb(Error('Invalid file type'))
+    const customError = Error('Invalid file type')
+    customError.displayInProd = true
+    return cb(customError)
   }
 
   const fileName = filenamePartsArray.join('.')
   if (!fileName || fileName.length > MAX_FILE_NAME_LENGTH) {
-    return cb(
-      Error(
-        `Filename must be between 1 and ${MAX_FILE_NAME_LENGTH} characters long.`
-      )
+    const customError = Error(
+      `Filename must be between 1 and ${MAX_FILE_NAME_LENGTH} characters long.`
     )
+    customError.displayInProd = true
+    return cb(customError)
   }
   if (!validator.isAlphanumeric(fileName[0], 'sl-SI', { ignore: '_' })) {
-    return cb(
-      Error(
-        'Filename must begin with an alphanumeric character or an underscore.'
-      )
+    const customError = Error(
+      'Filename must begin with an alphanumeric character or an underscore.'
     )
+    customError.displayInProd = true
+    return cb(customError)
   }
   if (!validator.isAlphanumeric(fileName, 'sl-SI', { ignore: ' _-.' })) {
-    return cb(
-      Error(
-        'Filename can only contain alphanumeric characters, spaces, underscores, minuses and periods.'
-      )
+    const customError = Error(
+      'Filename can only contain alphanumeric characters, spaces, underscores, minuses and periods.'
     )
+    customError.displayInProd = true
+    return cb(customError)
   }
 
   req.fileType = fileType

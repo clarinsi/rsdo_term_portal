@@ -1,3 +1,5 @@
+//- TODO MARK FOR DELETION
+
 doctype html
 html(lang="sl")
   head
@@ -9,11 +11,12 @@ html(lang="sl")
     h1 Demo konceptualna zasnova paginacije (muštr)
 
     //- Id krovnega elementa je v realnem primeru lahko poljuben, saj ga podaš funkciji initPagination (v demo-paginacija.js).
+    //-   UPDATE: initPagination sedaj lahko sprejme tudi array idjev (tukaj: pagination-top in pagination-bottom)
     //- Interna struktura mora ostati enaka (imena elementov, njihove klase, imena, vrednosti).
     //- Lahko pa v gumbe dodaš slike itd., če je potrebno, ali dodatne klase na njih, če je potrebno zaradi oblikovanja.
     //- Oblikovanja tu namenoma nisem dodajal, da je demo čim enostavnejši. Oblikovati ga morata vidva oz. prvi, ki bo to delal.
     //- Če kaj ne bo jasno, me raje vprašaj.
-    #pagination
+    #pagination-top
       button.first-page(disabled) <<
       button.previous-page(disabled) <
       form
@@ -26,6 +29,16 @@ html(lang="sl")
     ul#page-results
       each result in results 
         li Zanimiva vrednost: #[b= result.zanimivo]. Totalno nezanimivo: #{ result.nezanimivo1 } in #{ result.nezanimivo2 }
+
+    #pagination-bottom
+      button.first-page(disabled) <<
+      button.previous-page(disabled) <
+      form
+        input(name="page" value="1")
+        span= ' / '
+        span.pages-total= numberOfAllPages
+      button.next-page(disabled=numberOfAllPages === 1) >
+      button.last-page(disabled=numberOfAllPages === 1) >>
 
     //- V realnem primeru:
     //- Ne uvoziš axiosa, ker je že v layout.pug

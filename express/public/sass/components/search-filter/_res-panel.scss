@@ -50,20 +50,21 @@
 .rl {
   display: block;
   text-decoration: none;
-  color: #000;
+  color: v.$tp-black;
   padding-top: 6px;
-  padding-left: 6px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 
   // * {
   // word-break: normal;
   // }
 
   &:visited {
-    color: #000;
+    color: v.$tp-black;
   }
 
   &:hover {
-    color: #000;
+    color: v.$tp-black;
     background-color: #fff;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.2);
   }
@@ -253,6 +254,7 @@
         font-size: 0.75rem;
         font-weight: 700;
         border-radius: 2px;
+        width: 2.25rem;
 
         &.te {
           color: v.$gray-1;

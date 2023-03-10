@@ -1,13 +1,12 @@
-//- TODO implement real text
 p Pozdravljeni,
 case type
   when 'status'
     p oseba: #[b #{ changerEmail }] je spremenila stanje vašega slovarja: #[b #{ nameSl }].
   when 'unpublish'
-    p tralala hopsasa oseba: #[b #{ changerEmail }] se je igrala in zato vaš slovar: #[b #{ nameSl }] ni več objavljen.
+    p oseba: #[b #{ changerEmail }] je spremenila status slovarja #[b #{ nameSl }], ki ni več objavljen.
   when 'delete'
-    p tralala hopsasa slovar: #[b #{ nameSl }] ima manjše število gesel kot je nastavljeno.
+    p slovar: #[b #{ nameSl }] ima manjše število gesel kot je nastavljeno.
   when 'publish-approval'
-    p slovar #[b #{ nameSl }] je bil dan v stanje preverjanja slovarja... Prosimo, da ga odprete/zaprete.
+    p slovar #[b #{ nameSl }] je bil dan v stanje preverjanja. Prosimo, da ga odprete/zaprete.
   when 'publish-no-approval'
     p slovar #[b #{ nameSl }] je bil objavljen.

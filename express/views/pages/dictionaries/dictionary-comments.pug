@@ -12,11 +12,12 @@ block body
   - const d = { activeLvl1: 'attributes', activeLvl2: 'comments' }
   +sideNavigation(d)
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: dictionaryName, h1: 'Komentarji', description: 'Tu so zbrani vsi komentarji, povezani z vašim slovarjem.' }
+  //- TODO I18n 
+  - const c = { sideMenu: true, h2: dictionaryName, h1: t('Komentarji'), description: t('Tu so zbrani vsi komentarji, povezani z vašim slovarjem.') }
   +mainHeader(c)
 
-  .comments-content.col-12.col-md-12.py-md-3.bd-content.content-hold-prerequisites
+  .comments-content.col-12.col-md-12.pt-md-3.bd-content.content-hold-prerequisites
     #offset-main.main-container
       include /utilities/comments-with-pager
 
-  include /common/footer
+      include /common/footer

@@ -73,6 +73,9 @@ class InterInstanceSync {
       'SELECT l.code AS language_code, ef.entry_id, ef.term, ef.definition, ef.synonym FROM entry_foreign AS ef' +
       ' INNER JOIN language AS l ON l.id = ef.language_id' +
       ' WHERE entry_id = ANY($1::int[]) ORDER BY ef.entry_id, l.code'
+    const sqlLinks =
+      'SELECT entry_id, link, type FROM entry_link WHERE entry_id = ANY($1::int[]) ORDER BY entry_id, type, link'
+
     const { rows: entryList } = await db.query(sqlEntries, [
       dictionaryId,
       since
@@ -83,6 +86,7 @@ class InterInstanceSync {
     const { rows: translationList } = await db.query(sqlTranslations, [
       entryIds
     ])
+    const { rows: linkList } = await db.query(sqlLinks, [entryIds])
     let currentEntryId = 0
     let lastEntryId = 0
     translationList.forEach(t => {
@@ -101,6 +105,23 @@ class InterInstanceSync {
         currentEntryId = t.entry_id
       }
       entry.translations.push(t)
+    })
+    linkList.forEach(l => {
+      currentEntryId = l.entry_id
+      const entry = entryList.find(e => {
+        return e.id === currentEntryId
+      })
+      if (!entry) return
+      if (lastEntryId === 0) {
+        entry.links = []
+        lastEntryId = l.entry_id
+      } else if (currentEntryId !== lastEntryId) {
+        // new entry translations : save previous
+        entry.links = []
+        lastEntryId = currentEntryId
+        currentEntryId = l.entry_id
+      }
+      entry.links.push({ type: l.type, link: l.link })
     })
     return entryList
   }

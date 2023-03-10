@@ -5,27 +5,33 @@ mixin sideNavigation(sideNavigationData)
         button#nav-button.nav-button
           img#burger-menu-img(
             src="/images/burger-menu-button-icon.svg"
-            alt="Meni"
+            alt=t('Meni')
           )
-        span.nav-title Moj Profil
+        span.nav-title #{ t('Moj Profil') }
       #mobile-right-holder
     nav
-      ul.admin-nav-content.slidable
+      ul.admin-nav-content.slidable.scroller-style
         li(
           class=sideNavigationData.selection === 'change-profile-data' ? 'focused-menu' : 'admin-nav-item'
         )
           a.active(href="/moj-racun") 
-            img(src="/images/user-gray.svg" alt="Basic")
-            p Osnovni podatki
+            img(src="/images/user-gray.svg" alt=t('Basic'))
+            p #{ t('Osnovni podatki') }
         li(
           class=sideNavigationData.selection === 'change-profile-password' ? 'focused-menu' : 'admin-nav-item'
         )
           a.active(href="/spremeni-geslo") 
-            img(src="/images/lock-gray.svg" alt="Settings")
-            p Spremeni geslo
+            img(src="/images/lock-gray.svg" alt=t('Settings'))
+            p #{ t('Spremeni geslo') }
         li(
           class=sideNavigationData.selection === 'change-profile-settings' ? 'focused-menu' : 'admin-nav-item'
         )
           a.active(href="/nastavitve-racuna") 
-            img(src="/images/cog.svg" alt="Settings")
-            p Nastavitve
+            img(src="/images/cog.svg" alt=t('Settings'))
+            p #{ t('Nastavitve') }
+        li(
+          class=sideNavigationData.selection === 'delete-profile' ? 'focused-menu' : 'admin-nav-item'
+        )
+          a.active(href="/izbrisi-racun") 
+            img(src="/images/user-x.svg" alt=t('Delete profile'))
+            p #{ t('Izbriši račun') }

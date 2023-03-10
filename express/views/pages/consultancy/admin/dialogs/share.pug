@@ -41,7 +41,7 @@ mixin consultancyAdminShareModal
     .modal-dialog
       .modal-content
         .modal-header.mb-0.pb-0
-          h5.pt-3.navigation-text-color Deli
+          h5.pt-3.navigation-text-color #{ t('Deli') }
           button.btn-close(
             type="button"
             data-bs-dismiss="modal"
@@ -55,6 +55,6 @@ mixin consultancyAdminShareModal
               button#close-shared.btn.btn-secondary.height50(
                 type="button"
                 data-bs-dismiss="modal"
-              ) Zapri
+              ) #{ t('Zapri') }
             #add-shared-author.col.d-flex.justify-content-end.mb-2
-              button.btn.btn-primary.height50(type="button") Dodaj
+              button.btn.btn-primary.height50(type="button") #{ t('Dodaj') }

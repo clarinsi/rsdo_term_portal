@@ -8,115 +8,115 @@ mixin sideNavigation(sideNavigationData)
             src="/images/burger-menu-button-icon.svg"
             alt="Meni"
           )
-        span#nav-title.nav-title Urejanje
+        span#nav-title.nav-title= t('Urejanje')
       #mobile-right-holder
     nav
-      ul.admin-nav-content.slidable
+      ul.admin-nav-content.slidable.scroller-style
         //- li.side-menu-heading.mb-4 Urejanje
         if sideNavigationData.activeLvl1 === 'myDictionaries'
           li.focused-menu
             a.active(href="/slovarji/moji") 
               img(src="/images/fi_folder.svg" alt="")
-              p Moji slovarji
+              p= t('Moji slovarji')
         else
           li.admin-nav-item
             a.active(href="/slovarji/moji") 
               img(src="/images/fi_folder.svg" alt="")
-              p Moji slovarji
+              p= t('Moji slovarji')
 
         if sideNavigationData.activeLvl1 === 'attributes'
           li.focused-menu
             a.active(href=`/slovarji/${dictionary.id}/podatki`)
               img(src="/images/areas.svg" alt="Atributes")
-              p Lastnosti
+              p= t('Lastnosti')
             ul.sub-links
               li
                 a(
                   href=`/slovarji/${dictionary.id}/podatki`
                   class=sideNavigationData.activeLvl2 === 'description' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'description' ? 'page' : false
-                ) Osnovni podatki
+                )= t('Osnovni podatki')
               li
                 a(
                   href=`/slovarji/${dictionary.id}/uporabniki`
                   class=sideNavigationData.activeLvl2 === 'users' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'users' ? 'page' : false
-                ) Uporabniki
+                )= t('Uporabniki')
               li
                 a(
                   href=`/slovarji/${dictionary.id}/struktura`
                   class=sideNavigationData.activeLvl2 === 'structure' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'structure' ? 'page' : false
-                ) Struktura
+                )= t('Struktura')
               li
                 a(
                   href=`/slovarji/${dictionary.id}/podrocne-oznake`
                   class=sideNavigationData.activeLvl2 === 'areas' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'areas' ? 'page' : false
-                ) Področne oznake
+                )= t('Področne oznake')
               li
                 a(
                   href=`/slovarji/${dictionary.id}/napredno`
                   class=sideNavigationData.activeLvl2 === 'advanced' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'advanced' ? 'page' : false
-                ) Napredno
+                )= t('Napredno')
               li
                 a(
                   href=`/slovarji/${dictionary.id}/komentarji`
                   class=sideNavigationData.activeLvl2 === 'comments' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'comments' ? 'page' : false
-                ) Komentarji
+                )= t('Komentarji')
         else
           li.admin-nav-item
             a(href=`/slovarji/${dictionary.id}/podatki`)
               img(src="/images/areas.svg" alt="Atributes")
-              p Lastnosti
+              p= t('Lastnosti')
 
         if sideNavigationData.activeLvl1 === 'content'
           li.focused-menu
             a.active(href=`/slovarji/${dictionary.id}/vsebina`)
               img(src="/images/book.svg" alt="")
-              p Vsebina
+              p= t('Vsebina')
         else
           li.admin-nav-item
             a(href=`/slovarji/${dictionary.id}/vsebina`)
               img(src="/images/book.svg" alt="")
-              p Vsebina
+              p= t('Vsebina')
 
         if sideNavigationData.activeLvl1 === 'export'
           li.focused-menu
             a.active(href=`/slovarji/${dictionary.id}/izvoz`)
               img(src="/images/fi_download.svg" alt="")
-              p Izvoz
+              p= t('Izvoz')
         else
           li.admin-nav-item
             a(href=`/slovarji/${dictionary.id}/izvoz`)
               img(src="/images/fi_download.svg" alt="")
-              p Izvoz
+              p= t('Izvoz')
 
         if sideNavigationData.activeLvl1 === 'import'
           li.focused-menu
             a.active(href=`/slovarji/${dictionary.id}/uvoz/datoteka`)
               img(src="/images/fi_upload.svg" alt="")
-              p Uvoz
+              p= t('Uvoz')
             ul.sub-links
               li
                 a(
                   href=`/slovarji/${dictionary.id}/uvoz/datoteka`
                   class=sideNavigationData.activeLvl2 === 'file' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'file' ? 'page' : false
-                ) Uvoz iz datoteke
+                )= t('Uvoz iz datoteke')
               li
                 a(
                   href=`/slovarji/${dictionary.id}/uvoz/luscenje`
                   class=sideNavigationData.activeLvl2 === 'extraction' ? 'active' : false
                   aria-current=sideNavigationData.activeLvl2 === 'extraction' ? 'page' : false
-                ) Uvoz iz luščilnika
+                )= t('Uvoz iz luščilnika')
         else
           li.admin-nav-item
             a(href=`/slovarji/${dictionary.id}/uvoz/datoteka`)
               img(src="/images/fi_upload.svg" alt="")
-              p Uvoz
+              p= t('Uvoz')
         //- Enako za ostale
         //- li
         //-   a(href="urlDoStrani") Lastnosti

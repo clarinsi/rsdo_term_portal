@@ -17,18 +17,21 @@ const {
   sendToReview,
   publish,
   updateQuestion,
-  updateSharedAuthors
+  updateSharedAuthors,
+  sendPaginationData
 } = require('../../../controllers/api/v1/consultancy')
+
+router.get('/entry-pagination', sendPaginationData)
+
+router.get('/entry', listEntries)
+
+router.get('/new-entry', listNewEntries)
 
 // All routes require an authenticated user.
 router.use((req, res, next) => {
   if (req.isAuthenticated()) return next()
   res.status(400).send('Unauthenticated')
 })
-
-router.get('/entry', listEntries)
-
-router.get('/new-entry', listNewEntries)
 
 router.post('/entry', createQuestion)
 

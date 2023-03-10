@@ -16,7 +16,11 @@ exports.DEFAULT_HITS_PER_PAGE = 10
 
 exports.EDITOR_MAX_HITS = 10000
 
-// If you change this one, don't forget to also update the volume mount in docker-compose.prod.yml.
-exports.DATA_FILES_PATH = 'data_files'
+// If you change this one, don't forget to also update the volume mount in docker-compose.prod.yml
+// and nodemon ignore flag in package.json scripts.
+const DATA_FILES_PATH = 'data_files'
+exports.DATA_FILES_PATH = DATA_FILES_PATH
+
+exports.TEMP_EXPORT_PATH = `${DATA_FILES_PATH}/export_temp`
 
 exports.MAX_EXTRACTIONS_PER_USER = 5

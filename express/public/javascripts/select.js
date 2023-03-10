@@ -1,4 +1,4 @@
-/* global $, currentPagePath */
+/* global $, currentPagePath, i18next */
 
 // const currentPagePath = location.pathname
 
@@ -60,13 +60,13 @@ function initSelect() {
       const userPassword2 = ce.userConfirmationPassEl.value
 
       if (userPassword1 === '') {
-        alert('Prosim, vnesite geslo')
+        alert(i18next.t('Prosim, vnesite geslo'))
       } else if (userPassword2 === '') {
-        alert('Prosim, ponovno vnesite geslo')
+        alert(i18next.t('Prosim, ponovno vnesite geslo'))
       } else if (userPassword1 !== userPassword2) {
-        alert('Gesli se ne ujemata')
+        alert(i18next.t('Gesli se ne ujemata'))
       } else {
-        alert('Gesli se ujemata!')
+        alert(i18next.t('Gesli se ujemata!'))
       }
     }
   }
@@ -115,7 +115,7 @@ function deleteField(ele) {
 // Summernote
 
 $('.summernote').summernote({
-  placeholder: 'Na kratko opišite zasnovo in namen slovarja.',
+  placeholder: i18next.t('Na kratko opišite zasnovo in namen slovarja.'),
   height: 300,
   minheight: 150,
   toolbar: [

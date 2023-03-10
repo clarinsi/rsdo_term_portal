@@ -1,0 +1,132 @@
+mixin dictionary-import(dictionaryId)
+  .content-hold-prerequisites
+    #offset-main.main-container
+      .import-container.mt-3.ms-1
+        form#file-import-form(method="post" enctype="multipart/form-data")
+          .file-type
+            span.new-user-info= t('DATOTEKA')
+          .row
+            .col-md-6.ms-2.white-border-background.p-4.d-flex.align-items-center.justify-content-between.me-2
+              .align-items-center.d-flex
+                span#chosen-file.info-text-for-button= t('Izberi datoteko')
+              div
+                label(for="upload")
+                  button#button-import.btn.btn-primary(type="button")= t('IZBERI')
+                input#upload(
+                  type="file"
+                  name="dictionaryImportFile"
+                  accept=".xml"
+                )
+
+            .col-md.d-flex.align-items-center
+              span.name-info-txt= t('Izberite slovarske podatke, ki ste jih shranili na svojem računalniku.')
+          .file-type.mt-4
+            span.new-user-info= t('NAČIN UVOZA')
+            .row
+              .col-sm-6
+                .checkbox
+                  input#flexCheckDefault.form-check-input(
+                    type="checkbox"
+                    name="deleteExistingEntries"
+                  )
+                  label.form-check-label(for="flexCheckDefault")
+                    span.user-email= t('Izbriši obstoječe slovarske sestavke.')
+              .col.ms-2
+                span.name-info-txt= t('Če izberete to možnost, se bodo vsi doslejšnji slovarski sestavki ob uvozu nove datoteke izbrisali.')
+          .file-type.mt-4
+            span.new-user-info= t('FAZA UREJANJA')
+            #file-type-selection.file-types
+              .row
+                .col-sm-6.ms-2
+                  .form-check.radio-button.ms-0.ps-3
+                    input#in-edit-radio.form-check-input(
+                      type="radio"
+                      name="entryStatus"
+                      value="inEdit"
+                      checked
+                    )
+                    label.form-check-label.ms-0(for="in-edit-radio")
+                      = t('V urejanju')
+                  #complete-radio.form-check.radio-button.ms-3
+                    input#complete-radio.form-check-input(
+                      type="radio"
+                      name="entryStatus"
+                      value="complete"
+                    )
+                    label.form-check-label.ms-0(for="complete-radio")
+                      = t('Urejeno')
+                .col
+                  span.name-info-txt= t('Z izbiro te možnosti boste pobrisali samo slovarske sestavke, ki so v določeni fazi urejanja.')
+          .file-type.mt-4
+            span.new-user-info= t('FORMAT ZAPISA')
+            #file-type-selection.file-types
+              .row
+                .col-sm-6.ms-2.text-nowrap
+                  .form-check.radio-button.ms-0.ps-3
+                    input#file-format-xml.form-check-input(
+                      type="radio"
+                      name="importFileFormat"
+                      value="xml"
+                      checked
+                    )
+                    label.form-check-label.ms-0(for="file-format-xml") XML
+                  .form-check.radio-button.ms-2
+                    input#file-format-csv.form-check-input(
+                      disabled
+                      type="radio"
+                      name="importFileFormat"
+                      value="csv"
+                    )
+                    label.form-check-label.ms-0(for="file-format-csv") CSV
+                  .form-check.radio-button.ms-2
+                    input#file-format-tsv.form-check-input(
+                      disabled
+                      type="radio"
+                      name="importFileFormat"
+                      value="tsv"
+                    )
+                    label.form-check-label.ms-0(for="file-format-tsv") TSV
+                .col
+                  span.name-info-txt= t('Izberite format datoteke, v kateri je slovar shranjen na vašem računalniku.')
+          .file-type.mt-4
+            button.btn.btn-primary.mt-4= t('UVOZI')
+        .latest-uploads.mt-4
+          input#dictionary-id(hidden value=dictionary.id)
+          .d-flex.w-100.justify-content-between
+            .d-flex
+              span.info-text-for-button= t('Zadnji uvozi')
+            .d-flex
+              include /utilities/pager
+              +pager
+
+          -
+            const localeOptions = {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }
+
+          if results.length
+            .table-responsive
+              table.styled-table
+                thead
+                  tr#thead
+                    th= t('DATUM')
+                    th= t('VRSTA')
+                    th= t('ŠT. GESEL')
+                    th= t('STATUS')
+                tbody#page-results 
+                  each result in results
+                    tr
+                      - const date = new Date(result.time_started).toLocaleDateString('sl-SL', localeOptions)
+                      td= date
+                      td= result.file_format
+                      td= result.count_valid_entries
+                      td= result.status
+          else
+            p= t('Ni še dodanih uvozov.')
+          .mt-4
+            p!= t('Shemo za format xml si prenesete <a href="/slovarji/xml-schema" target="_blank">tukaj</a>.')
+        include /common/footer

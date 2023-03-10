@@ -41,7 +41,15 @@ body {
     font-weight: 400;
     color: #46535b;
     text-decoration: none;
-    display: block;
+    // display: block;
+    display: flex;
+    align-items: center;
+    // gap: 0.5rem;
+
+    > * {
+      padding: 0;
+      margin: 0;
+    }
   }
 
   a:visited {

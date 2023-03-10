@@ -1,4 +1,4 @@
-/* global axios */
+/* global axios, i18next */
 
 /*
 TODO
@@ -7,6 +7,8 @@ not just language filter, but filter for many properties...
 */
 
 /** BEGIN VARIABLE CONSTRUCTION AREA */
+
+let allAggregationDataForSF = null
 
 // TODO insert all sections of ids
 const ids = [
@@ -176,6 +178,10 @@ function cleanOldList() {
   modalListRoot.innerHTML = ''
 }
 
+function setTitleOnModal(title) {
+  document.getElementById('modal-filter-label').innerHTML = title
+}
+
 async function selectMoreListener(event) {
   const idstring = `${event.currentTarget.id
     .replace('select-', '')
@@ -183,12 +189,17 @@ async function selectMoreListener(event) {
     .concat('-side')}`
   // console.log(extractMap(idstring))
 
+  const titleText =
+    event.currentTarget.parentElement.parentElement.children[0].textContent
+
+  setTitleOnModal(titleText)
+
   // mp is the array of the currently displayed filters (required to get the checked information)
   // const mp = initializedValues[idstring]
 
   // all filters for search
   // const allAggregationData = { id: idstring }
-  const allAggregationData = { id: idstring }
+  allAggregationDataForSF = { id: idstring }
 
   const currentURL = new URL(window.location.href)
   const searchParams = currentURL.searchParams
@@ -200,10 +211,10 @@ async function selectMoreListener(event) {
 
   // const parsed = JSON.parse(event.currentTarget.dataset.aggregationInfo ?? '[]')
 
-  allAggregationData.items = data[idToSearchFiltersMapper(idstring)]
+  allAggregationDataForSF.items = data[idToSearchFiltersMapper(idstring)]
 
   cleanOldList()
-  initModalList(allAggregationData.id, allAggregationData.items)
+  initModalList(allAggregationDataForSF.id, allAggregationDataForSF.items)
 }
 
 function idToSearchFiltersMapper(inpt) {
@@ -297,6 +308,18 @@ function finishSelectingFromModal(e) {
   window.location.href = url
 }
 
+function finishSelectingFromModal2(e) {
+  const url = new URL(window.location.href)
+  const searchParams = url.searchParams
+  searchParams.delete(queryOrderedArr[sectionIDBattery])
+
+  selectedIds[sectionIDBattery].forEach(e => {
+    searchParams.append(queryOrderedArr[sectionIDBattery], e)
+  })
+
+  window.location.href = url
+}
+
 function reRenderSpecific(event) {
   const idstring = event.currentTarget.id
   const id = idstring.replace('show-all-', '')
@@ -349,7 +372,7 @@ function rePlotAndCheck(sectionId, selectedIdsArray, plotInverse = false) {
   const img = document.createElement('img')
   img.setAttribute('src', '/images/chevron-left-blue.svg')
   const span = document.createElement('span')
-  span.innerHTML = 'PRIKAŽI VSE'
+  span.innerHTML = i18next.t('PRIKAŽI VSE')
 
   anchr.appendChild(img)
   anchr.appendChild(span)
@@ -378,6 +401,7 @@ function clearModalFilters() {
     e.children[0].children[0].checked = false
   })
   selectedIds[sectionIDBattery] = []
+  clearSnapshots()
 }
 
 function clearModalFiltersWID(id) {
@@ -402,7 +426,7 @@ function initializeClickables() {
     .addEventListener('click', selectFromModal)
   document
     .querySelector('#sf-modal-button')
-    .addEventListener('click', finishSelectingFromModal)
+    .addEventListener('click', finishSelectingFromModal2)
 
   document.querySelector('#ccf').addEventListener('click', clearModalFilters)
 
@@ -427,6 +451,40 @@ function initializeClickables() {
 }
 
 // initModalList('id1', langsMapModal)
+
+function filterModalEntries(event) {
+  cleanOldList()
+
+  // console.log(allAggregationDataForSF.items)
+  const prompt = document.getElementById('filterSfmText')
+
+  let filtered
+  if (prompt) {
+    filtered = allAggregationDataForSF.items.filter(item =>
+      item.name.toLowerCase().includes(prompt.value.toLowerCase())
+    )
+  } else {
+    return
+  }
+
+  initModalList(allAggregationDataForSF.id, filtered)
+}
+
+const sfmFilterButton = document.getElementById('filter-sfm')
+
+const sfmOnEnterListener = document.querySelector('.onEnterListener')
+
+if (sfmFilterButton) {
+  sfmFilterButton.addEventListener('click', filterModalEntries)
+}
+
+if (sfmOnEnterListener) {
+  sfmOnEnterListener.addEventListener('keyup', event => {
+    if (event.key === 'Enter') {
+      filterModalEntries(event)
+    }
+  })
+}
 
 /// global run
 

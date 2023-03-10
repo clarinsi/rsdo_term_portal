@@ -8,7 +8,7 @@ portal.instanceSettings = async (req, res) => {
   const portal = await Portal.fetchInstanceSettings()
 
   res.render('pages/admin/portal', {
-    title: 'Nastavitve portala',
+    title: req.t('Nastavitve portala'),
     portal
   })
 }
@@ -24,7 +24,7 @@ portal.instanceDictSettings = async (req, res) => {
   const dictionary = await Portal.fetchInstanceDictSettings()
 
   res.render('pages/admin/settings-dictionaries', {
-    title: 'Nastavitve slovarjev',
+    title: req.t('Nastavitve slovarjev'),
     dictionary
   })
 }
@@ -39,7 +39,7 @@ portal.updateInstanceDictSettings = async (req, res) => {
 portal.instanceConsultancySettings = async (req, res) => {
   const consultancy = await Portal.fetchInstanceConsultancySettings()
   res.render('pages/admin/portal-consultancy-settings', {
-    title: 'Nastavitve svetovalnice',
+    title: req.t('Nastavitve svetovalnice'),
     consultancy
   })
 }
@@ -53,7 +53,7 @@ portal.updateInstanceConusltacySettings = async (req, res) => {
 
 portal.new = async (req, res) => {
   res.render('pages/admin/new-connection', {
-    title: 'Nova povezava'
+    title: req.t('Nova povezava')
   })
 }
 
@@ -61,7 +61,7 @@ portal.list = async (req, res) => {
   const allLinkedPortals = await Portal.fetchAll()
 
   res.render('pages/admin/connections-list', {
-    title: 'Seznam povezav',
+    title: req.t('Seznam povezav'),
     allLinkedPortals
   })
 }
@@ -70,7 +70,10 @@ portal.fetchPortal = async (req, res) => {
   const portalId = req.params.portalId
   const portal = await Portal.fetchPortal(portalId)
 
-  res.render('pages/admin/portal-edit', { title: 'Uredi povezavo', portal })
+  res.render('pages/admin/portal-edit', {
+    title: req.t('Uredi povezavo'),
+    portal
+  })
 }
 
 portal.updatePortal = async (req, res) => {
@@ -88,7 +91,7 @@ portal.fetchSelectedLinkedDictionaries = async (req, res) => {
     await Portal.fetchSelectedLinkedDictionaries(linkedId, resultsPerPage, 1)
 
   res.render('pages/admin/portal-list-dict', {
-    title: 'Slovarji portala',
+    title: req.t('Slovarji portala'),
     linkedId,
     numberOfAllPages,
     results
@@ -108,7 +111,7 @@ portal.fetchAllLinkedDictionaries = async (req, res) => {
     await Portal.fetchAllLinkedDictionaries(resultsPerPage, 1)
 
   res.render('pages/admin/portals-all-linked-dictionaries', {
-    title: 'Povezani',
+    title: req.t('Povezani slovarji'),
     numberOfAllPages,
     results
   })
@@ -130,7 +133,7 @@ portal.comments = async (req, res) => {
     1
   )
   res.render('pages/admin/comments', {
-    title: 'Komentarji',
+    title: req.t('Komentarji'),
     numberOfAllPages,
     dictionary: { id: req.params.dictionaryId },
     comments

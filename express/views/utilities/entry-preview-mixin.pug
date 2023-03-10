@@ -3,7 +3,7 @@ mixin entryPreview
     .dictionary-content-top.mx-0
       .mb-1.d-flex.align-items-start.row
         .d-sm-block.col-sm-4.preview-column-width
-          span.smaller-gray-info TERMIN:
+          span.smaller-gray-info #{ t('TERMIN:') }
         .flex-grow-1.col-sm-8
           span#selected-term.bold-blue-subheading.text-break!= entryData.term
       //- .headword-preview.mt-1.d-flex.align-items-start.row
@@ -25,38 +25,38 @@ mixin entryPreview
         if (structure.hasDomainLabels && !!selectedDomainLabelsForEntryString)
           #preview-domain-secondary.preview-domain-secondary.mt-1.d-flex.align-items-start.row
             .d-sm-block.col-sm-4.preview-column-width
-              span.smaller-gray-info PODROČNA OZNAKA:
+              span.smaller-gray-info #{ t('PODROČNA OZNAKA:') }
             .flex-grow-1.col-sm-8
               span#selected-domain-secondary.text-uppercase.text-break!= selectedDomainLabelsForEntryString
         if (structure.hasLabel && entryData.label)
           #preview-label.preview-label.mt-1.d-flex.align-items-start.row
             .d-sm-block.preview-column-width.col-sm-4
-              span.smaller-gray-info POJASNILO:
+              span.smaller-gray-info #{ t('POJASNILO:') }
             .flex-grow-1.col-sm-8
               span#selected-label.text-break!= entryData.label
         if (structure.hasDefinition && entryData.definition)
           #preview-definition.preview-definition.mt-1.d-flex.align-items-start.row
             .col-sm-4.d-flex.preview-column-width
-              span.smaller-gray-info DEFINICIJA:
+              span.smaller-gray-info #{ t('DEFINICIJA:') }
             .flex-grow-1.col-sm-8
               span#selected-definition.fw-bold!= entryData.definition
         if (structure.hasSynonyms && entryData.synonym && entryData.synonym.join(", ").length)
           #preview-synonym.preview-synonym.mt-1.d-flex.align-items-start.row
             .d-sm-block.col-sm-4.preview-column-width
-              span.smaller-gray-info SINONIM:
+              span.smaller-gray-info #{ t('SINONIM:') }
             .flex-grow-1.col-sm-8
               span#selected-synonyms.small-blue-text.text-break!= entryData.synonym.join(', ')
         //- TODO POVEZANI TERMIN
-        if (structure.hasLinks && entryData.link)
+        if (structure.hasLinks && Array.isArray(entryData.links) && entryData.links.length)
           #preview-linked-term.preview-linked-terms.mt-1.d-flex.align-items-start.row
             .d-sm-block.col-sm-4.preview-column-width
-              span.smaller-gray-info POVEZANI TERMIN:
+              span.smaller-gray-info #{ t('POVEZANI TERMIN:') }
             .flex-grow-1.col-sm-8
-              span#linked-terms.text-break.text-break!= entryData.link
+              span#linked-terms.text-break.text-break!= entryData.links.map(entry => entry.link).join('<br>')
         if (structure.hasOther && entryData.other)
           #preview-other-field.mt-1.d-flex.align-items-start.row
             .d-sm-block.col-sm-4.preview-column-width
-              span.smaller-gray-info DRUGO:
+              span.smaller-gray-info #{ t('DRUGO:') }
             .flex-grow-1.col-sm-8
               span#selected-other-field.text-break!= entryData.other
         - const isLastBreakPointRequired = (structure.hasImages && entryData.image && entryData.image.join(', ').length) || (structure.hasAudio && entryData.audio && entryData.audio.join(', ').length) || (structure.hasVideo && entryData.video && entryData.video.join(', ').length)
@@ -70,28 +70,28 @@ mixin entryPreview
                 if (structure.hasForeignLanguages && entry.term && entry.term.join(", ").length)
                   .preview-foreign-terms.mt-1.d-flex.align-items-start.row
                     .d-sm-block.col-sm-4.preview-column-width
-                      span.smaller-gray-info TERMIN:
+                      span.smaller-gray-info #{ t('TERMIN:') }
                     .selected-label.flex-grow-1.col-sm-8
                       span.preview-f-term.bold-blue-subheading.text-break!= entry.term.join(', ')
                 if (structure.hasForeignDefinitions && entry.definition)
                   .preview-foreign-definition.mt-1.d-flex.align-items-start.row
                     .d-sm-block.col-sm-4.preview-column-width
-                      span.smaller-gray-info DEFINICIJA:
+                      span.smaller-gray-info #{ t('DEFINICIJA:') }
                     .selected-label.flex-grow-1.col-sm-8
-                      span.preview-f-def.text-break #{ entry.definition }
+                      span.preview-f-def.text-break!= entry.definition
                 if (structure.hasForeignSynonyms && entry.synonym && entry.synonym.join(", ").length)
                   .preview-foreign-synonyms.mt-1.d-flex.align-items-start.row
                     .d-sm-block.col-sm-4.preview-column-width
-                      span.smaller-gray-info SINONIM:
+                      span.smaller-gray-info #{ t('SINONIM:') }
                     .selected-label.flex-grow-1.col-sm-8
-                      span.preview-f-synonym.text-break #{ entry.synonym.join(", ") }
+                      span.preview-f-synonym.text-break!= entry.synonym.join(', ')
                 hr(
                   class=index === entryData.foreign_entries.length - 1 && !isLastBreakPointRequired ? 'd-none' : ''
                 )
         if (structure.hasImages && entryData.image && entryData.image.join(", ").length)
           #preview-images.preview-images.mt-1.d-flex.align-items-start.row
             .col-sm-4.d-sm-block.preview-column-width
-              span.smaller-gray-info SLIKA:
+              span.smaller-gray-info #{ t('SLIKA:') }
             .flex-grow-1.col-sm-8
               a#selected-images.text-decoration-none.text-break(
                 href=entryData.image
@@ -99,7 +99,7 @@ mixin entryPreview
         if (structure.hasAudio && entryData.audio && entryData.audio.join(", ").length)
           #preview-audio.preview-audio.mt-1.d-flex.align-items-start.row
             .col-sm-4.d-sm-block.preview-column-width
-              span.smaller-gray-info ZVOK:
+              span.smaller-gray-info #{ t('ZVOK:') }
             .flex-grow-1.col-sm-8
               a#selected-audio.text-decoration-none.text-break(
                 href=entryData.audio
@@ -107,7 +107,7 @@ mixin entryPreview
         if (structure.hasVideo && entryData.video && entryData.video.join(", ").length)
           #preview-video.preview-video.mt-1.d-flex.align-items-start.row
             .col-sm-4.d-sm-block.preview-column-width
-              span.smaller-gray-info VIDEO:
+              span.smaller-gray-info #{ t('VIDEO:') }
             .flex-grow-1.col-sm-8
               a#selected-video.text-decoration-none.text-break(
                 href=entryData.video

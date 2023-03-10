@@ -27,6 +27,8 @@
   return await axios.get(url)
 } */
 
+// TODO MARK FOR REVIEW WHETHER THIS METHODS ARE STILL NEEDED
+
 function prepareQueryArrayForArrayWithIDs(page, searchQuery, filters = {}) {
   const qParams = new URL(location).searchParams
   qParams.set('p', page)

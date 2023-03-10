@@ -1,8 +1,8 @@
 extends /layout
 
 block pageSpecificScipts
-  script(nonce=cspNonce src="/javascripts/collapsable-comments.js")
-  script(nonce=cspNonce src="/javascripts/comments.js")
+  //- script(nonce=cspNonce src="/javascripts/collapsable-comments.js")
+  //- script(nonce=cspNonce src="/javascripts/comments.js")
 
 block body
   .index-footer
@@ -11,7 +11,8 @@ block body
       .index-nav
         ul.nav
           li.nav-item
-            img.logo(src="/images/logo.png" alt="Logo")
+            a(href="https://www.slovenscina.eu/")
+              img.logo(src="/images/logo.png" alt="Logo")
 
           include ../components/navigation/main-navigation-right-mixin
 
@@ -24,9 +25,9 @@ block body
       //- p Terminološki portal je samostojna, odprto dostopna spletna storitev, v katero so vključeni terminološki viri na samem portalu, na integriranem iskalniku pa so dostopni tudi zadetki iz spletišča Terminologišče in portala Termania. Registriranim uporabnikom je na voljo tudi <b>luščilnik terminoloških kandidatov</b> iz specializiranih korpusov, <b>konkordančnik</b> za specializirana besedila, označevalnik terminov v strokovnih besedilih, <b>urejevalnik</b> terminoloških virov, <b>terminološka svetovalnica</b> in stran s <b>pomočjo in navodili</b> za uporabo posameznih funkcij portala. Terminološki portal je moderiran.
       p!= portalDescription
       p.pt-5.fw-500.d-flex
-        span.d-flex Zadnji objavljeni slovarji
+        span.d-flex #{ t("Zadnji objavljeni slovarji") }
         span.navigation-text-color.d-flex.flex-grow-1.justify-content-end
-          a.text-decoration-none(href="/slovarji") Vsi slovarji &gt;
+          a.text-decoration-none(href="/slovarji") #{ t("Vsi slovarji") } &gt;
 
       include /components/dictionary/dictionary-list
       +table(latestDicts)
@@ -41,9 +42,9 @@ block body
           a(href="/slovarji/id_slovarja/o-slovarju") Davčni slovar
           span= ', '
           a(href="/slovarji/id_slovarja/o-slovarju") Glosar akademske integritete
-      p.pt-5
+      //- p.pt-5
 
-      include /utilities/comments-with-collapsable-pager
+      //- include /utilities/comments-with-collapsable-pager //- uncomment scripts for comments if uncomment this
       //- +pager
 
   include /common/footer

@@ -17,6 +17,7 @@ User.create = async user => {
     user.email || null,
     bcryptHash || null
   ]
+  if (user.language) values.push(user.language)
 
   const text = `INSERT INTO "user" (
       username,
@@ -24,6 +25,7 @@ User.create = async user => {
       last_name,
       email,
       bcrypt_hash
+      ${user.language ? ', language' : ''}
     )
     VALUES (${db.genParamStr(values)})
     RETURNING id`
@@ -67,7 +69,10 @@ User.fetchByActivationToken = async activationToken => {
 
 // Activate user account.
 User.activateAccount = async user => {
-  await db.query(`UPDATE "user" SET status = 'active' WHERE id = $1`, [user.id])
+  await db.query(
+    `UPDATE "user" SET status = 'active', time_activated = NOW() WHERE id = $1`,
+    [user.id]
+  )
 }
 
 // Generate a user remember me token.
@@ -101,6 +106,7 @@ User.fetchDeserializedDataById = async userId => {
       u.last_name,
       u.email,
       u.hits_per_page,
+      u.language,
       ARRAY(
         SELECT jsonb_build_object(
           'roleName', r.role_name,
@@ -258,9 +264,9 @@ User.updatePortalRoles = async rolesPerUser => {
 
 User.fetchUser = async userId => {
   const text = `
-    SELECT id, username, first_name, last_name, email
+    SELECT id, username, first_name, last_name, email, status, language
     FROM "user"
-    WHERE id=$1`
+    WHERE id = $1`
   const value = [userId]
 
   const { rows } = await db.query(text, value)
@@ -271,17 +277,33 @@ User.fetchUser = async userId => {
 }
 
 User.updateUser = async (userId, payload) => {
-  const text = `
+  const previousStatusText = 'SELECT status FROM "user" WHERE id = $1'
+  const { rows } = await db.query(previousStatusText, [userId])
+  const previousStatus = rows[0].status
+
+  let statusValue
+  if (previousStatus === 'registered') {
+    statusValue = !payload.status ? 'registered' : 'active'
+  } else statusValue = !payload.status ? 'inactive' : 'active'
+
+  const updateText = `
     UPDATE "user"
     SET
       username = $2,
       first_name = $3,
-      last_name = $4
+      last_name = $4,
+      status = $5
     WHERE id = $1`
 
-  const values = [userId, payload.username, payload.firstName, payload.lastName]
+  const values = [
+    userId,
+    payload.username,
+    payload.firstName,
+    payload.lastName,
+    statusValue
+  ]
 
-  await db.query(text, values)
+  await db.query(updateText, values)
 }
 
 User.fetchUserRoles = async userId => {
@@ -465,6 +487,14 @@ User.updateHitsPerPage = async (username, hitsPerPageAmount) => {
       WHERE username=$1;`,
     [username, hitsPerPageAmount]
   )
+}
+
+// Update user's language.
+User.updateLanguage = async (userId, languageCode) => {
+  await db.query('UPDATE "user" SET language = $1 WHERE id = $2', [
+    languageCode,
+    userId
+  ])
 }
 
 module.exports = User

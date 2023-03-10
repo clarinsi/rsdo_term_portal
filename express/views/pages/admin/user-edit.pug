@@ -10,7 +10,7 @@ block body
   include /common/side-menu-fake
   +sideNavigationFake
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: false, h2: userData.firstName + ' ' + userData.lastName, h1: 'Uporabniki', description: 'V tem razdelku lahko določite fazo urejanja slovarja, dodajate uporabnike in jim določate uporabniške pravice pri urejanju slovarja.', buttons: [{ type: 'cancel', content: 'Prekliči', url:"/admin/uporabniki/seznam", classAtr: "btn btn-secondary header-btn-secondary small-header-btn"}, { type: 'disabled', content: 'Shrani', form: 'form-edit-user' }] }
+  - const c = { sideMenu: false, h2: userData.firstName + ' ' + userData.lastName, h1: t('Uporabniki'), description: t('V tem razdelku lahko določite uporabniške vloge posameznega uporabnika in urejate njegove podatke.'), buttons: [{ type: 'cancel', content: t('Prekliči'), url:"/admin/uporabniki/seznam", classAtr: "btn btn-secondary header-btn-secondary small-header-btn"}, { type: 'disabled', content: t('Shrani'), form: 'form-edit-user' }] }
   +mainHeader(c)
   .content-hold-prerequisites.mt-4
     #offset-main
@@ -24,7 +24,7 @@ block body
       form#form-edit-user.needs-validation(method="post" novalidate)
         .mt-2
           .subject-name
-            label.smaller-black-uppercase(for="user-name") Uporabniško ime
+            label.smaller-black-uppercase(for="user-name")= t('Uporabniško ime')
           .row
             .col-sm-5
               input#user-name.name-input.form-control(
@@ -33,11 +33,11 @@ block body
                 name="username"
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Ime, s katerim se uporabnik predstavlja na terminološkem portalu.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Ime, s katerim se uporabnik predstavlja na terminološkem portalu.')
 
         .mt-2
           .subject-name
-            label.smaller-black-uppercase(for="user-fname") Ime
+            label.smaller-black-uppercase(for="user-fname")= t('Ime')
           .row
             .col-sm-5
               input#user-fname.name-input.form-control(
@@ -46,11 +46,11 @@ block body
                 name="firstName"
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Ime registriranega uporabnika.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Ime registriranega uporabnika.')
 
         .mt-2
           .subject-name
-            label.smaller-black-uppercase(for="user-lastname") Priimek
+            label.smaller-black-uppercase(for="user-lastname")= t('Priimek')
           .row
             .col-sm-5
               input#user-lastname.name-input.form-control(
@@ -59,11 +59,11 @@ block body
                 name="lastName"
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Priimek registriranega uporabnika.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Priimek registriranega uporabnika.')
 
         .mt-2
           .subject-name
-            label.smaller-black-uppercase(for="user-mail") E-naslov
+            label.smaller-black-uppercase(for="user-mail")= t('E-naslov')
           .row
             .col-sm-5
               input#user-mail.name-input.form-control(
@@ -72,7 +72,7 @@ block body
                 name="email"
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Veljavni elektronski naslov uporabnika, na katerega uporabnik prejema sporočila, povezana s portalom.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Veljavni elektronski naslov uporabnika, na katerega uporabnik prejema sporočila, povezana s portalom.')
 
         //- .mt-2
         //-   .subject-name
@@ -101,45 +101,45 @@ block body
 
         .mt-2.mb-4
           .subject-name
-            label.smaller-black-uppercase(for="user-is-confirmed") Potrjen
+            label.smaller-black-uppercase(for="user-is-confirmed")= t('Potrjen')
           .row
             .col-sm-5
               input#user-is-confirmed.form-check-input(
                 type="checkbox"
-                value=""
-                name="isUserConfirmed"
+                name="status"
+                checked=userData.status === 'active'
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Registracija uporabnika je potrjena.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Registracija uporabnika je potrjena.')
 
         .d-flex.justify-content-between.container-xl.ps-0.ms-0.mt-4.mb-4
           button#edit-user-remove.btn.btn-secondary(type="button") 
             img.me-2(src="/images/red-trash-icon.svg" alt="Delete")
-            | Briši uporabnika
-        span.users-subtitle-txt Uporabniške vloge
+            = t('Briši uporabnika')
+        span.users-subtitle-txt= t('Uporabniške vloge')
         if userRoles
           .container-xl.ps-0.ms-0.mt-3
             table.styled-table-left-header
               thead
                 if userRoles.roles.isPortalAdmin
                   tr
-                    th.table-left-header= 'Skrbnik portala'
+                    th.table-left-header= t('Skrbnik portala')
                       td= ''
                 if userRoles.roles.isDictionariesAdmin
                   tr
-                    th.table-left-header= 'Skrbnik slovarjev'
+                    th.table-left-header= t('Skrbnik slovarjev')
                       td= ''
                 if userRoles.roles.isConsultancyAdmin
                   tr
-                    th.table-left-header= 'Skrbnik svetovalnice'
+                    th.table-left-header= t('Skrbnik svetovalnice')
                       td= ''
                 if userRoles.roles.isConsultant
                   tr
-                    th.table-left-header= 'Svetovalec'
+                    th.table-left-header= t('Svetovalec')
                       td= ''
                 if userRoles.roles.isEditor
                   tr
-                    th.table-left-header= 'Urednik slovarja'
+                    th.table-left-header= t('Urednik slovarja')
                       td= ''
 
   include /common/footer

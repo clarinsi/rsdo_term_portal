@@ -3,13 +3,13 @@ mixin topHeaderContent(headerContent)
     .header-container-divider-left
       h2#site-header-title= headerContent.h2
       h1#site-heading= headerContent.h1
-      span#text-description.page-description.pe-0= headerContent.description
+      span#text-description.page-description.pe-0!= headerContent.description
         if (headerContent.helpLink)
           a.ms-2.page-description(href=headerContent.helpLink.linkHref)= headerContent.helpLink.linkText
 
 mixin mainHeader(headerContent, footerIncluded = true)
   - const checkForSpecificRights = headerContent.specificRights
-  #offset-padding.header-section-root.no-side-menu.consultancy-padding-main.flex-grow-0.p-squeeze-lg.mx-xxl-auto
+  #offset-padding.header-section-root.no-side-menu.consultancy-padding-main.flex-grow-0.p-squeeze-lg.mx-xxl-auto.gray-bg.pb-3
     .d-flex.justify-content-between.flex-wrap.flex-row.row
       if checkForSpecificRights
         .header-container-left-side.d-flex.col-sm-10
@@ -25,7 +25,7 @@ mixin mainHeader(headerContent, footerIncluded = true)
 
     .header-consultancy-content.w-100
       include ../components/search-and-filter/search-with-primary-domain-filter
-      +searchWithPrimaryDomainFilter("consultancy-form", "searchbar-main", "couns-search-btn")
+      +searchWithPrimaryDomainFilter("consultancy-form", "searchbar-main", "couns-search-btn", "mt-3", queryKey)
         .header-consultancy-divider-right.d-flex.align-items-center.justify-content-end.col-sm-5.pe-0.ps-3
           .fit-content
             if (headerContent.buttons && headerContent.buttons.length)
@@ -48,17 +48,17 @@ mixin mainHeader(headerContent, footerIncluded = true)
           .col-sm-6.align-items-center.d-flex
             if (entries.length>0)
               if (resultAmountDisplay)
-                p.mb-0.text-p875rem.strength500.text-header-title-gray Odgovori na vprašanja: #{ queryCount }
+                p.mb-0.text-p875rem.strength500.text-header-title-gray #{ t('Odgovori na vprašanja:') } #{ queryCount }
               else
-                p.mb-0.text-p875rem.strength500.text-header-title-gray Zadnji odgovori na vprašanja
+                p.mb-0.text-p875rem.strength500.text-header-title-gray #{ t('Zadnji odgovori na vprašanja') }
             else
-              p.mb-0.text-p875rem.strength500.text-header-title-gray Ni vprašanj.
+              p.mb-0.text-p875rem.strength500.text-header-title-gray #{ t('Ni vprašanj.') }
           .col-sm-6.align-items-center.justify-content-end.d-flex
             .col-sm-5.align-items-center.justify-content-end.d-flex
               //- if headerContent.exportButtonPresent
                 button#export-consultancy-info.btn.btn-secondary
                   img(src="/images/download.svg")
-                  span.ps-2 Izvozi
+                  span.ps-2 #{ t('Izvozi') }
             if (!headerContent.show5MostRecent)
               .col-sm-7.align-items-center.justify-content-end.d-flex
                 include /utilities/pager

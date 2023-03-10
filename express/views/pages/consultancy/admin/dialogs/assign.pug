@@ -29,7 +29,7 @@ mixin consultancyAdminAssignModal
     .modal-dialog
       .modal-content
         .modal-header.mb-0.pb-0
-          h5.pt-3.navigation-text-color Dodeli
+          h5.pt-3.navigation-text-color #{ t('Dodeli') }
           button.btn-close(
             type="button"
             data-bs-dismiss="modal"
@@ -43,9 +43,9 @@ mixin consultancyAdminAssignModal
               button.btn.btn-secondary.height50(
                 type="button"
                 data-bs-dismiss="modal"
-              ) Zapri
+              ) #{ t('Zapri') }
             .col.d-flex.justify-content-end.mb-2
               button#assign-btn.btn.btn-primary.height50(
                 type="button"
                 data-bs-dismiss="modal"
-              ) Uporabi
+              ) #{ t('Uporabi') }

@@ -1,0 +1,15 @@
+mixin topHeaderContent(headerContent)
+  #chevrons-left.d-flex
+    .header-container-divider-left
+      h2#site-header-title= headerContent.h2
+      h1#site-heading= headerContent.h1
+      span#text-description.page-description.pe-0!= headerContent.description
+        if (headerContent.helpLink)
+          a.ms-2.page-description(href=headerContent.helpLink.linkHref)= headerContent.helpLink.linkText
+
+mixin mainHeader(headerContent, footerIncluded = true)
+  #offset-padding.header-section-root.no-side-menu.consultancy-padding-main.flex-grow-0.p-squeeze-lg.mx-xxl-auto.gray-bg.pb-3
+    .d-flex.justify-content-between.flex-wrap.flex-row.row
+      .header-container-left-side.d-flex.col-sm-12
+        +topHeaderContent(headerContent)
+    hr#header-row.mt-1.ms-0.mb-0

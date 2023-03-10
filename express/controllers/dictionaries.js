@@ -9,7 +9,8 @@ const Comment = require('../models/comment')
 const genEditorAllQuery = require('../models/helpers/search/generate-query/editor/all')
 const { searchEntryIndex } = require('../models/search-engine')
 const { prepareEditorEntries } = require('../models/helpers/search')
-const { getInstanceSetting } = require('../models/helpers')
+const { getInstanceSetting, intoDbArray } = require('../models/helpers')
+const { getExportFilesPath } = require('../models/helpers/dictionary')
 const { DEFAULT_HITS_PER_PAGE, DATA_FILES_PATH } = require('../config/settings')
 const {
   statusChangeCheckAndAct,
@@ -17,6 +18,7 @@ const {
 } = require('./helpers/dictionary')
 const SFDSuggestionImporter = require('./helpers/search-filter-data-suggestion-importer')
 const Extraction = require('../models/extraction')
+const { isGeneratorFunction } = require('util/types')
 
 const importFileBodyParser = multer({
   dest: `${DATA_FILES_PATH}/dict_import_temp`,
@@ -39,7 +41,7 @@ dictionary.list = async (req, res) => {
     dictionaries = await Dictionary.fetchAllByUser(req.user.id)
   }
   res.render('pages/dictionaries/list', {
-    title: 'Seznam slovarjev',
+    title: req.t('Seznam slovarjev'),
     dictionaries
   })
 }
@@ -51,11 +53,11 @@ dictionary.new = async (req, res) => {
     await Promise.all([
       Dictionary.fetchAllPrimaryDomains(),
       Dictionary.fetchAllApprovedSecondaryDomains(),
-      Dictionary.fetchAllLanguages(language)
+      Dictionary.fetchAllLanguages(language, true)
     ])
 
   res.render('pages/dictionaries/new', {
-    title: 'Nov slovar',
+    title: req.t('Nov slovar'),
     allPrimaryDomains,
     allSecondaryDomains,
     allLanguages
@@ -82,7 +84,7 @@ dictionary.editDescription = async (req, res) => {
   ])
 
   res.render('pages/dictionaries/description', {
-    title: 'Ime in opis',
+    title: req.t('Osnovni podatki'),
     allPrimaryDomains,
     allSecondaryDomains,
     dictionary,
@@ -125,7 +127,7 @@ dictionary.editUsers = async (req, res) => {
   }
 
   res.render(viewPath, {
-    title: 'Uporabniki',
+    title: req.t('Uporabniki'),
     dictionary,
     userRights,
     entriesCount,
@@ -142,6 +144,7 @@ dictionary.updateUsers = async (req, res) => {
 
   const newDictStatus = await determineNewStatus(isPublished)
 
+  // TODO I18n - nameSl
   const { nameSl, status: oldDictStatus } = await Dictionary.fetchEditUsers(
     dictionaryId
   )
@@ -172,12 +175,13 @@ dictionary.updateUsers = async (req, res) => {
 
 dictionary.editStructure = async (req, res) => {
   // TODO Once english language is implemented, gather selected language (sl/en) from request ~ (cookies?)
+  // TODO I18n - nameSl
   const language = 'name_sl'
   const { dictionaryId } = req.params
   const [dictionary, associatedLanguages, allLanguages] = await Promise.all([
     Dictionary.fetchEditStructure(dictionaryId),
     Dictionary.fetchLanguages(dictionaryId),
-    Dictionary.fetchAllLanguages(language)
+    Dictionary.fetchAllLanguages(language, true)
   ])
 
   let viewPath
@@ -190,7 +194,7 @@ dictionary.editStructure = async (req, res) => {
   }
 
   res.render(viewPath, {
-    title: 'Struktura slovarskega sestavka',
+    title: req.t('Struktura slovarskega sestavka'),
     dictionary,
     associatedLanguages,
     allLanguages
@@ -223,7 +227,7 @@ dictionary.editAdvanced = async (req, res) => {
   }
 
   res.render(viewPath, {
-    title: 'Napredno',
+    title: req.t('Napredno'),
     dictionary: { id: req.params.dictionaryId },
     dictionaryName
   })
@@ -251,7 +255,7 @@ dictionary.comments = async (req, res) => {
   }
 
   res.render(viewPath, {
-    title: 'Komentarji',
+    title: req.t('Komentarji'),
     numberOfAllPages,
     dictionary: { id: req.params.dictionaryId },
     comments,
@@ -261,10 +265,12 @@ dictionary.comments = async (req, res) => {
 
 dictionary.showImportFromFileForm = async (req, res) => {
   const { dictionaryId } = req.params
-  const [imports, dictionaryName] = await Promise.all([
-    Dictionary.fetchAllImports(dictionaryId),
-    Dictionary.fetchName(dictionaryId)
-  ])
+  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
+  const [{ pages_total: numberOfAllPages, results }, dictionaryName] =
+    await Promise.all([
+      Dictionary.fetchAllImports(dictionaryId, resultsPerPage, 1),
+      Dictionary.fetchName(dictionaryId)
+    ])
   let viewPath
   switch (req.baseUrl) {
     case '/slovarji':
@@ -275,9 +281,10 @@ dictionary.showImportFromFileForm = async (req, res) => {
   }
 
   res.render(viewPath, {
-    title: 'Uvoz iz datoteke',
+    title: req.t('Uvoz iz datoteke'),
     dictionary: { id: dictionaryId },
-    imports,
+    numberOfAllPages,
+    results,
     dictionaryName
   })
 }
@@ -289,7 +296,7 @@ dictionary.listAdminDictionaries = async (req, res) => {
     await Dictionary.fetchAllAdminDictionaries(resultsPerPage, 1)
 
   res.render('pages/admin/dictionaries-list', {
-    title: 'Struktura slovarjev',
+    title: req.t('Seznam slovarjev'),
     numberOfAllPages,
     results
   })
@@ -312,7 +319,7 @@ dictionary.adminEditDescription = async (req, res) => {
   ])
 
   res.render('pages/admin/dictionary-description', {
-    title: 'Podatki',
+    title: req.t('Osnovni podatki'),
     allPrimaryDomains,
     allSecondaryDomains,
     dictionary,
@@ -364,11 +371,11 @@ dictionary.showImportFromExtractionForm = async (req, res) => {
   switch (req.baseUrl) {
     case '/slovarji':
       viewPath = 'pages/dictionaries/extraction-import'
-      title = 'Uvoz'
+      title = req.t('Uvoz iz luščilnika')
       break
     case '/admin':
       viewPath = 'pages/admin/dictionary-extraction-import'
-      title = 'Uvoz luščenje'
+      title = req.t('Uvoz iz luščilnika')
   }
 
   res.render(viewPath, {
@@ -381,7 +388,12 @@ dictionary.showImportFromExtractionForm = async (req, res) => {
 
 dictionary.showExportToFileForm = async (req, res) => {
   const { dictionaryId } = req.params
-  const dictionaryName = await Dictionary.fetchName(dictionaryId)
+  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
+  const [dictionaryName, { pages_total: numberOfAllPages, results }] =
+    await Promise.all([
+      Dictionary.fetchName(dictionaryId),
+      Dictionary.fetchExports(dictionaryId, resultsPerPage, 1)
+    ])
   let viewPath
   switch (req.baseUrl) {
     case '/slovarji':
@@ -390,11 +402,12 @@ dictionary.showExportToFileForm = async (req, res) => {
     case '/admin':
       viewPath = 'pages/admin/dictionary-export'
   }
-
   res.render(viewPath, {
-    title: 'Izvoz',
-    dictionary: { id: req.params.dictionaryId },
-    dictionaryName
+    title: req.t('Izvoz'),
+    dictionary: { id: dictionaryId },
+    dictionaryName,
+    numberOfAllPages,
+    results
   })
 }
 
@@ -418,7 +431,7 @@ dictionary.editDomainLabels = async (req, res) => {
   }
 
   res.render(viewPath, {
-    title: 'Področne oznake',
+    title: req.t('Področne oznake'),
     dictionary: { id: dictionaryId },
     numberOfAllPages,
     results,
@@ -448,7 +461,7 @@ dictionary.showContent = async (req, res) => {
   const terms = prepareEditorEntries(hits)
 
   res.render('pages/dictionaries/content', {
-    title: 'Vsebina slovarja',
+    title: req.t('Vsebina slovarja'),
     terms,
     canPublishEntriesInEdit,
     dictionaryName,
@@ -466,7 +479,7 @@ dictionary.showSecondaryDomains = async (req, res) => {
     await Dictionary.fetchAllSecondaryDomains(resultsPerPage, 1)
 
   res.render('pages/admin/areas', {
-    title: 'Podpodročja',
+    title: req.t('Področne oznake'),
     numberOfAllPages,
     results
   })
@@ -501,11 +514,26 @@ dictionary.dictionaryList = async (req, res) => {
   )
 
   const numberOfAllHits = parseInt(
-    (await Dictionary.fetchAllDictionariesCount()).count
+    (await Dictionary.fetchAllDictionariesPublishedCount()).count
   )
   const numberOfAllPages = Math.ceil(numberOfAllHits / hitsPerPage)
 
   const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+
+  /*
+  /// filter selected domains for the prompt ///
+  // Not duplicates of this code arise...
+  const pdList = intoDbArray(req.query.pd, 'always')
+
+  allPrimaryDomains = allPrimaryDomains.map(entry => {
+    if (pdList.includes(`${entry.id}`)) {
+      entry.selected = true
+    }
+    return entry
+  })
+
+  /// //////////////////////////////////////////
+  */
 
   dictionaries = dictionaries.map(e => {
     if (!e.portalcode) {
@@ -518,7 +546,7 @@ dictionary.dictionaryList = async (req, res) => {
   const isDictionaryListPage = true
 
   res.render('pages/dictionaries/dictlist', {
-    title: 'Seznam slovarjev',
+    title: req.t('Seznam slovarjev'),
     dictionaries,
     allPrimaryDomains,
     numberOfAllPages,
@@ -532,6 +560,7 @@ dictionary.dictionaryList = async (req, res) => {
 dictionary.dictionaryDetails = async (req, res) => {
   const { absolutePrevPath, sentFromEntryId } = req.query
   const dictId = req.params.dictionaryId
+  const title = req.t('O slovarju')
   const {
     allPrimaryDomains,
     sourceLanguages,
@@ -555,7 +584,7 @@ dictionary.dictionaryDetails = async (req, res) => {
 
   // check if it is a local dictionary
   if (!dictionaryData.portalname && !dictionaryData.portalcode) {
-    dictionaryData[0].portalname = await getInstanceSetting('portal_name')
+    dictionaryData[0].portalname = await getInstanceSetting('portal_name_sl')
     dictionaryData[0].portalcode = await getInstanceSetting('portal_code')
   }
 
@@ -579,7 +608,7 @@ dictionary.dictionaryDetails = async (req, res) => {
   )
 
   const structData = {
-    prevWindowTitle: 'Nazaj',
+    prevWindowTitle: req.t('Nazaj'),
     dictName: dictionaryData[0].dictionarysl,
     portalCode: dictionaryData[0].portalcode,
     portalName: dictionaryData[0].portalname,
@@ -589,13 +618,14 @@ dictionary.dictionaryDetails = async (req, res) => {
     languages: reducedData.languages ? reducedData.languages.join(', ') : ''
   }
 
+  // TODO I18n
   if (reducedData.author) {
     if (reducedData.author.length > 2) {
-      structData.authorLabel = 'Avtorji'
+      structData.authorLabel = req.t('Avtorji')
     } else if (reducedData.author.length === 2) {
-      structData.authorLabel = 'Avtorja'
+      structData.authorLabel = req.t('Avtorja')
     } else if (reducedData.author.length === 1) {
-      structData.authorLabel = 'Avtor'
+      structData.authorLabel = req.t('Avtor')
     }
   }
 
@@ -623,7 +653,8 @@ dictionary.dictionaryDetails = async (req, res) => {
     finalData,
     numberOfAllPages,
     comments,
-    commentCount
+    commentCount,
+    title
   }) // todo
 }
 
@@ -680,8 +711,28 @@ dictionary.importFromFile = async (req, res) => {
   }
 }
 
+dictionary.exportDownload = async (req, res) => {
+  // TODO Add authentication and authorization.
+
+  const { exportId } = req.params
+  const { exportStatus, dictionaryId, nameString, timeString, fileFormat } =
+    await Dictionary.fetchExportDownloadMetadata(exportId)
+  if (exportStatus !== 'finished') {
+    throw Error("Can't request file for unfinished export")
+  }
+  const exportFilesPath = getExportFilesPath(dictionaryId)
+  const exportFilePath = `${exportFilesPath}/${exportId}`
+  const exportFileName = `${nameString}_${timeString}.${fileFormat}`
+
+  res.download(exportFilePath, exportFileName)
+}
+
 function importFileFilter(req, file, cb) {
-  if (file.mimetype !== 'text/xml') return cb(Error('Invalid file type'))
+  if (file.mimetype !== 'text/xml') {
+    const customError = Error('Invalid file type')
+    customError.displayInProd = true
+    return cb(customError)
+  }
   cb(null, true)
 }
 

@@ -1,0 +1,224 @@
+﻿h1= t('helpPageTitleHelp', { ns: 'extended' })
+
+h2#help-general= t('helpPageTitleAbout', { ns: 'extended' })
+
+p The Terminology Portal was developed as part of the #[a(href="https://www.slovenscina.eu/" target="_blank") Development of Slovene in a Digital Environment] Project.
+p The search function of the Terminology Portal in available to all users without registration. To use other functions - #[a(href="/luscenje" target="_blank") exctraction], #[a(href="/slovarji/moji" target="_blank") editing] of terminology dictionaries, commenting, and taking advantage of the offered #[a(href="/svetovanje" target="_blank") consultations] related to the terminology issues - users need to register before first use and sing in every time they want to use these functions. To register or sign in go to the Terminology Portal home page and find the Registration link in the upper right corner. The Terminology Portal is managed by the Amebis company and the Research Centre of the Slovenian Academy of Sciences and Arts, whose employees will answer your questions sent to #[a(href="mailto:info@terminoloski.slovenscina.eu") info@terminoloski.slovenscina.eu].
+
+p The Terminology Portal and the sample collections of the Slovenian Terminology Portal have been created by the associates of the following research institutions and companies:
+p #[a(href="https://amebis.si" target="_blank") Amebis]: Miro Romih, Anton Romšak, Luka Romih, Jure Artiček, Miha Stele, Aljaž Grilc
+p #[a(href="https://kt.ijs.si/" target="_blank") Jožef Stefan Institute]: Senja Pollak, Hanh Thi Hong Tran, Vid Podpečan, Matej Martinc, Andraž Repar, Marko Pranjić, Nada Lavrač, Andraž Pelicon, Tomaž Erjavec
+p #[a(href="https://www.ff.uni-lj.si/" target="_blank") Faculty of Arts, University of Ljubljana]: Špela Vintar
+p #[a(href="https://www.fri.uni-lj.si/sl" target="_blank") Faculty of Computer and Information Science, University of Ljubljana]: Boštjan Slivnik, Danijel Skočaj, Marko Robnik Šikonja, Vladimir Batagelj (otherwise from the Faculty of Mathematics and Physics, University of Ljubljana), Ivan Bratko, Peter Rogelj (otherwise from the Faculty of Mathematics, Natural Sciences and Information Technologies, University of Primorska),
+p #[a(href="https://www.fu.uni-lj.si/" target="_blank") Faculty of Public Administration, University of Ljubljana]: Polonca Kovač, Maja Klun, Jernej Podlipnik (otherwise a lawyer and a lecturer), Andreja Kostelec (otherwise independent researcher and lecturer), Nika Hudej (otherwise consultant for the Constitutional Court of the Republic of Slovenia)
+p #[a(href="https://feri.um.si/" target="_blank") Faculty of Electrical Engineering and Computer Science, University of Maribor]: Marko Ferme, Kristjan Žagar, Ivan Kovačič, Klemen Kac, Milan Ojsteršek, Damjan Strnad, Matjaž Divjak, Marko Bizjak, Matjaž Debevec, Ines Kožuh, Irena Lovrenčič Držanič
+p #[a(href="https://www.isjfr.zrc-sazu.si/" target="_blank") Fran Ramovš Institute of the Slovenian Language at the Research Centre of the Slovenian Academy of Sciences and Arts]. Mateja Jemec Tomazin, Simon Atelšek, Tanja Fajfar, Karmen Nemec, Jera Sitar, Mitja Trojar, Mojca Žagar Karer
+
+h3#help-registration= t('helpPageTitleRegistration', { ns: 'extended' })
+
+p To register or sign in, go to the #[a(href="/" target="_blank") upper right corner] of the Terminology Portal home page. You have to enter a valid e-mail address, where we can send a link to confirm your account. If you do not get the link, check the junk folder.
+
+p Your registration will be completed when you confirm that you have read the #[a(href="/politika-zasebnosti" target="_blank") Privacy Policy] and agree to the #[a(href="/pogoji-uporabe" target="_blank") Terms of Use].
+
+h2#help-search= t('helpPageTitleSearchIndex', { ns: 'extended' })
+
+h3#help-basic-search= t('helpPageTitleSearchBasic', { ns: 'extended' })
+
+p By entering a search query into the search window, users can search by terms or parts of therms they are interested in. Entering the search string and confirming it will return the results that match the search term. The results are sorted so that perfect matches in the headword are shown at the top, followed by partial matches in the headword, and finally by matches in other parts of the dictionary entry. All dictionary entries on the Terminology Portal have headwords in Slovenian. Some of the dictionary entries offer equivalents in other languages or a definition, while others offer both as well as other related information.
+
+p The search query can include a string of letters and the * character, which can replace any number of letters. The Terminology Portal is also connected to the terminology dictionaries hosted at the #[a(href="https://isjfr.zrc-sazu.si/sl/terminologisce" target="_blank") Terminologišče] website managed by the #[a(href="https://isjfr.zrc-sazu.si/sl" target="_blank") Fran Ramovš Institute of the Slovenian Language at the Research Centre of the Slovenian Academy of Sciences and Arts] and the terminology dictionaries at the #[a(href="https://www.termania.net" target="_blank") Termania] dictionary portal managed by the #[a(href="https://www.amebis.si/" target="_blank") Amebis] company.
+
+p The list of results shows the term in Slovenian, the definition label if the entry includes one, and the equivalents in all languages that are available. Clicking on the term opens the entires dictionary entry.
+
+p Image:
+img(src="/images/Iskalni_zadetki.png" alt="Search results") 
+
+p Filters allow the users to filter the results by #[b language], #[b domains], #[b dictionaries] and by #[b source], which allows the users to see the results from connected terminology portals.
+
+p Image:
+img(src="/images/Filtri.png" alt="Filters") 
+
+h3#help-advanced-search= t('helpPageTitleSearchAdvanced', { ns: 'extended' })
+
+p To open the advanced search option, click the arrow to the right of the search window. In addition to the search query, advanced search allows users to select the source language (for search results from terminology dictionaries on other terminology portals), target language, domain, dictionary, and source.
+
+p Clicking on the four small squares opens up a window with special characters.
+
+p Image:
+img(src="/images/Napredno_iskanje.png" alt="Advanced search") 
+
+h2#help-extraction= t('helpPageTitleExtractionIndex', { ns: 'extended' })
+
+p Every terminological endeavor usually starts by collecting texts related to the specific domain. For further machine processing, it is best to use plain text in the .txt format. A specialized corups of different collected texts is created, which is the basis for extraction of term candidates. Term candidates are words and phrases which are typically used in the selected domain rather than in general language and are suitable for creation of a terminology resource. The extraction function of the Terminology portal can only be used by registered users. The extraction of term candidates is done on a remote server. The user is notified via e-mail when the extraction is successfully completed. Each registered user can save up to 5 personal user corpora and extraction results.
+
+h3#help-specialized-corpuses= t('helpPageTitleExtractionSpecializedCorpora', { ns: 'extended' })
+
+p Specialized corpora are collections of domain-specific texts with a balanced representation of text types. Terminology resources are usually created from contemporary texts. The best texts for extraction of term candidates are handbooks, where the terminology of the domain is usually presented in a systematic way and the terms are often also defined. Other text types, such as graduate degrees, especially doctoral dissertations, Master’s degrees, but also Bachelor’s degrees, as well as scientific monographs and scientific journals, are of course necessary and desired, but one must be aware that they often have a very narrow focus and thus contain less divers domain-specific terminology. It is up to the user to make sure that the selected texts cover all the primary and secondary domains they want to include in the dictionary. If you do not have your own texts, you can search for texts in the OSS Corpus, where you have to select the domain, and usually also provide key words and filter by document type and year of publication to limit the number of results and get more precise results.
+
+h3#help-my-corpuses= t('helpPageTitleExtractionPersonalCorpus', { ns: 'extended' })
+
+p The users can decide to collect their own texts rather than use the texts in the OSS Corups, which have already been annotated with linguistic metadata. We recommend saving all your texts in a plain text format (.txt) as this leads to better extraction results. Using other formats, especially (.pdf), can lead to errors when the document is converted into plain text, which causes the extraction to fail. When creating a personal corups, the user should ensure the selected texts sufficiently represent the domain. This allows the users to improve terminology they believe is missing from the OSS Corpus but needs to be included into the terminology resource they are editing.
+
+h3#help-corpus-oss= t('helpPageTitleExtractionOssCorpus', { ns: 'extended' })
+
+p The OSS Corpus includes all the texts available at the #[a(href="https://openscience.si/" target="_blank") Open Science Slovenia Portal]. The advantage of this corpus is that all the texts have already been annotated with linguistic metadata and segmented, which make the process of extracting term candidates faster. The OSS Corpus also includes textual metadata, such as domain, text type, year of publication, and key words, allowing the user to filter the selection of texts.
+
+h3#help-stop-lists= t('helpPageTitleExtractionStopTerms', { ns: 'extended' })
+
+p The extraction results will be more relevant if the user also prepares a list of unwanted words. the so-called "stop list". These lists can include general terms, such as npr. #[i report], #[i table], #[i quotient], or allow you to exclude the most common domain-related terms, which would be included into the terminology resource anyway and would otherwise make it to the top of the results, so that you can find less common terms.
+
+h3#help-extraction-areas= t('helpPageTitleExtractionDomains', { ns: 'extended' })
+
+p The domain classification used on the Slovenian Terminology Portal has been created specifically for this Portal, but is based on two standard classifications: the #[a(href="https://www.arrs.si/sl/gradivo/sifranti/sif-cerif-cercs.asp" target="_blank") Common European Research Classification Scheme (CERIF)] and the #[a(href="https://eur-lex.europa.eu/browse/eurovoc.html?locale=sl" target="_blank") Eurovoc] classification. To help users select the domains, we created a classification conversion table.
+
+p #[a(href="pomoc/pdf" target="_blank") Table]
+
+h3#help-terminology-candidates= t('helpPageTitleExtractionTermCandidates', { ns: 'extended' })
+
+p After the extraction is completed, the user will receive a notification about the successful extraction to the e-mail address used for registration. The result of the extraction is a list of words and phrases that are more typical for the selected texts compared to the general use. These words and phrases are called term candidates. The quality of the extraction depends on the selected texts as well as on stop lists, which tell the application which terms or words to exclude from the results. By preparing a detailed stop list, the user can improve the resulting list of term candidates. We recommend saving the lists in a .txt format.
+
+h2#help-editor= t('helpPageTitleEditingIndex', { ns: 'extended' })
+
+p The editing function allows registered users to create new terminology resources. The users can edit a list of term candidates that are imported from the #[a(href="/luscenje" target="_blank") Extractor] after the extraction is completed or prepare their own list of terms and import it into the Editor. Before starting, the user must provide certain information about the dictionary. The dictionary can be edited by a single user or other registered users can be invited to collaborate. When creating new terminology resources, the user can follow the #[a(href="pomoc/guidance-pdf" target="_blank") Guidelines for independent creation of terminology resources].
+
+h3#help-new-dict= t('helpPageTitleEditingNewDictionary', { ns: 'extended' })
+
+p Select the New dictionary button to start the process by providing basic information about the dictionary. Fields marked with * are mandatory. Domains can be selected from a drop-down menu. If the user feels the selected domain is to broad, secondary domains can be added. Secondary domains can also be selected from a drop-down menu. If you cannot find your secondary domain on the menu, write down your suggestion and it will be approved by the administrator. The reliability of a terminology resource is also based on the provided metadata, which is why we recommend that you fill in all the fields and provide a short description of the content and the methodology. By selecting dictionary entry fields, the user decides which fields will be available in the Editor.
+
+h3#help-edit-dict= t('helpPageTitleEditingDictionaryProperties', { ns: 'extended' })
+
+p A navigation window with metadata fields opens up. Better documented resources are more reliable, which is why we recommend filling in all the fields.
+
+p The Advanced tab allows the user to delete all previously created dictionary entries while saving the metadata or to delete the entire dictionary. Both of these actions are irreversible.
+
+p Publishing dictionary entries notifies the Terminology Portal Administrator, who checks whether the resource meets the formal requirements (all dictionary entries should have the term in Slovenian as well as at least a definition and/or equivalent in at least one other language) and publishes the dictionary entries.
+
+h3#help-users-dict= t('helpPageTitleEditingUsers', { ns: 'extended' })
+
+p In addition to adding basic dictionary metadata, the user can also add new collaborators and define their user rights under the Users tab. The registered user who creates a new dictionary automatically has all editing and administration rights. The users with #[i editing rights] can edit almost all data, but cannot delete the dictionary. The users with the terminology and language review rights can only change information in the definition and equivalent fields. Different levels of dictionary administration and editing rights make it easier to trace change history and make decision. By clicking the #[i Publish the dictionary] button in the same tab, the user notifies the Portal Administrator that the dictionary is ready to be published.
+
+h3#help-structure-dict= t('helpPageTitleEditingStructure', { ns: 'extended' })
+
+p By selecting dictionary entry fields, the user decides which fields will be available in the Editor. Mandatory elements of all dictionary entries are the term in Slovenian an at least the definition in Slovenian or the equivalent in at least one other language. This means that every dictionary must contain at least two types of data. Several options are available, but it is recommended that the majority of the dictionary entries in the same dictionary include all selected elements (e.g. equivalents in Coratian), as this makes the dictionary more reliable.
+
+p In addition to the term in Slovenian and the definition, the user can also add domain labels, which can be selected before starting the editing process or be added at a latter time. Qualifiers, e.g. time- or domain-related qualifiers, should only be added to terms where that makes sense.
+
+h3#help-comments-dict= t('helpPageTitleEditingComments', { ns: 'extended' })
+
+p Comments allow the authors of the dictionary to communicate while the dictionary is being created. After publication, they also allow the users to communicate with the authors. Every user with dictionary administration rights can decide whether the comments will only be visible to the dictionary authors or to all portal users.
+
+h3#help-content-dict= t('helpPageTitleEditingDictionaryContent', { ns: 'extended' })
+
+p The main part of the Editor is a page with fields for adding information to the dictionary entry. Until at least two types of information are entered, the Editor returns a "Dictionary entry invalid" message.
+
+p Image:
+img(src="/images/Neveljavno.png" alt="Invalid")
+
+h3#help-import-dict= t('helpPageTitleEditingImportingData', { ns: 'extended' })
+
+p The user can import a list of term candidates in the Import from folder tab. If you already have a list of terms, make sure that is saved in one of the appropriate formats. During this process you can also delete all dictionary entries you have edited so far. If you only want to add terms to the existing dictionary entries, make sure the #[i Delete existing dictionary entries] box in not checked.
+
+p Term candidates can also be imported from the Extractor. To do this, select the correct extraction and determine which of the extracted candidates should be included.
+
+h3#help-content-add= t('helpPageTitleEditingEntriesIndex', { ns: 'extended' })
+
+p To add a new dictionary entry, click the #[b New] button. If you click the New button without saving the data, the entry will not be saved. Fill in all the selected fields. Until at least two elements are filled in, the dictionary entries will be marked as invalid.
+
+h4#help-content-domains= t('helpPageTitleEditingEntriesDomainLabels', { ns: 'extended' })
+
+p Domain labels can be used for a more detailed classification of terms into smaller conceptual groups. Domain labels are not mandatory, but we recommend using then in dictionaries with a large number of entries, e.g. in dictionaries with more than 1000 entries. Domain labels are completely optional. The authors can adjust them for each separate dictionary.
+
+h4#help-content-label= t('helpPageTitleEditingEntriesLabel', { ns: 'extended' })
+
+p Qualifiers allows the user to write down the circumstances which are not part of the term, but which make it easier to contextualize it. Authors can use, for example, time-related qualifiers (#[i until 2007], #[i in 19th centurry], #[i between the years 1988 and 1992]) or more detailed domain-related qualifiers (#[i in criminal law], #[i in bio-dynamic farming], #[i in water rescue]).
+
+h4#help-content-def= t('helpPageTitleEditingEntriesDefinition', { ns: 'extended' })
+
+p Definition places the term into the conceptual system and determines the parent term or the conceptual group. For example, all taxes are described in the same way, starting the definition with the term #[i tax] then describing the characteristics of the term in relation to other terms in the group, especially its basic characteristics and differences, e.g. #[i inheritance tax] is a tax levied on transfer of assets of a deceased persons to legal heirs.
+
+h4#help-content-syn= t('helpPageTitleEditingEntriesSynonyms', { ns: 'extended' })
+
+p When there are two or more terms describing the same concept, it makes sense to note that down. As this information is related to the concept, it should be written down together with the main term. In Slovenian, the terms #[i dokaz] and #[i dokazilo] are used for #[i dokazno sredstvo], which is why they are written as synonyms for the term #[i dokazno sredstvo].
+
+h4#help-content-links= t('helpPageTitleEditingEntriesRelatedTerms', { ns: 'extended' })
+
+p When creating a conceptual system, we should also note the terms that denote a related concept we want to draw attention to, which can be selected from the list of already created dictionary entries. While synonyms can be entered freely, related terms must have their own dictionary entries. This option allows us to connect, for example, all types of taxes, all fire extinguishing agents, all types of decisions, etc. When adding related terms, the authors should consider the perspective of a dictionary user who is not as familiar with the domain. The authors should carefully consider which terms should be related to create a more complete picture rather than simply adding relations for the sake of it, especially if the terms are not on the same level.
+
+h4#help-content-flang= t('helpPageTitleEditingEntriesOtherLanguages', { ns: 'extended' })
+
+p In addition to the equivalent, the definition and any synonyms can also be added in other languages. In general, the most often used term in the other language should be put down as the equivalent, while less often used terms should be noted as synonyms. The definitions in other languages should be equivalent to the definition in Slovenian. If the definition is different, especially if it is cited from another source, this can cause doubts about the concept. We recommend putting any additional information, such as definitions from other sources and citations, into the Other field.
+
+h4#help-content= t('helpPageTitleEditingEntriesOther', { ns: 'extended' })
+
+p This field can be used for any additional information about the term and the concept, e.g. examples of use, the source of the definition, and any other considerations. This field has intentionally been undefined, so that it can be use to include any additional information which is not part of the structured elements.
+
+h4#help-content-history= t('helpPageTitleEditingEntriesEditingHistory', { ns: 'extended' })
+
+p The process of editing a dictionary takes a long time. The decisions we make can be changed and we often return to the starting point. The Editor allows the user see previously saved versions. By selecting the date in the Editing tab, we can observe the changes. The user can see up to 10 saved versions of each individual entry. When the user saves a new version, the oldest version is deleted. The corrections and changes of the dictionary entry will only be saved if the user clicks the Save button.
+
+h4#help-content-comments= t('helpPageTitleEditingEntriesComments', { ns: 'extended' })
+
+p Comments allow the communication between the authors of the dictionary. In the comments for individual terms, the authors can write down their questions and suggest solutions, which is especially helpful when a group of authors collaborate virtually. After the dictionary is made public, all other users can also make comments. The authors can decide whether to publish the entire communication or just the first question and the final answer.
+
+h3#help-export-dict= t('helpPageTitleEditingEntriesDataExport', { ns: 'extended' })
+
+p You can export the saved list of edited dictionary entries in the Export tab. You can select all dictionary entries or only certain ones, e.g. only valid ones, only the ones with terminology or language review, only the edited ones, or different combinations of the above. You can choose between different export formats, such as .xml, .csv, .tsv and .txt. You can save up to five exports of each terminology resource.
+
+h2#help-consulting= t('helpPageTitleConsultancyIndex', { ns: 'extended' })
+
+p The answers to the terminology questions published at the #[a(href="https://isjfr.zrc-sazu.si/sl/terminologisce/svetovanje" target="_blank") Terminology counselling] can be found in the Consultancy. Registered users can also ask new terminology questions. Terminology consulting can help clarify terminology questions for domains with no dictionary resources or when answers cannot be found in the existing resources because new concepts or new methods have developed in the domain. The Consultancy is ran by the #[a(href="https://isjfr.zrc-sazu.si/sl/terminologisce" target="_blank") Terminology section of the Fran Ramovš Institute of the Slovenian Language at the Research Centre of the Slovenian Academy of Sciences and Arts]. The user will receive an answer to the e-mail address used for registration.
+
+h3#help-consult-questions= t('helpPageTitleConsultancyQuestions', { ns: 'extended' })
+
+p When asking about the most appropriate term, it is important to include enough information. Sending enough information about a terminological issue allows the consultants to propose the best solution form the perspective of the terminology science. When asking a question, it is important to put as much information about the term as possible into the contact form, especially an explanation of the meaning of the term in the specific domain, as well as the information on any texts where the term occurs, any already existing solution (when several terms exists for the same concept), any equivalents in other languages, etc.
+
+h3#help-consult-principles= t('helpPageTitleConsultancyTerminologyPrinciples', { ns: 'extended' })
+
+p The most important terminology principle is the #[b principle of established use], which gives preference to the term that is the most often used in specialized and scientific texts. The next important terminology principle is #[b the principle of economy], which gives preference to shorter terms. And the third terminology principle is the #[b language-system adequacy principle], which gives preference to terms that can be placed within the language system. It is also important to take into consideration the #[b linguistic culture principle], which gives preference to the terms of domestic origin before words of foreign origin. Terminology principles are not meant to be used mechanically. When considering a specific terminology issue, it should always be carefully considered which terminology principles to apply.
+
+h3#help-consult-link= t('helpPageTitleConsultancyLink', { ns: 'extended' })
+
+p When posting a terminology question, you should also include any links with examples of use of the term in question. Texts where the term is defined or used in a typical manner are especially useful.
+
+h3#help-consult-answers= t('helpPageTitleConsultancyAnswers', { ns: 'extended' })
+
+p The answers will be published in the Terminological counselling of the Fran Ramovš Institute of the Slovenian Language at the Research Centre of the Slovenian Academy of Sciences and Arts, and also on the Slovenian Terminology Portal. The user will be sent the answer to the e-mail address used for registration before the answer will be published online.
+
+h2#help-administration= t('helpPageTitleAdministrationIndex', { ns: 'extended' })
+
+p The Terminology Portal is administered. Below is the description of functions and rights or the Administrator and co-workers. Terminology Portal users without these rights cannot see the Administration tab.
+
+h3#help-administration-settings= t('helpPageTitleAdministrationBasicSettingsIndex', { ns: 'extended' })
+
+p The Administration part of the Portal allows the Portal Administrator to give rights to selected users who are appointed as Dictionary Administrators and Consultancy Administrators. Dictionary Administrator can approve content to be published on the public part of the Portal, add users (editors of individual terminology resources also have this right), add descriptions, and communicate with the editors of individual terminology resources. Consultancy Administrator for the portals that are not linked to the Terminological counselling of the Fran Ramovš Institute of the Slovenian Language at the Research Centre of the Slovenian Academy of Sciences and Arts assignes the terminology questions to individual consultants and publishes the answers to the public part of the portal.
+
+h4#help-administration-settings-portal= t('helpPageTitleAdministrationBasicSettingsPortal', { ns: 'extended' })
+p You have to name your portal and write a brief description, which will show on the home page of the portal. The two-letter label is used for data exchange with other portals and for source differentiation. The Slovenian Terminology Portal uses the label TP.
+
+h4#help-administration-settings-dictionaries= t('helpPageTitleAdministrationBasicSettingsDictionaries', { ns: 'extended' })
+p Under in this tab, you can determine the characteristics of the terminology resources on the portal, specifically the minimal number of entries required to publish a dictionary, the option to approve the publication of new terminology dictionaries, as well as the number of versions and exports that can be saved by individual users. These settings apply to all terminology resources on the portal.
+
+h4#help-administration-settings-consulting= t('helpPageTitleAdministrationBasicSettingsConsultancy', { ns: 'extended' })
+p In the Consultancy tab, you can select what kind of consulting services you will offer as part of your terminology portal. A link to the Terminological counselling of the Fran Ramovš Institute of the Slovenian Language at the Research Centre of the Slovenian Academy of Sciences and Arts directs all questions to their consultants. You can also decide to select your own Consultancy, which will be manage and edit by you. To do this, you must enter a valid e-mail where you will collect the terminology questions and the URL of the website where the answers will be published.
+
+h3#help-administration-link= t('helpPageTitleAdministrationLinksToOtherPortalsIndex', { ns: 'extended' })
+
+p You can link your terminology portal to other terminology portals and - with approval of the administrators of these portals - show their terminology dictionaries in your results. To to that, you must add the portal data and make sure to mark any duplicate results. The two-letter portal label is specific and unique to each portal.
+
+h4#help-administration-link-list= t('helpPageTitleAdministrationLinksToOtherPortalsList', { ns: 'extended' })
+p Links to other portals are posted to a special list, which can be edited here. When adding a new link, you must add the name and the two-letter label of the portal you are linking your portal with, as well as a valid URL.
+
+h4#help-administration-link-dictionaries= t('helpPageTitleAdministrationLinksToOtherPortalsDictionaries', { ns: 'extended' })
+p You can search terminology dictionaries on the connected portal and select the ones you whish to add to the search results on your portal. You can select all the dictionaries or only a few. All you have to do is save your selection. All your choices must be confirmed by the administrator of the linked portal.
+
+h3#help-administration-dictionaries= t('helpPageTitleAdministrationDictionaries', { ns: 'extended' })
+
+p Here, the Portal Administrator and Dictionary Administrator can edit the details of terminology dictionaries. They can change the dictionary status to make it visible to public, add new users and assign them rights, add domain labels, or even delete the entire dictionary or delegate it to another user for editing.
+
+h3#help-administration-users= t('helpPageTitleAdministrationUsers', { ns: 'extended' })
+
+p In this tab, the Administrator can assign administration roles for the portal. Administrator can assign new user roles to individual users and edit their data.
+
+h3#help-administration-subfileds= t('helpPageTitleAdministrationSecondaryDomains', { ns: 'extended' })
+
+p Secondary domains are used for more detailed classification of terminology dictionaries. Here, the Administrator can approve new secondary domains suggested by the users. The Administrator should verify whether the new secondary domains are described properly and named in accordance with the convention.

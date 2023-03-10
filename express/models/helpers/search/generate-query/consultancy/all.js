@@ -9,7 +9,7 @@ module.exports = function (filters, hitsPerPage, page) {
         filter: []
       }
     },
-    sort: ['_score', 'timeCreated']
+    sort: ['_score', { timeCreated: 'desc' }]
   }
 
   if (filters.status) {

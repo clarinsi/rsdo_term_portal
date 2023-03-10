@@ -12,14 +12,14 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Osnovne nastavitve', h1: 'Slovarji', description: 'Določite lastnosti terminoloških virov na portalu, zlasti minimalno število sestavkov, ki so pogoj za objavo, možnosti potrjevanja objave novih slovarjev, število različic slovarja, ki jih lahko hrani posamezni uporabnik. Te nastavitve veljajo za vse terminološke vire na portalu.', buttons: [{ form: 'admin-settings-dict', type: 'disabled', content: 'Shrani' }] }
+  - const c = { sideMenu: true, h2: t('Osnovne nastavitve'), h1: t('Slovarji'), description: t('Določite lastnosti terminoloških virov na portalu, zlasti minimalno število sestavkov, ki so pogoj za objavo, možnosti potrjevanja objave novih slovarjev, število različic slovarja, ki jih lahko hrani posamezni uporabnik. Te nastavitve veljajo za vse terminološke vire na portalu.'), buttons: [{ form: 'admin-settings-dict', type: 'disabled', content: t('Shrani') }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-2
       form#admin-settings-dict(method="post") 
         .min-composition
           .subject-name
-            label.smaller-black-uppercase(for="min-composition") MINIMALNO ŠTEVILO SLOVARSKIH SESTAVKOV
+            label.smaller-black-uppercase(for="min-composition")= t('MINIMALNO ŠTEVILO SLOVARSKIH SESTAVKOV')
           .row
             .col-sm-5
               select#min-composition.name-input.form-control.autocomplete.d-inline.w-25(
@@ -43,11 +43,11 @@ block body
                   selected=dictionary.minEntriesPerDictionary === '100'
                 ) 100
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Število slovarskih sestavkov, ki jih mora vsebovati slovar, da je omogočena objava slovarja na portalu.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Število slovarskih sestavkov, ki jih mora vsebovati slovar, da je omogočena objava slovarja na portalu.')
 
         .mt-4
           .subject-name
-            label.smaller-black-uppercase(for="publish-control") KONTROLA OBJAVE
+            label.smaller-black-uppercase(for="publish-control")= t('KONTROLA OBJAVE')
           .ms-1.row
             .form-check.form-switch.d-flex.align-items-center.col-sm-5
               if dictionary.dictionaryPublishApproval
@@ -64,50 +64,13 @@ block body
                   )
               label.form-check-label.normal-gray-label.ms-3(
                 for="publish-control"
-              ) Kontrola objave
+              )= t('Kontrola objave')
             .col-sm.d-flex.align-items-center.ps-0
-              span.smaller-gray-info.ms-xxl-3.ms-md-3 Za prvo objavo slovarja je potrebno dovoljenje skrbnika slovarjev.
-
-        //- .mt-4
-        //-   .subject-name
-        //-     label.smaller-black-uppercase(for="max-copy-count") MAKSIMALNO ŠTEVILO KOPIJ SLOVARJEV
-        //-   .row
-        //-     .col-sm-5
-        //-       input#max-copy-count.name-input.form-control.autocomplete.d-inline.w-25(
-        //-         type="text"
-        //-         maxlength="6"
-        //-         name="keepNumOfExportsPerDict"
-        //-         value=dictionary.keepNumOfExportsPerDict
-        //-       )
-        //-     .col-sm.d-flex.align-items-center
-        //-       span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Število zadnjih kopij spremenjenih slovarjev, ki se hranijo. Če vrednost ni določena, omejitve ni.
-
-        //- .mt-4
-        //-   .subject-name
-        //-     label.smaller-black-uppercase(for="autosave") SAMODEJNO SHRANJEVANJE
-        //-   .row
-        //-     .col-sm-5
-        //-       select#autosave.name-input.form-select.autocomplete.d-inline.w-50(
-        //-         name="dictionaryAutoSaveFrequency"
-        //-       )
-        //-         if dictionary.dictionaryAutoSaveFrequency === 'disabled'
-        //-           option(selected value="disabled") Onemogočeno
-        //-           option(value="monthly") Mesečno
-        //-           option(value="yearly") Letno
-        //-         if dictionary.dictionaryAutoSaveFrequency === 'monthly'
-        //-           option(selected value="monthly") Mesečno
-        //-           option(value="disabled") Onemogočeno
-        //-           option(value="yearly") Letno
-        //-         if dictionary.dictionaryAutoSaveFrequency === 'yearly'
-        //-           option(selected value="yearly") Letno
-        //-           option(value="disabled") Onemogočeno
-        //-           option(value="monthly") Mesečno
-        //-     .col-sm.d-flex.align-items-center
-        //-       span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Časovno obdobje, v katerem se slovar samodejno shranjuje.
+              span.smaller-gray-info.ms-xxl-3.ms-md-3= t('Za prvo objavo slovarja je potrebno dovoljenje skrbnika slovarjev.')
 
         .mt-4
           .subject-name
-            label.smaller-black-uppercase(for="max-composition-count") MAKSIMALNO ŠTEVILO KOPIJ SLOVARSKIH SESTAVKOV
+            label.smaller-black-uppercase(for="max-composition-count")= t('MAKSIMALNO ŠTEVILO KOPIJ SLOVARSKIH SESTAVKOV')
           .row
             .col-sm-5
               input#max-composition-count.name-input.form-control.autocomplete.d-inline.w-25(
@@ -117,12 +80,12 @@ block body
                 value=dictionary.numOfHistoryEntriesPerEntry
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Število zadnjih kopij spremenjenih slovarskih sestavkov, ki se hranijo. Če vrednost ni določena, omejitve ni.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Število zadnjih kopij spremenjenih slovarskih sestavkov, ki se hranijo. Če vrednost ni določena, omejitve ni.')
 
         .mt-4
           .row
             .subject-name.col-sm-5
-              label.smaller-black-uppercase MOŽNOST OBJAVE SLOVARSKEGA SESTAVKA MED UREJANJEM
+              label.smaller-black-uppercase= t('MOŽNOST OBJAVE SLOVARSKEGA SESTAVKA MED UREJANJEM')
           .d-grid
             .ms-1.d-sm-flex.row
               .form-check.form-switch.d-flex.align-items-center.col-sm-5
@@ -133,75 +96,15 @@ block body
                       name="canPublishEntriesInEdit"
                       checked
                     )
-                    label.form-check-label.normal-gray-label(for="in-editing") Objava med urejanjem
+                    label.form-check-label.normal-gray-label(for="in-editing")= t('Objava med urejanjem')
                   else
                     input#in-editing.form-check-input(
                       type="checkbox"
                       name="canPublishEntriesInEdit"
                     )
-                    label.form-check-label.normal-gray-label(for="in-editing") Objava med urejanjem
+                    label.form-check-label.normal-gray-label(for="in-editing")= t('Objava med urejanjem')
               .col-sm.d-flex.align-items-center
-                span.d-md-inline.d-block.smaller-gray-info.ms-md-2 Poleg objave slovarskega sestavka v fazi "Urejeno" je omogočena tudi objava v fazi "V urejanju".
-              //- .ms-1.d-sm-flex.mt-2.row
-          //-     .form-check.form-switch.d-flex.align-items-center.col-sm-2
-          //-       input#suggestion.form-check-input(
-          //-         type="checkbox"
-          //-         disabled
-          //-         checked
-          //-       )
-          //-       label.form-check-label.normal-gray-label(for="suggestion") Predlog
-          //-     .col-sm.d-flex.align-items-center
-            //- span.d-md-inline.d-block.smaller-gray-info Modul za luščenje terminoloških kandidatov iz besedil.
-              //- span.d-md-inline.d-block.smaller-gray-info Modul za urejanje terminoloških slovarjev.
-
-            //- .ms-1.d-sm-flex.mt-4.row
-            //-   .form-check.form-switch.d-flex.align-items-center.col-sm-2
-            //-     if dictionary.enabledTerminologyReview
-            //-       if dictionary.enabledTerminologyReview === 'T'
-            //-         input#pro-checked.form-check-input(
-            //-           type="checkbox"
-            //-           checked
-            //-           name="enabledTerminologyReview"
-            //-         )
-            //-       else
-            //-         input#pro-checked.form-check-input(
-            //-           type="checkbox"
-            //-           name="enabledTerminologyReview"
-            //-         )
-            //-     label.form-check-label.normal-gray-label(for="pro-checked") Strokovno pregledano
-            //-   .col-sm.d-flex.align-items-center
-              //- span.d-md-inline.d-block.smaller-gray-info Modul za urejanje terminoloških slovarjev.
-
-            //- .ms-1.d-sm-flex.mt-4.row
-            //-   .form-check.form-switch.d-flex.align-items-center.col-sm-2
-            //-     if dictionary.enabledLanguageReview
-            //-       if dictionary.enabledLanguageReview === 'T'
-            //-         input#linguistically-checked.form-check-input(
-            //-           type="checkbox"
-            //-           checked
-            //-           name="enabledLanguageReview"
-            //-         )
-            //-       else
-            //-         input#linguistically-checked.form-check-input(
-            //-           type="checkbox"
-            //-           name="enabledLanguageReview"
-            //-         )
-            //-     label.form-check-label.normal-gray-label(
-            //-       for="linguistically-checked"
-            //-     ) Jezikovno pregledano
-            //-   .col-sm.d-flex.align-items-center
-              //- span.d-md-inline.d-block.smaller-gray-info Modul za urejanje terminoloških slovarjev.
-
-            //- .ms-1.d-sm-flex.mt-4.row
-            //-   .form-check.form-switch.d-flex.align-items-center.col-sm-2
-            //-     input#consulting.form-check-input(
-            //-       type="checkbox"
-            //-       checked
-            //-       disabled
-            //-     )
-            //-     label.form-check-label.normal-gray-label(for="consulting") Urejeno
-            //-   .col-sm.d-flex.align-items-center
-              //- span.d-md-inline.d-block.smaller-gray-info Modul za svetovanje pri terminoloških zagatah.
+                span.d-md-inline.d-block.smaller-gray-info.ms-md-2= t('Poleg objave slovarskega sestavka v fazi "Urejeno" je omogočena tudi objava v fazi "V urejanju".')
+      include /common/footer
   include /utilities/modal-alert-mixin
-  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
-  include /common/footer
+  +alertModal('unsaved-data', t('Shrani'), t('Ne'), 'modal-save-btn', 'modal-dont-save-btn', t('Imate neshranjene spremebe. Ali jih želite shraniti?'))

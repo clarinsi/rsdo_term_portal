@@ -7,9 +7,11 @@ CREATE TABLE instance_settings (
 
 INSERT INTO instance_settings (name, value)
 VALUES
-  ('portal_name', 'Terminološki portal'),
+  ('portal_name_sl', 'Terminološki portal'),
+  ('portal_name_en', 'Terminology Portal'),
   ('portal_code', 'XX'),
-  ('portal_description', 'Terminološki portal je samostojna, odprto dostopna spletna storitev, v katero so vključeni terminološki viri na portalu. Registriranim uporabnikom je na voljo tudi luščilnik terminoloških kandidatov iz specializiranih korpusov, konkordančnik za pregledovanje izbranih besedil, označevalnik terminov v izbranih besedilih, urejevalnik terminoloških virov, terminološka svetovalnica in stran s pomočjo in navodili za uporabo posameznih funkcij portala. Terminološki portal je moderiran.'),
+  ('portal_description_sl', 'Terminološki portal je samostojna, odprto dostopna spletna storitev, v katero so vključeni terminološki viri na portalu. Registriranim uporabnikom je na voljo tudi luščilnik terminoloških kandidatov iz specializiranih korpusov, konkordančnik za pregledovanje izbranih besedil, označevalnik terminov v izbranih besedilih, urejevalnik terminoloških virov, terminološka svetovalnica in stran s pomočjo in navodili za uporabo posameznih funkcij portala. Terminološki portal je moderiran.'),
+  ('portal_description_en', 'Terminology portal is an independent openly accessible on-line service that offers the use of terminology resources published on the portal. Registered users can also use an extractor to extract term candidates from specialized corpora, a concordance tool to review selected texts, a term mark-up tool, edit terminology resource with an editor, take advantage of terminology consulting and access a help page with instructions for use of all Portal functions. The Terminology Portal is moderated.'),
   ('is_extraction_enabled', 'T'),
   ('is_dictionaries_enabled', 'T'),
   ('is_consultancy_enabled', 'T'),

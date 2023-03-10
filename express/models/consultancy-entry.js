@@ -70,6 +70,7 @@ class ConsultancyEntry {
 
   // Fetch consultancy entry by ID
   // to_char(time_created,'HH24:MI:SS DD/MM/YYYY')
+  // TODO i18n date format
   static async fetchByIdWithFormattedTime(id) {
     const { rows: fetchedConsEntry } = await db.query(
       `
@@ -679,6 +680,7 @@ class ConsultancyEntry {
   }
 
   // (Re)index specific consultancy entry into consultancy search index.
+  // TODO i18n name_sl
   static async indexIntoSearchEngine(entryId, shouldWait) {
     const values = [entryId]
     const text = `

@@ -6,7 +6,7 @@
   .modal-dialog.modal-lg
     .modal-content
       .modal-header
-        h5#modal-alert-label.modal-title.modal-title-blue Pozor
+        h5#modal-alert-label.modal-title.modal-title-blue= t('Pozor')
         button.btn-close(
           type="button"
           data-bs-dismiss="modal"
@@ -16,13 +16,13 @@
         .d-flex.modal-alert.me-3
           img(src="/images/alert-circle-modal.svg")
         .d-flex.modal-alert-content
-          p#alert-text.normal-gray Ali želite zbrisati ta vnos?
+          p#alert-text.normal-gray= t('Ali želite zbrisati ta vnos?')
       .modal-footer.d-flex.justify-content-between.align-items-center
         button#modal-cancel-btn.btn.btn-secondary(
           type="button"
           data-bs-dismiss="modal"
-        ) Prekliči
+        )= t('Prekliči')
         button#modal-use-btn.btn.btn-primary(
           type="button"
           data-bs-dismiss="modal"
-        ) Potrdi
+        )= t('Potrdi')

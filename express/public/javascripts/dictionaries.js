@@ -1,10 +1,12 @@
-/* global $, axios, bootstrap, currentPagePath, initPagination, removeAllChildNodes, unsavedData */
+/* global $, axios, bootstrap, currentPagePath, initPagination, removeAllChildNodes, unsavedData, replaceContainer, i18next */
 
 // Temporary workaround (use of currentPagePath).
 
 window.addEventListener('load', () => {
   initDictionaries()
 })
+
+let queryBattery = ''
 
 function initDictionaries() {
   const ce = {}
@@ -166,7 +168,7 @@ function initDictionaries() {
         if (ce.fileUploadInput.files.item(0) !== null)
           chosenFile.textContent = ce.fileUploadInput.files.item(0).name
         else {
-          chosenFile.textContent = 'Izberi datoteko'
+          chosenFile.textContent = i18next.t('Izberi datoteko')
         }
       }
     })
@@ -185,12 +187,140 @@ function initDictionaries() {
 
         await axios.post(event.target.action, payload)
 
-        alert('SLOVAR UVOŽEN')
+        alert(i18next.t('SLOVAR UVOŽEN'))
       } catch (error) {
-        alert('NAPAKA V UVOZU')
+        alert(i18next.t('NAPAKA V UVOZU'))
+      }
+    }
+
+    {
+      const resultsListEl = document.getElementById('page-results')
+      const dictionaryId = document.getElementById('dictionary-id').value
+
+      const updatePager = initPagination('pagination', onPageChange)
+
+      async function onPageChange(newPage) {
+        try {
+          const { page, numberOfAllPages, results } = await getDataForPage(
+            newPage
+          )
+          removeAllChildNodes(resultsListEl)
+          renderResults(results)
+          updatePager(page, numberOfAllPages)
+        } catch (error) {
+          let message = i18next.t('Prišlo je do napake.')
+          if (error.response?.data) {
+            message = error.response.data
+          } else if (error.request) {
+            message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+          }
+          alert(message)
+          updatePager()
+        }
+      }
+
+      async function getDataForPage(page) {
+        const url = `/api/v1/dictionaries/${dictionaryId}/showImportFromFileForm?p=${page}`
+        const { data } = await axios.get(url)
+        return data
+      }
+
+      function renderResults(results) {
+        const localeOptions = {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }
+        results.forEach(result => {
+          const rowEl = document.createElement('tr')
+          const td1 = document.createElement('td')
+          const td2 = document.createElement('td')
+          const td3 = document.createElement('td')
+          const td4 = document.createElement('td')
+          const date = new Date(result.time_started).toLocaleDateString(
+            'sl-SL',
+            localeOptions
+          )
+          td1.textContent = date
+          td2.textContent = result.file_format
+          td3.textContent = result.count_valid_entries
+          td4.textContent = result.status
+          rowEl.append(td1, td2, td3, td4)
+          resultsListEl.appendChild(rowEl)
+        })
       }
     }
   }
+
+  if (/\/slovarji\/\d+\/izvoz/.test(currentPagePath)) {
+    const resultsListEl = document.getElementById('page-results')
+    const dictionaryId = document.getElementById('dictionary-id').value
+
+    const updatePager = initPagination('pagination', onPageChange)
+
+    async function onPageChange(newPage) {
+      try {
+        const { page, numberOfAllPages, results } = await getDataForPage(
+          newPage
+        )
+        removeAllChildNodes(resultsListEl)
+        renderResults(results)
+        updatePager(page, numberOfAllPages)
+      } catch (error) {
+        let message = i18next.t('Prišlo je do napake.')
+        if (error.response?.data) {
+          message = error.response.data
+        } else if (error.request) {
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+        }
+        alert(message)
+        updatePager()
+      }
+    }
+
+    async function getDataForPage(page) {
+      const url = `/api/v1/dictionaries/${dictionaryId}/showExportToFileForm?p=${page}`
+      const { data } = await axios.get(url)
+      return data
+    }
+
+    function renderResults(results) {
+      const localeOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+      results.forEach(result => {
+        const rowEl = document.createElement('tr')
+        const td1 = document.createElement('td')
+        const td2 = document.createElement('td')
+        const td3 = document.createElement('td')
+        const td4 = document.createElement('td')
+        const date = new Date(result.time_created).toLocaleDateString(
+          'sl-SL',
+          localeOptions
+        )
+        td1.textContent = date
+        td2.textContent = result.export_file_format
+        td3.textContent = result.entry_count
+        if (result.status === 'finished') {
+          const aEl = document.createElement('a')
+          aEl.href = `/slovarji/export-download/${result.id}`
+          aEl.textContent = i18next.t('Shrani')
+          aEl.className = 'btn btn-primary'
+          td4.append(aEl)
+        } else td4.textContent = ''
+
+        rowEl.append(td1, td2, td3, td4)
+        resultsListEl.appendChild(rowEl)
+      })
+    }
+  }
+
   if (/\/slovarji\/\d+\/vsebina/.test(currentPagePath)) {
     ce.formEditContent = document.getElementById('form-edit-content')
     ce.formEditContent.addEventListener('submit', updateEntry)
@@ -233,6 +363,7 @@ function initDictionaries() {
     ce.clearSearchInput = document.querySelector('.clear-search-input')
     ce.collapsablePart = document.querySelectorAll('.collapsable-entry-part')
     ce.scrollEl = document.querySelector('.content-nav-content')
+    $('.multiple').on('select2:select', enableButton)
     ce.collapsablePart.forEach(el => {
       el.addEventListener('hide.bs.collapse', () =>
         changePageContent('collapse-hidden')
@@ -257,7 +388,7 @@ function initDictionaries() {
     })
     ce.statusEditEl = document.getElementById('status-edit')
     // ce.deleteEntryBtn.addEventListener('click', () => ajaxDeleteEntry())
-    ce.newEntryBtn.addEventListener('click', () => {
+    ce.newEntryBtn.addEventListener('click', e => {
       ce.formEditContent.reset()
       changePageContent('new-entry-btn')
     })
@@ -307,7 +438,8 @@ function initDictionaries() {
     if (mcBtnsGrp.length) {
       mcBtnsGrp.forEach(e => e.addEventListener('click', enableButton))
     }
-    ce.newHeadwordGroupBtn.addEventListener('click', createHeadword)
+    if (ce.newHeadwordGroupBtn)
+      ce.newHeadwordGroupBtn.addEventListener('click', createHeadword)
     if (ce.newConnectionBtn)
       ce.newConnectionBtn.addEventListener('click', () =>
         addConnectionField(ce.formEditContent, ce.newConnectionBtn)
@@ -408,7 +540,7 @@ function initDictionaries() {
 
     if (termListMenu.childElementCount > 1) {
       const termListLabels = termListMenu.querySelectorAll('label')
-      termListLabels[0].click()
+      if (termListLabels.length) termListLabels[0].click()
     }
 
     function handleClick({ target }) {
@@ -423,10 +555,11 @@ function initDictionaries() {
           const okBtnText = modalUseBtn.textContent
           const cnclBtnTxt = modalCnclBtn.textContent
           const modalMainTxt = modalMain.textContent
-          modalUseBtn.textContent = 'Shrani'
-          modalCnclBtn.textContent = 'Ne shrani'
-          modalMain.textContent =
+          modalUseBtn.textContent = i18next.t('Shrani')
+          modalCnclBtn.textContent = i18next.t('Ne shrani')
+          modalMain.textContent = i18next.t(
             'Imate neshranjene spremembe. Ali jih želite shraniti?'
+          )
           const alertModal = new bootstrap.Modal(
             document.getElementById('alert-modal')
           )
@@ -478,8 +611,8 @@ function initDictionaries() {
       if (deleteEntryEl) {
         const modalUseBtn = document.getElementById('modal-del-btn')
         const modalCnclBtn = document.getElementById('cancel-btn')
-        modalUseBtn.textContent = 'Izbriši'
-        modalCnclBtn.textContent = 'Ne izbriši'
+        modalUseBtn.textContent = i18next.t('Izbriši')
+        modalCnclBtn.textContent = i18next.t('Ne izbriši')
         const alertModal = new bootstrap.Modal(
           document.getElementById('delete-modal')
         )
@@ -497,8 +630,8 @@ function initDictionaries() {
         const { data } = await axios.get(
           `/api/v1/entries/${entryId}/version-snapshots/${versionId}`
         )
-        const payload = { entry: data }
-        insertTermData(entryId, payload)
+        const payload = { entry: data.data }
+        insertTermData(entryId, payload, data.author)
         const isPublishedEl = payload.entry.is_published
         const info = new FormData(formEditContent)
         info.append('isPublishedEl', isPublishedEl)
@@ -531,6 +664,7 @@ function initDictionaries() {
         info.append('isPublishedEl', isPublishedEl)
         loadPreview(info)
         changeVersionList(data.entry.versions)
+        setLatestVersion(data.entry)
         ce.formEditContent.addEventListener('input', () => (unsaved = true))
         formEditContent.dataset.entryId = entryId
         formEditContent.action = '/api/v1/entries/update'
@@ -553,7 +687,7 @@ function initDictionaries() {
       }
     }
 
-    function insertTermData(entryId, data) {
+    function insertTermData(entryId, data, vAuthor) {
       const { newConnectionBtn } = window.dictionaryElements
       const localeOptions = {
         day: '2-digit',
@@ -609,12 +743,20 @@ function initDictionaries() {
         }
       else
         for (let i = 0; i < termIdText.length; i++) {
-          termIdText[i].textContent = `ID: Ni idja`
+          termIdText[i].textContent = i18next.t('ID: Ni idja')
         }
-      ce.authorEl.textContent = data.entry.version_author
-      ce.versionEl.textContent = `Verzija ${data.entry.version}`
-      ce.previewVersion.textContent = `Verzija ${data.entry.version}`
-      ce.previewAuthor.textContent = data.entry.version_author
+      if (vAuthor) {
+        ce.authorEl.textContent = vAuthor
+        ce.previewAuthor.textContent = vAuthor
+      } else {
+        ce.authorEl.textContent = data.entry.version_author
+        ce.previewAuthor.textContent = data.entry.version_author
+      }
+      // ce.versionEl.textContent = `Verzija ${data.entry.version}`
+      ce.versionEl.textContent = i18next.t('Verzija') + `${data.entry.version}`
+      // ce.previewVersion.textContent = `Verzija ${data.entry.version}`
+      ce.previewVersion.textContent =
+        i18next.t('Verzija') + `${data.entry.version}`
       termName.value = data.entry.term
         ? data.entry.term.replace(/&quot;/g, '"')
         : ''
@@ -757,18 +899,19 @@ function initDictionaries() {
         const payload = new URLSearchParams(new FormData(ce.formEditContent))
         payload.set('entryId', entryId)
         try {
+          saveBtn.textContent = i18next.t('Shranjujem ...')
           await axios.post(ce.formEditContent.action, payload)
           spinnerEl.classList.remove('d-none')
           saveBtn.classList.add('saved-entry-btn')
-          saveBtn.textContent = 'Shranjeno'
+          saveBtn.textContent = i18next.t('Shranjeno')
           if (id != null) entryId = id
           ajaxSideMenu(entryId)
         } catch (error) {
-          let message = 'Prišlo je do napake.'
+          let message = i18next.t('Prišlo je do napake.')
           if (error.response) {
             message = error.response.data
           } else if (error.request) {
-            message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+            message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
           }
           messageContainer.textContent = message
         }
@@ -776,19 +919,20 @@ function initDictionaries() {
         event.preventDefault()
         const payload = new URLSearchParams(new FormData(ce.formEditContent))
         try {
+          saveBtn.textContent = i18next.t('Shranjujem ...')
           const res = await axios.post(ce.formEditContent.action, payload)
           spinnerEl.classList.remove('d-none')
           saveBtn.classList.add('saved-entry-btn')
-          saveBtn.textContent = 'Shranjeno'
+          saveBtn.textContent = i18next.t('Shranjeno')
           let entryId = res.data.entryId
           if (id != null) entryId = id
           ajaxSideMenu(entryId)
         } catch (error) {
-          let message = 'Prišlo je do napake.'
+          let message = i18next.t('Prišlo je do napake.')
           if (error.response) {
             message = error.response.data
           } else if (error.request) {
-            message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+            message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
           }
           messageContainer.textContent = message
         } finally {
@@ -806,11 +950,11 @@ function initDictionaries() {
         })
         renderTerms(data, entryId)
       } catch (error) {
-        let message = 'Prišlo je do napake.'
+        let message = i18next.t('Prišlo je do napake.')
         if (error.response) {
           message = error.response.data
         } else if (error.request) {
-          message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
         }
         messageContainer.textContent = message
       }
@@ -829,7 +973,7 @@ function initDictionaries() {
         selectNextEntry(selectedIndex)
       } catch (error) {
         console.log(error)
-        const message = 'Prišlo je do napake.'
+        const message = i18next.t('Prišlo je do napake.')
         messageContainer.textContent = message
       }
     }
@@ -870,21 +1014,27 @@ function initDictionaries() {
                 /&quot;/g,
                 '"'
               )}`
-            } else labelElement.textContent = '[ni termina]'
-          } else labelElement.textContent = '[ni termina]'
+            } else labelElement.textContent = i18next.t('[ni termina]')
+          } else labelElement.textContent = i18next.t('[ni termina]')
         } else {
           if (el.isValid) {
             if (el.isPublished) {
-              labelElement.textContent = sloTerm
+              labelElement.textContent = `${sloTerm} ${
+                el.homonymSort ? '(' + el.homonymSort + ')' : ''
+              }`
               labelElement.className =
                 'terms-label term-good-btn btn p-2 ms-2 me-3 text-truncate justify-content-start d-inline-block'
             } else {
               labelElement.className =
                 'terms-label btn p-2 ms-2 me-3 text-truncate justify-content-start d-inline-block'
-              labelElement.textContent = sloTerm
+              labelElement.textContent = `${sloTerm} ${
+                el.homonymSort ? '(' + el.homonymSort + ')' : ''
+              }`
             }
           } else {
-            labelElement.textContent = sloTerm
+            labelElement.textContent = `${sloTerm} ${
+              el.homonymSort ? '(' + el.homonymSort + ')' : ''
+            }`
             labelElement.className =
               'terms-label not-valid-not-published btn p-2 ms-2 me-3 text-truncate justify-content-start d-inline-block'
           }
@@ -949,84 +1099,83 @@ function initDictionaries() {
       }
     }
 
-    {
-      const resultsListEl = document.getElementById('page-results')
-      const dictionaryId = document.getElementById('subareas-dict-id').value
+    const resultsListEl = document.getElementById('page-results')
+    const dictionaryId = document.getElementById('subareas-dict-id').value
 
-      const updatePager = initPagination('pagination', onPageChange)
+    const updatePager = initPagination('pagination', onPageChange)
 
-      async function onPageChange(newPage) {
-        try {
-          const { page, numberOfAllPages, results } = await getDataForPage(
-            newPage
-          )
-          removeAllChildNodes(resultsListEl)
-          renderResults(results)
-          updatePager(page, numberOfAllPages)
-        } catch (error) {
-          let message = 'Prišlo je do napake.'
-          if (error.response?.data) {
-            message = error.response.data
-          } else if (error.request) {
-            message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
-          }
-          alert(message)
-          updatePager()
+    async function onPageChange(newPage) {
+      try {
+        const results = await getDataForPage(newPage)
+
+        const numberOfAllPages = +results.headers['number-of-all-pages']
+        const page = +results.headers.page
+        removeAllChildNodes(resultsListEl)
+        renderResults(results.data)
+        updatePager(page, numberOfAllPages)
+      } catch (error) {
+        let message = i18next.t('Prišlo je do napake.')
+        if (error.response?.data) {
+          message = error.response.data
+        } else if (error.request) {
+          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
         }
-      }
-
-      async function getDataForPage(page) {
-        const url = `/api/v1/dictionaries/${dictionaryId}/listDomainLabels?p=${page}`
-        const { data } = await axios.get(url)
-        return data
-      }
-
-      function renderResults(results) {
-        results.forEach(result => {
-          const rowEl = document.createElement('tr')
-          const input = document.createElement('input')
-          const th = document.createElement('th')
-          const input2 = document.createElement('input')
-          const td1 = document.createElement('td')
-          const td2 = document.createElement('td')
-          const div = document.createElement('div')
-          const editBtn = document.createElement('button')
-          const deleteBtn = document.createElement('button')
-          const imgEditEl = document.createElement('img')
-          const imgDelEl = document.createElement('img')
-          input.value = result.id
-          input.type = 'hidden'
-          input.name = 'domainLabelId'
-          th.scope = 'row'
-          input2.className = 'form-check checkbox-table'
-          input2.type = 'checkbox'
-          input2.name = 'isVisible'
-          input2.disabled = true
-          input2.checked = !!result.isVisible
-          th.append(input2)
-          td1.className = 'tdata-area'
-          td1.textContent = result.name
-
-          td2.classList.add('buttons-group')
-          div.classList.add('table-buttons')
-          editBtn.className = 'p-0 table-button-grp me-3 edit-row-btn'
-          editBtn.type = 'button'
-          imgEditEl.src = '/images/u_edit-alt.svg'
-          deleteBtn.className = 'p-0 table-button-grp delete-row-btn'
-          deleteBtn.dataset.bsTarget = '#alert-modal'
-          deleteBtn.dataset.bsToggle = 'modal'
-          deleteBtn.type = 'button'
-          imgDelEl.src = '/images/red-trash-icon.svg'
-          td2.append(div)
-          div.append(editBtn, deleteBtn)
-          editBtn.append(imgEditEl)
-          deleteBtn.append(imgDelEl)
-
-          rowEl.append(input, th, td1, td2)
-          resultsListEl.appendChild(rowEl)
-        })
+        alert(message)
+        updatePager()
       }
     }
+
+    async function getDataForPage(page) {
+      // const url = `/api/v1/dictionaries/${dictionaryId}/listDomainLabels?p=${page}`
+      const url = `/api/v1/dictionaries/${dictionaryId}/domainLabels?q=${queryBattery}&p=${page}`
+      // const { data } = await axios.get(url)
+      return await axios.get(url)
+    }
+
+    function renderResults(results) {
+      replaceContainer('page-results', results)
+    }
+
+    const updatePaginationOnFilter = axiosResult => {
+      const numberOfAllPages = +axiosResult.headers['number-of-all-pages']
+      const page = +axiosResult.headers.page
+      // removeAllChildNodes(resultsListEl)
+      // renderResults(results.data)
+      // console.log(numberOfAllPages)
+      // console.log(page)
+      // console.log(updatePager)
+      updatePager(page, numberOfAllPages)
+    }
+
+    /// / Due to unsual design, the function was moved inside
+    function searchController() {
+      if (window.location.pathname.includes('podrocne-oznake')) {
+        queryBattery = document.getElementById('input-search').value
+        // console.log(queryBattery)
+        axios
+          .get(
+            `/api/v1/dictionaries/${
+              window.location.pathname.split('/')[2]
+            }/domainLabels?q=${queryBattery}&p=${1}`
+          )
+          .then(result => {
+            updatePaginationOnFilter(result)
+            replaceContainer('page-results', result.data)
+          })
+      }
+    }
+
+    const inlineSearchButton = document.getElementById('inline-search-btn')
+
+    if (inlineSearchButton) {
+      inlineSearchButton.addEventListener('click', searchController)
+      $('#input-search').on('keyup', function (e) {
+        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+          searchController()
+        }
+      })
+    }
+    /// //
   }
 
   if (/\/slovarji\/\d+\/napredno/.test(currentPagePath)) {
@@ -1217,8 +1366,8 @@ function mobileMoveContent() {
         currentPagePath.includes('slovarji') &&
         !currentPagePath.includes('admin')
       )
-        navTitle.textContent = 'Urejanje'
-      else navTitle.textContent = 'Administrator'
+        navTitle.textContent = i18next.t('Urejanje')
+      else navTitle.textContent = i18next.t('Administracija')
       siteHeading.style.display = 'block'
     }
   }
@@ -1310,9 +1459,9 @@ function createNewAreaInput(pageForm) {
   divSmallNameArea.className = 'author mt-4 added-field'
   divSubjectName.className = 'subject-name'
   spanInputNameTxtSlo.className = 'input-name-txt'
-  spanInputNameTxtSlo.textContent = 'NOVO PODPODROČJE (slovensko)'
+  spanInputNameTxtSlo.textContent = i18next.t('NOVO PODPODROČJE (slovensko)')
   spanInputNameTxtEng.className = 'input-name-txt mt-4'
-  spanInputNameTxtEng.textContent = 'NOVO PODPODROČJE (angleško)'
+  spanInputNameTxtEng.textContent = i18next.t('NOVO PODPODROČJE (angleško)')
   divRow.className = 'row align-items-center'
   divRow2.className = 'row align-items-center'
   divEnglishInput.className = 'mt-4'
@@ -1333,11 +1482,12 @@ function createNewAreaInput(pageForm) {
   divColSm.className = 'col-sm  mt-3 mt-sm-0'
   divColSm2.className = 'col-sm mt-3 mt-sm-0'
   spanNameInfoTxt.className = 'd-sm-inline name-info-txt ms-xxl-3 ms-md-3'
-  spanNameInfoTxt.textContent =
+  spanNameInfoTxt.textContent = i18next.t(
     'Vpišite novo podpodročje. Na seznamu podpodročij bo vidno takoj po potrditvi administratorja portala.'
+  )
   spanNameInfoTxtEng.className =
     'd-sm-inline name-info-txt ms-xxl-3 ms-md-3 mt-4'
-  spanNameInfoTxtEng.textContent = 'Novo podpodročje (angleško).'
+  spanNameInfoTxtEng.textContent = i18next.t('Novo podpodročje (angleško).')
 
   divSmallNameArea.appendChild(divSubjectName)
   divSubjectName.appendChild(spanInputNameTxtSlo)
@@ -1468,6 +1618,10 @@ function changePageContent(el) {
   const collapsableBtn = document.querySelectorAll('.collapsable-entry-btn')
   const addedFields = document.querySelectorAll('.added-field')
   const collapsibleData = document.querySelectorAll('.collapsible-data')
+  const responseModal = new bootstrap.Modal(
+    document.getElementById('duplicate-modal'),
+    { keyboard: false }
+  )
   switch (el) {
     case 'content-preview':
       loadPreview(info)
@@ -1530,6 +1684,7 @@ function changePageContent(el) {
       break
     case 'new-entry-btn': {
       // formEditContent.reset()
+
       formEditContent.removeAttribute('data-entry-id')
       formEditContent.action = '/api/v1/entries/create'
       if (editSection.classList.contains('d-none'))
@@ -1546,6 +1701,16 @@ function changePageContent(el) {
         previewBtnEl.disabled = true
         delete newEntryBtn.dataset.term
       }
+      // editBtnEl.click()
+      editBtnEl.classList.add('active-site-link')
+      previewBtnEl.classList.remove('active-site-link')
+      commentsBtnEl.classList.remove('active-site-link')
+      previewButtonsGroup.classList.remove('d-none')
+      commentsButtonsGroup.classList.add('d-none')
+      previewSection.classList.add('d-none')
+      editSection.classList.remove('d-none')
+      commentsSection.classList.add('d-none')
+      resizeFields.forEach(el => autoResize(el))
       authorEl.textContent = ''
       versionEl.textContent = 'Verzija 1'
       previewAuthor.textContent = ''
@@ -1558,15 +1723,19 @@ function changePageContent(el) {
       deleteEntry.disabled = true
       changeCollapsedContent()
       if (addedFields.length) addedFields.forEach(el => el.remove())
-      editBtnEl.click()
-      termInputField.focus()
       const messageContainer = document.querySelectorAll('.message-container')
       messageContainer.forEach(el => el.classList.add('d-none'))
       window.scrollTo({ top: 0, behavior: 'smooth' })
       selectedEntry.classList.remove('selected-term-btn')
       $('.multiple').val(null).trigger('change')
       $('.without-dropdown').val(null).trigger('change')
-      editBtnEl.click()
+      // editBtnEl.click()
+      // termInputField.addEventListener('focus', () =>
+      //   showMCButtons(termInputField, 'link')
+      // )
+      termInputField.focus()
+      termInputField.click()
+
       break
     }
     case 'first':
@@ -1610,7 +1779,6 @@ function changePageContent(el) {
       commentsBtnEl.disabled = true
       commentsBtnEl.classList.add('disabled')
       showDates.disabled = true
-      duplicateEntry.disabled = true
       deleteEntry.disabled = true
       changeCollapsedContent()
       editBtnEl.click()
@@ -1618,6 +1786,8 @@ function changePageContent(el) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
       selectedEntry.classList.remove('selected-term-btn')
       editBtnEl.click()
+      responseModal.toggle()
+      duplicateEntry.disabled = true
       break
     case 'true':
       spanFilterText.classList.remove('normal-gray-label')
@@ -1798,8 +1968,9 @@ function loadPreview(info) {
               : linksArr[i][key] === 'broader'
               ? 'BT:'
               : ''
-
-          linkedTerms.innerHTML += keyTxt + ' ' + key + ' '
+          linkedTerms.innerHTML += keyTxt + ' ' + key
+          if (parseInt(i) !== linksArr.length - 1) linkedTerms.innerHTML += ', '
+          else linkedTerms.innerHTML += ' '
         }
       }
     } else changeClasses(previewLinkedTerms, 'hide')
@@ -1924,6 +2095,7 @@ function changeVersionList(versions) {
         dateLabel.dataset.bsCustomClass = 'dark-gray-tooltip'
         dateLabel.dataset.bsPlacement = 'bottom'
         dateLabel.dataset.bsToggle = 'tooltip'
+        dateLabel.dataset.bsHtml = 'true'
         const date = new Date(el.version_time).toLocaleDateString(
           'sl-SL',
           localeOptions
@@ -1932,14 +2104,45 @@ function changeVersionList(versions) {
         dateRadio.id = `date${el.version}`
         dateRadio.value = `${el.version}`
         dateLabel.htmlFor = `date${el.version}`
+        // new bootstrap.Tooltip(dateLabel, {
+        //   title: `Verzija ${el.version} <br> Avtor: ${el.version_author}`
+        // })
         // eslint-disable-next-line
         new bootstrap.Tooltip(dateLabel, {
-          title: `Verzija ${el.version}`
+          title:
+            i18next.t('Verzija') +
+            `${el.version} <br>` +
+            i18next.t('Avtor:') +
+            `${el.version_author}`
         })
         allDatesEl.append(dateRadio)
         allDatesEl.appendChild(dateLabel)
       })
   }
+}
+
+function setLatestVersion(data) {
+  const latestVersionLabel = document.getElementById('latest-version-label')
+  // const tooltip = new bootstrap.Tooltip(latestVersionLabel, {
+  //   title: `Verzija: ${data.version} <br> Avtor: ${data.version_author}`,
+  //   customClass: 'dark-gray-tooltip',
+  //   html: true,
+  //   placement: 'bottom'
+  // })
+  // eslint-disable-next-line
+  const tooltip = new bootstrap.Tooltip(latestVersionLabel, {
+    title:
+      i18next.t('Verzija:') +
+      `${data.version} <br>` +
+      i18next.t('Avtor:') +
+      `${data.version_author}`,
+    customClass: 'dark-gray-tooltip',
+    html: true,
+    placement: 'bottom'
+  })
+  // Can't think of any better solution for the not disapearing label bug
+  const dateArea = document.querySelector('.date-scroller')
+  dateArea.addEventListener('click', () => tooltip.hide())
 }
 
 function removeOldMedia(images, audio, video) {
@@ -1998,7 +2201,7 @@ function showSelectedDateData(date) {
   // classicOverview.classList.add('d-none')
   // selectedOverview.classList.remove('d-none')
   btnSaveIcon.firstChild.src = '/images/u_redo.svg'
-  btnSaveIcon.children[1].textContent = 'Obnovi'
+  btnSaveIcon.children[1].textContent = i18next.t('Obnovi')
   btnSaveIcon.id = 'redo-action'
 }
 
@@ -2038,7 +2241,7 @@ function changeCollapsedContent() {
 
 function createHeadword() {
   const { termInputField, headerwordTable } = window.dictionaryElements
-  if (!termInputField.value.length) alert('Vnesti morate termin')
+  if (!termInputField.value.length) alert(i18next.t('Vnesti morate termin'))
   else {
     const createHeadwordGroup = document.getElementById('create-headword-group')
     const createdHeadwordGroup = document.getElementById(
@@ -2181,21 +2384,21 @@ function addField(form, element, content) {
   if (formEditContent) {
     switch (element) {
       case newImageBtn:
-        spanName.textContent = 'SLIKA'
+        spanName.textContent = i18next.t('SLIKA')
         inputField.name = 'image'
-        spanNameInfoTxt.textContent = 'Nova slika.'
+        spanNameInfoTxt.textContent = i18next.t('Nova slika.')
         if (content) inputField.value = content
         break
       case newAudioBtn:
-        spanName.textContent = 'ZVOK'
+        spanName.textContent = i18next.t('ZVOK')
         inputField.name = 'audio'
-        spanNameInfoTxt.textContent = 'Nov zvok.'
+        spanNameInfoTxt.textContent = i18next.t('Nov zvok.')
         if (content) inputField.value = content
         break
       case newVideoBtn:
-        spanName.textContent = 'VIDEO'
+        spanName.textContent = i18next.t('VIDEO')
         inputField.name = 'video'
-        spanNameInfoTxt.textContent = 'Nov video.'
+        spanNameInfoTxt.textContent = i18next.t('Nov video.')
         if (content) inputField.value = content
         break
     }
@@ -2204,10 +2407,11 @@ function addField(form, element, content) {
       element.parentElement.parentElement.parentElement
     )
   } else {
-    spanName.textContent = 'AVTOR'
+    spanName.textContent = i18next.t('AVTOR')
     inputField.name = 'author'
-    spanNameInfoTxt.textContent =
-      'Dodajte ime in priimek naslednjega avtorja slovarja..'
+    spanNameInfoTxt.textContent = i18next.t(
+      'Dodajte ime in priimek naslednjega avtorja slovarja.'
+    )
     form.insertBefore(
       divMarginTop,
       element.parentElement.parentElement.parentElement
@@ -2224,7 +2428,6 @@ function addConnectionField(form, element, data) {
   const divRow = document.createElement('div')
   const divColLg2 = document.createElement('div')
   const divColLg4 = document.createElement('div')
-  const divColLg = document.createElement('div')
   const colLg2Input = document.createElement('select')
   const inputGroup = document.createElement('div')
   const inputField = document.createElement('input')
@@ -2243,7 +2446,6 @@ function addConnectionField(form, element, data) {
   divColLg2.appendChild(colLg2Input)
   colLg2Input.appendChild(opt)
   divRow.appendChild(divColLg4)
-  divRow.appendChild(divColLg)
   divColLg4.appendChild(inputGroup)
   inputGroup.appendChild(inputField)
   inputGroup.appendChild(spanInputGroup)
@@ -2252,32 +2454,34 @@ function addConnectionField(form, element, data) {
   divColSm.appendChild(spanNameInfoTxt)
 
   divMarginTop.className = 'mt-4 added-field'
-  divSubjectName.className = 'subject-name'
+  divSubjectName.className =
+    'subject-name col-sm-6 d-flex justify-content-between'
   spanName.className = 'input-name-txt'
   divRow.className = 'row align-items-center'
-  divColLg2.className = 'col-lg-2 col-6'
-  divColLg4.className = 'col-lg-4 mt-2 mt-lg-0'
-  divColLg.className = 'col-lg align-items-center'
+  divColLg2.className = 'col-xl-2 col-4'
+  divColLg4.className = 'col-8 col-xl-6 col-xxl-4'
   colLg2Input.className = 'name-input form-select d-inline'
   colLg2Input.name = 'type'
   inputGroup.className = 'input-group'
-  inputField.className = 'name-input d-inline form-control icon-trash mc-field'
+  inputField.className =
+    'name-input d-inline form-control icon-trash mc-field dispatch-tab'
   spanInputGroup.className = 'input-group-text delete-author-btn'
   spanInputGroup.id = 'trash-icon-btn'
   spanInputGroup.addEventListener('click', deleteField)
   imgTrashIcon.className = 'delete-author p-0'
   imgTrashIcon.src = '/images/red-trash-icon.svg'
   imgTrashIcon.alt = 'Delete'
-  divColSm.className = 'col-sm'
-  spanNameInfoTxt.className = 'name-info-txt mt-3'
-  spanName.textContent = 'POVEZAVA'
+  divColSm.className = 'col d-none d-xl-flex align-items-center'
+  spanNameInfoTxt.className = 'd-md-inline d-block name-info-txt mt-3 mt-sm-0'
+  spanNameInfoTxt.textContent = i18next.t('Nov povezan termin.')
+  spanName.textContent = i18next.t('POVEZANI TERMIN')
   inputField.name = 'links'
   opt.value = 'broader'
-  opt.text = 'Širši'
+  opt.text = i18next.t('Širši')
   opt2.value = 'related'
   opt3.value = 'narrow'
-  opt2.text = 'Sorodni'
-  opt3.text = 'Ožji'
+  opt2.text = i18next.t('Sorodni')
+  opt3.text = i18next.t('Ožji')
   colLg2Input.add(opt2)
   colLg2Input.add(opt)
   colLg2Input.add(opt3)
@@ -2286,6 +2490,32 @@ function addConnectionField(form, element, data) {
     divMarginTop,
     element.parentElement.parentElement.parentElement
   )
+
+  // Create mixed content buttons above input field
+  const mcDiv = document.createElement('div')
+  const supscriptBtn = document.createElement('button')
+  const subscriptBtn = document.createElement('button')
+  const supImg = document.createElement('img')
+  const subImg = document.createElement('img')
+
+  mcDiv.appendChild(supscriptBtn)
+  mcDiv.appendChild(subscriptBtn)
+  supscriptBtn.appendChild(supImg)
+  subscriptBtn.appendChild(subImg)
+
+  mcDiv.className = 'mc-buttons-group d-none'
+  supscriptBtn.className = 'mc-button mc-supscript'
+  supscriptBtn.type = 'button'
+  subscriptBtn.className = 'mc-button mc-subscript'
+  subscriptBtn.type = 'button'
+  supImg.src = '/images/superscript.svg'
+  supImg.className = 'mc-center-img'
+  subImg.className = 'mc-center-img'
+  subImg.src = '/images/subscript.svg'
+
+  divSubjectName.appendChild(mcDiv)
+  // eslint-disable-next-line
+  inputField.addEventListener('focus', () => showMCButtons(inputField, 'link'))
   if (data) {
     inputField.value = data.link
     colLg2Input.value = data.type
@@ -2336,14 +2566,14 @@ function handleAreasClick({ target }) {
     const saveButton = document.createElement('button')
     saveButton.type = 'button'
     cancelButton.type = 'button'
-    cancelButton.textContent = 'Prekliči'
+    cancelButton.textContent = i18next.t('Prekliči')
     cancelButton.className = 'btn btn-secondary me-2'
     cancelButton.style.height = '33px'
     cancelButton.style.width = '105px'
     cancelButton.addEventListener('click', () =>
       abortEditing(newButtonGroup, tableButtons, tDataArea)
     )
-    saveButton.textContent = 'POTRDI'
+    saveButton.textContent = i18next.t('POTRDI')
     saveButton.type = 'button'
     saveButton.className = 'btn btn-primary'
     saveButton.style.height = '33px'
@@ -2666,7 +2896,7 @@ function checkLanguages() {
 }
 
 $('.summernote').summernote({
-  placeholder: 'Na kratko opišite zasnovo in namen slovarja.',
+  placeholder: i18next.t('Na kratko opišite zasnovo in namen slovarja.'),
   height: 300,
   minheight: 150,
   toolbar: [

@@ -3,7 +3,7 @@ mixin dictionaryMainInput(data)
     form.needs-validation(id=data.formId method="post" novalidate)
       .title
         .subject-name
-          label.input-name-txt(for="dictionary-title") NASLOV SLOVARJA *
+          label.input-name-txt(for="dictionary-title")= t('NASLOV SLOVARJA *')
         .row
           .col-sm-6.align-items-center
             input#dictionary-title.name-input.form-control.d-inline(
@@ -12,14 +12,14 @@ mixin dictionaryMainInput(data)
               required
               maxlength="120"
             )
-            .invalid-feedback Niste vpisali imena slovarja.
+            .invalid-feedback= t('Niste vpisali imena slovarja.')
 
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Celotni naslov slovarja, ki bo zabeležen v bibliografskih podatkih.
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Celotni naslov slovarja, ki bo zabeležen v bibliografskih podatkih.')
 
       .english-title.mt-4
         .subject-name
-          label.input-name-txt(for="dictionary-title-en") ANGLEŠKI NASLOV SLOVARJA *
+          label.input-name-txt(for="dictionary-title-en")= t('ANGLEŠKI NASLOV SLOVARJA *')
         .row
           .col-sm-6
             input#dictionary-title-en.name-input.form-control.d-inline(
@@ -28,14 +28,14 @@ mixin dictionaryMainInput(data)
               maxlength="120"
               required
             )
-            .invalid-feedback Niste vpisali angleškega naslova slovarja.
+            .invalid-feedback= t('Niste vpisali angleškega naslova slovarja.')
 
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Celotni naslov slovarja v angleščini.
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Celotni naslov slovarja v angleščini.')
 
       .short-title.mt-4
         .subject-name
-          label.input-name-txt(for="short-dictionary-title") SKRAJŠANI NASLOV SLOVARJA
+          label.input-name-txt(for="short-dictionary-title")= t('SKRAJŠANI NASLOV SLOVARJA')
         .row
           .col-sm-6
             input#short-dictionary-title.name-input.d-inline.form-control(
@@ -44,11 +44,11 @@ mixin dictionaryMainInput(data)
               maxlength="15"
             )
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Zaradi organizacije podatkov na portalu za skrajšani naslov slovarja predlagamo poenobesedenje, ki se bo izpisovalo ob slovarju, npr. Davčni terminološki slovar &rarr; Davki
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Zaradi organizacije podatkov na portalu za skrajšani naslov slovarja predlagamo poenobesedenje, ki se bo izpisovalo ob slovarju, npr. Davčni terminološki slovar &rarr; Davki')
 
       #first-author.author.mt-4
         .subject-name
-          label.input-name-txt(for="author") AVTOR SLOVARJA
+          label.input-name-txt(for="author")= t('AVTOR SLOVARJA')
         .row
           .col-sm-6
             input#author.name-input.d-inline.form-control(
@@ -57,63 +57,65 @@ mixin dictionaryMainInput(data)
               maxlength="64"
             )
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.')
 
       #add-new-author.author.mt-4
         .subject-name
-          label.input-name-txt(for="input-new-author") NOV AVTOR SLOVARJA
+          label.input-name-txt(for="input-new-author")= t('NOV AVTOR SLOVARJA')
         .row
           .col-sm-6
             button#input-new-author.form-control(type="button")
-              span.new-author-text-btn Nov avtor
+              span.new-author-text-btn= t('Nov avtor')
 
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite avtorja slovarja, če ste glavni avtor, na prvo mesto zapišite svoje ime.')
 
       .cerif-area.mt-4
         .subject-name
-          label.input-name-txt(for="select-cerif") PODROČJE *
+          label.input-name-txt(for="select-cerif")= t('PODROČJE *')
         .row
           .col-sm-6
             select.name-input.d-inline.form-select(
               name="domainPrimary"
               required
             )
-              option(value="" hidden disabled selected) Izberite področje
+              //- TODO I18n 
+              option(value="" hidden disabled selected)= t('Izberite področje')
               each domain in allPrimaryDomains
                 option(value=domain.id)= domain.nameSl
-            #invalid-section.invalid-feedback-selection.hidden-section.mt-3 Niste izbrali glavnega področja.
+            #invalid-section.invalid-feedback-selection.hidden-section.mt-3= t('Niste izbrali glavnega področja.')
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Področje.
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Področje.')
 
       .small-name-area.mt-4
         .subject-name
-          label.input-name-txt(for="domain-secondary") PODPODROČJE
+          label.input-name-txt(for="domain-secondary")= t('PODPODROČJE')
         .row
           .col-sm-6
             select#domain-secondary.name-input.d-inline.form-control.without-addition(
               name="domainSecondary"
               multiple
             )
+              //- TODO I18n 
               each domain in allSecondaryDomains
                 option(value=domain.id)= domain.nameSl
 
           .col-sm.d-flex.align-items-center
-            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite podpodročje glavnega področja, ki ste ga izbrali. Če podpodročja ni med naborom, izberite polje Novo podpodročje.
+            span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite podpodročje glavnega področja, ki ste ga izbrali. Če podpodročja ni med naborom, izberite polje Novo podpodročje.')
 
       #add-new-area.author.mt-4
       .subject-name
-        label.input-name-txt NOVO PODPODROČJE
+        label.input-name-txt= t('NOVO PODPODROČJE')
       .row
         .col-sm-6
           button#input-new-area.form-control(type="button")
-            span.new-author-text-btn Novo podpodročje
+            span.new-author-text-btn= t('Novo podpodročje')
         .col-sm.d-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0 Vpišite novo podpodročje. Na seznamu podpodročij bo vidno takoj po potrditvi administratorja portala.
+          span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite novo podpodročje. Na seznamu podpodročij bo vidno takoj po potrditvi administratorja portala.')
       if (data.hasDescription)
         #text-editor.mt-4
         .subject-name
-          span.input-name-txt OPIS SLOVARJA
+          span.input-name-txt= t('OPIS SLOVARJA')
         .container-xxl.ps-0.ms-0
           #summernote
       if (data.hasStructure)

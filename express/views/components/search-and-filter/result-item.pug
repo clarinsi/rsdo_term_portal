@@ -16,9 +16,9 @@ mixin result-item(headword, entry, isLast=false)
   a.rl.py-3(href=`/termin/${entry.id}`)
     .anchor(id='e-' + entry.id)
     .result-item.d-flex.flex-row.w-100
-      .row.w-100.result-items-row
-        .col-lg-4
-          .row.w-100.ls
+      .row.w-100.result-items-row.g-0
+        .col-lg-4.px-0
+          .row.w-100.ls.g-0
             .col-10.word-constraint-container
               .results-item-headword.d-flex.flex-grow-1.word-constraint.d-flex.flex-direction-column.w-100.flex-nowrap
                 span.rihw.word-breakable.ps-2.long-text-wrap-r!= headword
@@ -33,9 +33,25 @@ mixin result-item(headword, entry, isLast=false)
             .col-2.flex-column.row.rsc
               .results-comments.d-inline.me-4.align-top
                 if slovenianDefinitionExists
-                  img.bgmsg.mb-1(src="/images/message-square-black.svg")
+                  //- tabindex="0"
+                  img.bgmsg.mb-1(
+                    data-bs-toggle="tooltip"
+                    data-bs-title=t('Definicija')
+                    data-bs-container="body"
+                    data-bs-placement="right"
+                    data-tooltip-content=t('Definicija')
+                    src="/images/message-square-black.svg"
+                  )
                 else if checkAllForeignDefinitions
-                  img.bgmsg.mb-1(src="/images/message-square.svg")
+                  //- tabindex="0"
+                  img.bgmsg.mb-1(
+                    data-bs-toggle="tooltip"
+                    data-bs-title=t('Definicija')
+                    data-bs-container="body"
+                    data-bs-placement="right"
+                    data-tooltip-content=t('Definicija')
+                    src="/images/message-square.svg"
+                  )
         .col-lg-4.d-flex.px-0
           //- .results-foreign-languages.d-inline-block.align-top
             ul.mt-1.px-0
@@ -67,8 +83,8 @@ mixin result-item(headword, entry, isLast=false)
                         li.results-foreign-term.align-items-top.d-flex
                           p.word-breakable.text-truncate.pb-0.mb-0.lh-18px.syn-h.long-text-wrap-r!= synonym
 
-        .col-lg-4
-          .row
+        .col-lg-4.px-0
+          .row.g-0.px-2
             .col
               .results-keywords.d-flex.flex-grow-1.ms-2 
                 span.res-domain= domain

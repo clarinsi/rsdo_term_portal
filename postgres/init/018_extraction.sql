@@ -2,7 +2,7 @@ CREATE TYPE extraction_status AS ENUM ('new', 'in progress', 'failed', 'finished
 
 CREATE TYPE extraction_job_type AS ENUM ('doc to conllu', 'conllus to term candidates', 'concordancer', 'oss term candidates');
 
-CREATE TYPE extraction_job_status AS ENUM ('pending', 'in progress', 'failed', 'finished');
+CREATE TYPE extraction_job_status AS ENUM ('pending', 'skipped', 'in progress', 'failed', 'finished');
 
 CREATE TABLE extraction (
   id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -40,7 +40,11 @@ CREATE TABLE extraction_job (
   ),
   CHECK (
     CASE
-      WHEN job_type = 'concordancer' OR status = 'pending' THEN remote_job_id IS NULL
+      WHEN
+        job_type = 'concordancer' OR
+        status = 'pending' OR
+        (status = 'failed' AND time_started IS NULL)
+        THEN remote_job_id IS NULL
       ELSE remote_job_id IS NOT NULL
     END
   )

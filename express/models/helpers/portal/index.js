@@ -9,8 +9,10 @@ exports.aggregateSettings = settings => {
 exports.deserialize = {
   settings(settings) {
     const deserializedSettings = {
-      name: settings.portal_name,
-      description: settings.portal_description,
+      nameSl: settings.portal_name_sl,
+      nameEn: settings.portal_name_en,
+      descriptionSl: settings.portal_description_sl,
+      descriptionEn: settings.portal_description_en,
       code: settings.portal_code,
       isExtractionEnabled: settings.is_extraction_enabled,
       isDictionariesEnabled: settings.is_dictionaries_enabled,

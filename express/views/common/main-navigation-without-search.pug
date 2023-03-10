@@ -15,20 +15,20 @@ block main-navigation
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               )
-                img.threedots(src="/images/threedots.svg" alt="")
+                img.threedots.mx-1(src="/images/threedots.svg" alt="")
               ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
                 li
-                  a.dropdown-item(href="/") Iskanje
+                  a.dropdown-item(href="/")= t('Iskanje')
                 if req.extractionEnabled
                   li
-                    a.dropdown-item(href="/luscenje") Luščenje
+                    a.dropdown-item(href="/luscenje")= t('Luščenje')
                 if req.dictionariesEnabled
                   li
-                    a.dropdown-item(href="/slovarji/moji") Urejanje
+                    a.dropdown-item(href="/slovarji/moji")= t('Urejanje')
                 if req.consultancyEnabled
                   li
-                    a.dropdown-item(href="#") Svetovanje
+                    a.dropdown-item(href="#")= t('Svetovanje')
                 li
-                  a.dropdown-item(href="/admin/nastavitve/portal") Administracija
+                  a.dropdown-item(href="/admin/nastavitve/portal")= t('Administracija')
             a.col-sm.nav-entry(href="#")
               img(src="/images/profile.svg" alt="")

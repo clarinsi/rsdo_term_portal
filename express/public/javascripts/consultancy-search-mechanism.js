@@ -11,6 +11,7 @@ function routeConsultancy(searchString) {
   } else {
     url = new URL(location)
 
+    url.searchParams.delete('p')
     const sq = document.getElementById('search-query')
     if (sq) {
       url.searchParams.set('q', sq.value)
@@ -65,3 +66,14 @@ if (inputMainSearch) {
 
 propagateFunctionalityToASearchButton(searchButton)
 propagateFunctionalityToASearchButton(advancedSearchButton)
+
+$(document).ready(() => {
+  const focused = $('#description')
+  if (focused) {
+    focused.focus()
+  }
+
+  if (window.location.pathname === '/svetovanje/iskanje') {
+    // todo
+  }
+})

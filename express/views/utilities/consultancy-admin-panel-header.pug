@@ -26,9 +26,9 @@ mixin mainHeader(headerContent, footerIncluded = true)
         .row
           .col-sm-6.align-items-center.d-flex
             if (entries.length>0)
-              p.mb-0.text-p875rem.strength500.text-header-title-gray Število vprašanj: #{ queryCount }
+              p.mb-0.text-p875rem.strength500.text-header-title-gray #{ t('Število vprašanj:') } #{ queryCount }
             else
-              p.mb-0.text-p875rem.strength500.text-header-title-gray Ni vprašanj.
+              p.mb-0.text-p875rem.strength500.text-header-title-gray #{ t('Ni vprašanj.') }
           .col-sm-6.align-items-center.justify-content-end.d-flex
             .col-sm-6.align-items-center.justify-content-end.d-flex
             .col-sm-6.align-items-center.justify-content-end.d-flex

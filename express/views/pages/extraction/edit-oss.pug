@@ -11,14 +11,14 @@ block body
   include /common/side-menu-fake
   +sideNavigationFake
   include /utilities/dictionaries-main-panel-header
-  - const c = { noSidebar: false, hrefurl: '/luscenje', h2: 'Luščenje iz korpusa besedil OSS', h1: 'Korpus OSS', description: 'Luščenje terminoloških kandidatov iz besedil, ki so že predhodno oblikoslovno označena, nudi dobre rezultate, vendar je treba nabor besedil omejiti. Svetujemo vam, da zoožite področje in dodatno omejite izbiro s tipi besedil in časovnim razponom, v katerih so nastala. Ko vnesete podatke, morate vse spremembe shraniti. Po vnosu podatkov, s katerimi boste omejili nabor izbranih besedil, morate pritisniti gumb Najdi. Izbiro boste shranili lahko le v primeru, da ne bo število najdenih dokumentov preveliko.', buttons: [{ type: 'cancel', url: '/luscenje', content: 'Nazaj', classAtr: 'btn btn-secondary header-btn-secondary' }] }
+  - const c = { noSidebar: false, hrefurl: '/luscenje', h2: t('Luščenje iz korpusa besedil OSS'), h1: t('Korpus OSS'), description: t('Luščenje terminoloških kandidatov iz besedil, ki so že predhodno oblikoslovno označena, nudi dobre rezultate, vendar je treba nabor besedil omejiti. Svetujemo vam, da zoožite področje in dodatno omejite izbiro s tipi besedil in časovnim razponom, v katerih so nastala. Ko vnesete podatke, morate vse spremembe shraniti. Po vnosu podatkov, s katerimi boste omejili nabor izbranih besedil, morate pritisniti gumb Najdi. Izbiro boste shranili lahko le v primeru, da ne bo število najdenih dokumentov preveliko.'), buttons: [{ type: 'cancel', url: '/luscenje', content: t('Naprej'), classAtr: 'btn border-header header-btn-secondary' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.mt-2
       form#form-edit-oss(method="post")
         .title
           .subject-name
-            label.smaller-black-uppercase(for="name") IME
+            label.smaller-black-uppercase(for="name")= t('IME')
           .row
             .col-sm-6
               input.name-input.form-control.d-inline(
@@ -27,11 +27,11 @@ block body
                 value=extraction.name
               )
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Izberite takšno ime, ki vam bo pomagalo slediti rezultatom, če boste luščenje besedil opravili večkrat.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Izberite takšno ime, ki vam bo pomagalo slediti rezultatom, če boste luščenje besedil opravili večkrat.')
 
         .cerif.mt-4
           .subject-name
-            label.smaller-black-uppercase PODROČJE
+            label.smaller-black-uppercase= t('PODROČJE')
           .row 
             .col-sm-6
               select.name-input.form-control.d-inline(name="domain")
@@ -42,17 +42,18 @@ block body
                     selected=domain.id === extraction.domainId
                   )= domain.nameSl
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Izberite področje iz seznama področij, da zmanjšate obseg besedil, iz katerih bo potekalo luščenje.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Izberite področje iz seznama področij, da zmanjšate obseg besedil, iz katerih bo potekalo luščenje.')
 
         .cerif.mt-4
           .subject-name
-            label.smaller-black-uppercase VRSTA DOKUMENTA
+            label.smaller-black-uppercase= t('VRSTA DOKUMENTA')
           .row
             .col-sm-6
               select.pick-multiple.name-input.form-control.d-inline(
                 name="documentType"
                 multiple
               )
+                //- TODO i18n - Angleški šifrant, baza, itd.?
                 option
                 option(
                   value=101
@@ -295,11 +296,11 @@ block body
                   selected=extraction.documentType.includes(325)
                 ) Druga izvedena dela
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Izberite vrsto dokumenta iz seznama, npr. članek, diplomsko delo.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Izberite vrsto dokumenta iz seznama, npr. članek, diplomsko delo.')
 
         .year.mt-4
           .subject-name
-            label.smaller-black-uppercase LETO
+            label.smaller-black-uppercase= t('LETO')
           .row
             .col-sm-6
               select.enter-multiple.name-input.form-control.d-inline(
@@ -309,11 +310,11 @@ block body
                 each year in extraction.year
                   option(value=year selected)= year
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Dodajte leto izida besedil, ki jih želite luščiti. Lahko dodate več posameznih let. Če boste polje pustili prazno, bodo vključena vsa leta. Če bo besedil preveč, boste morali omejiti izbiro.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Dodajte leto izida besedil, ki jih želite luščiti. Lahko dodate več posameznih let. Če boste polje pustili prazno, bodo vključena vsa leta. Če bo besedil preveč, boste morali omejiti izbiro.')
 
         .words.mt-4
           .subject-name
-            label.smaller-black-uppercase KLJUČNE BESEDE
+            label.smaller-black-uppercase= t('KLJUČNE BESEDE')
           .row
             .col-sm-6
               select.enter-multiple.name-input.form-control.d-inline(
@@ -323,15 +324,15 @@ block body
                 each keyword in extraction.keywords
                   option(value=keyword selected)= keyword
             .col-sm.d-flex.align-items-center
-              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 S ključnimi besedami, ki so vključene v večino znanstvenih in strokovnih, lahko bolj natančno izberete besedila, ki jih želite uporabiti za luščenje terminoloških kandidatov.
+              span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('S ključnimi besedami, ki so vključene v večino znanstvenih in strokovnih, lahko bolj natančno izberete besedila, ki jih želite uporabiti za luščenje terminoloških kandidatov.')
         .table-kas.mt-5.d-sm-flex
           .d-flex.flex-column.col-sm-6
             .personal-documents.justify-content-between.d-flex.align-items-center
-              span.smaller-black-uppercase (STOP) Termini
+              span.smaller-black-uppercase= t('(STOP) Termini')
               a#edit-stop-terms.btn.btn-primary.button-edit.align-items-center.d-flex.justify-content-center.me-2(
                 type="link"
                 href=`${id}/stop-termini`
-              ) Uredi
+              )= t('Uredi')
             div
               table.table.mt-2
                 tbody
@@ -341,23 +342,23 @@ block body
                       td.text-sm-start.normal-gray= file.filename
                       td.text-sm-end.normal-gray= file.size
           .col.d-flex.ms-2
-            .d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Dodate lahko seznam besed, ki jih v seznam terminoloških kandidatov ne želite vključiti. Seznam naj bo shranjen v formatu .txt. Vse spremembe morate shraniti. #[a.smaller-gray-info(href="/pomoc#help-stop-lists") Več...]
+            .d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3!= t('Dodate lahko seznam besed, ki jih v seznam terminoloških kandidatov ne želite vključiti. Seznam naj bo shranjen v formatu .txt. Vse spremembe morate shraniti. <a class="smaller-gray-info" href="/pomoc#help-stop-lists">Več...</a>')
 
       .col-sm-4.mt-5
-        button#search-btn.btn.btn-primary(type="button") Najdi
+        button#search-btn.btn.btn-primary(type="button")= t('Najdi')
 
       #search-result
         .task.task-completed.p-3.mb-3.mt-4.d-none
           .d-sm-flex.justify-content-between
             .d-sm-grid
-              span.normal-gray Število dokumentov
+              span.normal-gray= t('Število dokumentov')
               span#results-count.bold-weight-black 
             .d-sm-flex.align-items-center
               button#save-params.btn.btn-primary.align-items-center.d-flex(
                 disabled
               )
                 img(src="/images/external-link-white.svg")
-                span.ms-1 Shrani
+                span.ms-1= t('Shrani')
 
   include /utilities/modal-spinner
   include /utilities/modal-alert

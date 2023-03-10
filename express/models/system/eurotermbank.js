@@ -47,7 +47,7 @@ Eurotermbank.push = async () => {
               'definition', ef.definition,
               'synonyms', ef.synonym)
           FROM entry_foreign ef
-          LEFT JOIN LANGUAGE l ON l.id = ef.language_id
+          LEFT JOIN language l ON l.id = ef.language_id
           WHERE entry_id = e.id
           ) foreign_entries
         FROM entry e

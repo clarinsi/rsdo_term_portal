@@ -12,12 +12,12 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: 'Uporabniki', description: 'V tem razdelku lahko določite fazo urejanja slovarja, dodajate uporabnike in jim določate uporabniške pravice pri urejanju slovarja.', buttons: [{ type: 'disabled', content: 'Shrani', form: 'admin-dictionary-users' }] }
+  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: t('Uporabniki'), description: t('V tem razdelku lahko določite uporabniške vloge posameznega uporabnika in urejate njegove podatke.'), buttons: [{ type: 'disabled', content: t('Shrani'), form: 'admin-dictionary-users' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-1
       form#admin-dictionary-users.container-xxl.ms-0.ps-0(method="post")
-        span.users-subtitle-txt.ms-0 Faze urejanja
+        span.users-subtitle-txt.ms-0= t('Faze urejanja')
         .row.align-items-center.mt-2
           .col-sm-6
             .switch-forms-and-key-word.d-md-flex.mt-2
@@ -28,10 +28,10 @@ block body
                     disabled
                     checked
                   )
-                  label.form-check-label(for="preposition") Predlog
+                  label.form-check-label(for="preposition")= t('Predlog')
 
           .col-sm
-            span.name-info-txt V slovarju so samo terminološki kandidati. Slovarja ne morete objaviti.
+            span.name-info-txt= t('V slovarju so samo terminološki kandidati. Slovarja ne morete objaviti.')
 
         .row.align-items-center
           .col-sm-6
@@ -43,11 +43,11 @@ block body
                     disabled
                     checked
                   )
-                  label.form-check-label(for="editing") V urejanju
+                  label.form-check-label(for="editing")= t('V urejanju')
 
           .col-sm
-            span.name-info-txt Slovarski sestavek je v fazi, ko se dodajajo in oblikujejo elementi, ki ste jih izbrali v strukturi slovarskega sestavka.
-            a.ms-1.name-info-txt(href="/pomoc#help-users-dict" target="_blank") Več...
+            span.name-info-txt= t('Slovarski sestavek je v fazi, ko se dodajajo in oblikujejo elementi, ki ste jih izbrali v strukturi slovarskega sestavka.')
+            a.ms-1.name-info-txt(href="/pomoc#help-users-dict" target="_blank")= t('Več...')
 
         .row.align-items-center
           .col-sm-6
@@ -59,9 +59,9 @@ block body
                     disabled
                     checked
                   )
-                  label.form-check-label(for="edited") Urejeno
+                  label.form-check-label(for="edited")= t('Urejeno')
           .col-sm
-            span.name-info-txt Slovarski sestavek je pregledan in dokončan.
+            span.name-info-txt= t('Slovarski sestavek je pregledan in dokončan.')
 
         .row.align-items-center.mt-2
           .col-sm-6
@@ -74,16 +74,16 @@ block body
                       name="hasTerminologyReview"
                       checked
                     )
-                    label.form-check-label(for="terminology_review") Strokovno pregledano
+                    label.form-check-label(for="terminology_review")= t('Strokovno pregledano')
                 else
                   .form-check.form-switch.d-flex
                     input#terminology_review.form-check-input(
                       type="checkbox"
                       name="hasTerminologyReview"
                     )
-                    label.form-check-label(for="terminology_review") Strokovno pregledano
+                    label.form-check-label(for="terminology_review")= t('Strokovno pregledano')
           .col-sm
-            span.name-info-txt Slovar je pregledal področni strokovnjak.
+            span.name-info-txt= t('Slovar je pregledal področni strokovnjak.')
 
         .row.align-items-center.mt-2
           .col-sm-6
@@ -96,35 +96,35 @@ block body
                       name="hasLanguageReview"
                       checked
                     )
-                    label.form-check-label(for="language_review") Jezikovno pregledano
+                    label.form-check-label(for="language_review")= t('Jezikovno pregledano')
                 else
                   .form-check.form-switch.d-flex
                     input#language_review.form-check-input(
                       type="checkbox"
                       name="hasLanguageReview"
                     )
-                    label.form-check-label(for="language_review") Jezikovno pregledano
+                    label.form-check-label(for="language_review")= t('Jezikovno pregledano')
 
           .col-sm
-            span.name-info-txt Slovar je pregledal jezikoslovec.
+            span.name-info-txt= t('Slovar je pregledal jezikoslovec.')
 
         .container-xl.mt-4.ms-0.ps-0
-          span.users-subtitle-txt.ms-0.mt-3 Uporabniške pravice/vloge
+          span.users-subtitle-txt.ms-0.mt-3= t('Uporabniške pravice/vloge')
             table#user-roles-table.table-users.table-borderless.align-middle.mt-3
               thead
                 tr
                   th.col-2
-                    span.user-rights-column-title Uporabnik
+                    span.user-rights-column-title= t('Uporabnik')
                   th.col-2
-                    span.user-rights-column-title Administracija
+                    span.user-rights-column-title= t('Administracija')
                   th.col-2.text-center
-                    span.user-rights-column-title Urejanje
+                    span.user-rights-column-title= t('Urejanje')
                   th.col-2
-                    span#txt-term-rev.user-rights-column-title Strokovni pregled
+                    span#txt-term-rev.user-rights-column-title= t('Strokovni pregled')
                   th.col-2
-                    span#txt-lang-rev.user-rights-column-title Jezikovni pregled
+                    span#txt-lang-rev.user-rights-column-title= t('Jezikovni pregled')
                   th.col-1.justify-content-center
-                    span.hidden-text Izbriši polje
+                    span.hidden-text= t('Izbriši polje')
 
               if userRights
                 each el in userRights
@@ -207,7 +207,7 @@ block body
       form#form-add-user.container-xl.new-user-input.mt-4.ps-0.ms-0(
         action="/api/v1/users/addUser"
       )
-        span.new-user-info NOV UPORABNIK
+        span.new-user-info= t('NOV UPORABNIK')
         .row.d-flex.justify-content-lg-start.align-items-center.mt-2.ms-0.ps-0
           .col-lg-6.ms-0.ps-0.me-2
             input.name-input.d-inline.form-control.ms-0.ps-0(
@@ -216,13 +216,13 @@ block body
               autocomplete="off"
             )
           .col.ms-xl-4.ms-0.ps-0.d-flex.justify-content-start.mt-2.mt-lg-0
-            button.btn.btn-primary Dodaj
+            button.btn.btn-primary= t('Dodaj')
 
       - const minEntriesNum = parseInt(minEntries)
       - const countEntries = parseInt(entriesCount)
       .container-xxl.ms-0.ps-0
-        .row.align-items-center
-          .col-sm-6.mt-4
+        .row.align-items-center.mt-4
+          .col-sm-6
             .switch-forms-and-key-word.d-md-flex
               .form-check.form-switch.d-flex
                 if publishApproval === 'F'
@@ -263,20 +263,20 @@ block body
                       form="admin-dictionary-users"
                       checked
                     )
-                label.form-check-label(for="publish-switch") Slovar odprt
+                label.form-check-label(for="publish-switch")= t('Slovar odprt')
 
           .col-sm
-            span.name-info-txt Slovar je pregledal jezikoslovec.
+            span.name-info-txt= t('Slovar je odprt.')
         if dictionary.status === 'published' && countEntries < minEntriesNum
           .col-sm-6
-            span.mt-3.normal-red-note Število slovarskih sestavkov je manjše od zahtevanega števila - povečajte število slovarskih sestavkov, sicer ga skrbnik slovarjev lahko zapre
+            span.mt-3.normal-red-note= t('Število slovarskih sestavkov je manjše od zahtevanega števila - povečajte število slovarskih sestavkov, sicer ga skrbnik slovarjev lahko zapre')
         if publishApproval === 'T' && dictionary.status === 'reviewed'
           .col-sm-6
-            span.mt-3.normal-red-note Slovar je v odpiranju - čaka na potrditev skrbnika slovarjev
+            span.mt-3.normal-red-note= t('Slovar je v odpiranju - čaka na potrditev skrbnika slovarjev')
 
+      include /common/footer
     include /utilities/modal-alert
     include /utilities/modal-response
     +responseModal
   include /utilities/modal-alert-mixin
   +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
-  include /common/footer

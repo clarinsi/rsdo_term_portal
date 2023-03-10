@@ -6,9 +6,11 @@ DROP TYPE IF EXISTS user_role_name;
 DROP TYPE IF EXISTS user_hits_per_page;
 DROP TYPE IF EXISTS user_status;
 
-CREATE TYPE user_status AS ENUM ('registered', 'active');
+CREATE TYPE user_status AS ENUM ('registered', 'active', 'inactive');
 
 CREATE TYPE user_hits_per_page AS ENUM ('10', '20', '50', '100');
+
+CREATE TYPE user_language AS ENUM ('sl', 'en');
 
 CREATE TYPE user_role_name AS ENUM ('portal admin', 'dictionaries admin', 'consultancy admin', 'consultant', 'editor');
 
@@ -22,7 +24,8 @@ CREATE TABLE "user" (
   bcrypt_hash VARCHAR NOT NULL,
   time_registered TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   time_activated TIMESTAMPTZ,
-  hits_per_page user_hits_per_page NOT NULL DEFAULT '10'
+  hits_per_page user_hits_per_page NOT NULL DEFAULT '10',
+  language user_language NOT NULL DEFAULT 'sl'
 );
 
 CREATE TABLE user_token_activation (

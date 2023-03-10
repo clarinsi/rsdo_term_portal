@@ -36,6 +36,12 @@ $content-nav-content-width-medium: 22rem;
   }
 }
 
+.content-nav-title {
+  position: fixed;
+  top: 85px;
+  left: 35px;
+}
+
 .term-button {
   max-width: 445px;
   font-size: 1rem;
@@ -491,6 +497,28 @@ $content-nav-content-width-medium: 22rem;
   --bs-tooltip-bg: #b6bec4;
 }
 */
+
+.dark-gray-tooltip.tooltip > .tooltip-inner {
+  background-color: v.$header-description-gray !important;
+  max-width: 500px;
+  padding: 8px 17px;
+  border-radius: 4px;
+}
+
+.dark-gray-tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: v.$header-description-gray !important;
+}
+.dark-gray-tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+  border-bottom-color: v.$header-description-gray !important;
+}
+
+.dark-gray-tooltip.bs-tooltip-start .tooltip-arrow::before {
+  border-left-color: v.$header-description-gray !important;
+}
+
+.dark-gray-tooltip.bs-tooltip-end .tooltip-arrow::before {
+  border-right-color: v.$header-description-gray !important;
+}
 
 .gray-tooltip.tooltip > .tooltip-inner {
   background-color: #b6bec4;

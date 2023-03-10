@@ -1,9 +1,9 @@
-.bg-white.add-padding-1.rounded-3.me-1.g-0
+.bg-white.add-padding-1.rounded-3.me-1.g-0col-sm-4
   .dictionary-content-top.mx-0
     .mb-1.d-flex.align-items-baseline.row
       .d-sm-block.col-sm-4.preview-column-width
-        span.smaller-gray-info TERMIN:
-      .flex-grow-1.col-sm-4
+        span.smaller-gray-info= t('TERMIN:')
+      .flex-grow-1.col-lg-4
         if (structure)
           span#selected-term.bold-blue-subheading.text-break
         else
@@ -24,42 +24,44 @@
     //-     #headword-table.collapse.flex-column.my-2
     //-       .card.card-body
     //-         | tabela
+
+    //- Used on content (edit entry) page
     if (structure)
       if (structure.hasDomainLabels)
         #preview-domain-secondary.preview-domain-secondary.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info PODROČNA OZNAKA:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('PODROČNA OZNAKA:')
+          .flex-grow-1.col-lg-4
             span#selected-domain-secondary.text-uppercase.text-break
       if (structure.hasLabel)
         #preview-label.preview-label.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.preview-column-width.col-sm-4
-            span.smaller-gray-info POJASNILO:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('POJASNILO:')
+          .flex-grow-1.col-lg-4
             span#selected-label.text-break
       if (structure.hasDefinition)
         #preview-definition.preview-definition.mt-1.d-flex.align-items-baseline.row
           .col-sm-4.d-sm-block.preview-column-width
-            span.smaller-gray-info DEFINICIJA:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('DEFINICIJA:')
+          .flex-grow-1.col-lg-4
             span#selected-definition.fw-bold.text-break
       if (structure.hasSynonyms)
         #preview-synonym.preview-synonym.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info SINONIM:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('SINONIM:')
+          .flex-grow-1.col-lg-4
             span#selected-synonyms.small-blue-text.text-break
       if (structure.hasLinks)
         #preview-linked-term.preview-linked-terms.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info POVEZANI TERMIN:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('POVEZANI TERMIN:')
+          .flex-grow-1.col-lg-4
             span#linked-terms.text-break
       if (structure.hasOther)
         #preview-other-field.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info DRUGO:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('DRUGO:')
+          .flex-grow-1.col-lg-4
             span#selected-other-field.text-break
       if (structure.hasForeignLanguages)
         .preview-languages-container.mt-2
@@ -71,22 +73,22 @@
                   span.smaller-black-info= language.nameSl
                 .preview-foreign-terms.mt-1.d-flex.align-items-baseline.row
                   .d-sm-block.col-sm-4.preview-column-width
-                    span.smaller-gray-info TERMIN:
-                  .selected-label.flex-grow-1.col-sm-4
+                    span.smaller-gray-info= t('TERMIN:')
+                  .selected-label.flex-grow-1.col-lg-4
                     span.preview-f-term.bold-blue-subheading(
                       id='foreign[' + language.id + '][term]'
                     )
                 .preview-foreign-definition.mt-1.d-flex.align-items-baseline.row
                   .d-sm-block.col-sm-4.preview-column-width
-                    span.smaller-gray-info DEFINICIJA:
-                  .selected-label.flex-grow-1.col-sm-4
+                    span.smaller-gray-info= t('DEFINICIJA:')
+                  .selected-label.flex-grow-1.col-lg-4
                     span.preview-f-def(
                       id='foreign[' + language.id + '][definition]'
                     )
                 .preview-foreign-synonyms.mt-1.d-flex.align-items-baseline.row
                   .d-sm-block.col-sm-4.preview-column-width
-                    span.smaller-gray-info SINONIM:
-                  .selected-label.flex-grow-1.col-sm-4
+                    span.smaller-gray-info= t('SINONIM:')
+                  .selected-label.flex-grow-1.col-lg-4
                     span.preview-f-synonym(
                       id='foreign[' + language.id + '][synonym]'
                     )
@@ -94,84 +96,85 @@
       if (structure.hasImages)
         #preview-images.preview-images.mt-1.d-flex.align-items-baseline.row
           .col-sm-4.d-sm-block.preview-column-width
-            span.smaller-gray-info SLIKA:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('SLIKA:')
+          .flex-grow-1.col-lg-4
             span#selected-images.text-break
       if (structure.hasAudio)
         #preview-audio.preview-audio.mt-1.d-flex.align-items-baseline.row
           .col-sm-4.d-sm-block.preview-column-width
-            span.smaller-gray-info ZVOK:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('ZVOK:')
+          .flex-grow-1.col-lg-4
             span#selected-audio.text-break
       if (structure.hasVideo)
         #preview-video.preview-video.mt-1.d-flex.align-items-baseline.row
           .col-sm-4.d-sm-block.preview-column-width
-            span.smaller-gray-info VIDEO:
-          .flex-grow-1.col-sm-4
+            span.smaller-gray-info= t('VIDEO:')
+          .flex-grow-1.col-lg-4
             span#selected-video.text-break
+    //- Used on dictionary-structure page(s)
     else
       .preview-domain-secondary.mt-1.d-flex.align-items-baseline.row
         .d-sm-block.col-sm-4.preview-column-width
-          span.smaller-gray-info PODROČNA OZNAKA:
+          span.smaller-gray-info= t('PODROČNA OZNAKA:')
         .flex-grow-1.col-sm-4
           span#selected-domain-secondary.text-uppercase DAVKI
       .preview-label.mt-1.d-flex.align-items-baseline.row
         .d-sm-block.preview-column-width.col-sm-4
-          span.smaller-gray-info POJASNILO:
+          span.smaller-gray-info= t('POJASNILO:')
         .flex-grow-1.col-sm-4
           span#selected-label v nekaterih davčnih sistemih
       .preview-definition.mt-1.d-flex.align-items-baseline.row
         .col-sm-4.d-sm-block.preview-column-width
-          span.smaller-gray-info DEFINICIJA:
+          span.smaller-gray-info= t('DEFINICIJA:')
         .flex-grow-1.col-sm-4
-          span#selected-definition.fw-bold zmanjševanje davčnih obveznosti z izkoriščanjem pravnih praznin in z uporabo metod ter davčnih shem, ki niso nezakonite
+          span#selected-definition.fw-bol zmanjševanje davčnih obveznosti z izkoriščanjem pravnih praznin in z uporabo metod ter davčnih shem, ki niso nezakonite
       .preview-synonym.mt-1.d-flex.align-items-baseline.row
         .d-sm-block.col-sm-4.preview-column-width
-          span.smaller-gray-info SINONIM:
+          span.smaller-gray-info= t('SINONIM:')
         .flex-grow-1.col-sm-4
           span#selected-synonyms.small-blue-text agresivno davčno načrtovanje, davčno zaobidenje
       .preview-linked-terms.mt-1.d-flex.align-items-baseline.row
         .d-sm-block.col-sm-4.preview-column-width
-          span.smaller-gray-info POVEZANI TERMIN:
+          span.smaller-gray-info= t('POVEZANI TERMIN:')
         .flex-grow-1.col-sm-4
           span#linked-terms davčna zatajitev
       .preview-other-field.mt-1.d-flex.align-items-baseline.row
         .d-sm-block.col-sm-4.preview-column-width
-          span.smaller-gray-info DRUGO:
+          span.smaller-gray-info= t('DRUGO:')
         .flex-grow-1.col-sm-4
-          span#other-field Drugo
+          span#other-field= t('Drugo')
       .preview-languages-container.mt-2
         hr
         .preview-foreign-language
-          span.smaller-black-info angleščina
+          span.smaller-black-info= t('angleščina')
         .preview-foreign-terms.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info TERMIN:
+            span.smaller-gray-info= t('TERMIN:')
           .selected-label.flex-grow-1.col-sm-4
             span.preview-f-term.bold-blue-subheading tax avoidance
         .preview-foreign-definition.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info DEFINICIJA:
+            span.smaller-gray-info= t('DEFINICIJA:')
           .selected-label.flex-grow-1.col-sm-4
             span.preview-f-def the use of legal methods to reduce the amount of income tax that an individual or business owes
         .preview-foreign-synonyms.mt-1.d-flex.align-items-baseline.row
           .d-sm-block.col-sm-4.preview-column-width
-            span.smaller-gray-info SINONIM:
+            span.smaller-gray-info= t('SINONIM:')
           .selected-label.flex-grow-1.col-sm-4
             span.preview-f-synonym aggresive tax planning
         hr
       .preview-images.mt-1.d-flex.align-items-baseline.row
         .col-sm-4.d-sm-block.preview-column-width
-          span.smaller-gray-info SLIKA:
+          span.smaller-gray-info= t('SLIKA:')
         .flex-grow-1.col-sm-4
-          span#selected-images slika
+          span#selected-images= t('slika')
       .preview-audio.mt-1.d-flex.align-items-baseline.row
         .col-sm-4.d-sm-block.preview-column-width
-          span.smaller-gray-info ZVOK:
+          span.smaller-gray-info= t('ZVOK:')
         .flex-grow-1.col-sm-4
-          span#selected-audio zvok
+          span#selected-audio= t('zvok')
       .preview-video.mt-1.d-flex.align-items-baseline.row
         .col-sm-4.d-sm-block.preview-column-width
-          span.smaller-gray-info VIDEO:
+          span.smaller-gray-info= t('VIDEO:')
         .flex-grow-1.col-sm-4
-          span#selected-video video
+          span#selected-video= t('video')

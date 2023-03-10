@@ -10,11 +10,11 @@ mixin sideNavigation(metaData)
         span#nav-title.nav-title= 'Svetovalnica'
       #mobile-right-holder
     nav
-      ul.admin-nav-content.slidable.z-20
+      ul.admin-nav-content.slidable.z-20.scroller-style
         li
           a(href="/svetovanje") 
             img(src="/images/chevrons-left.svg")
-            p Nazaj
+            p= t('Nazaj')
         if user.hasRole('consultancy admin')
           li(class=metaData.new ? 'focused-menu' : '')
             a(
@@ -25,7 +25,7 @@ mixin sideNavigation(metaData)
                 src=metaData.new ? '/images/star-blue.svg' : '/images/star.svg'
                 alt=""
               )
-              p Novo
+              p= t('Novo')
           li(class=metaData.rejected ? 'focused-menu' : '')
             a(
               href="/svetovanje/vprasanje/admin/zavrnjeno"
@@ -35,7 +35,7 @@ mixin sideNavigation(metaData)
                 src=metaData.rejected ? '/images/x-circle-blue.svg' : '/images/x-circle.svg'
                 alt=""
               )
-              p Zavrnjeno
+              p= t('Zavrnjeno')
         li(class=metaData.inProgress ? 'focused-menu' : '')
           a(
             href="/svetovanje/vprasanje/admin/v-delu"
@@ -45,7 +45,7 @@ mixin sideNavigation(metaData)
               src=metaData.inProgress ? '/images/edit-blue.svg' : '/images/edit.svg'
               alt=""
             )
-            p V delu
+            p= t('V delu')
         if user.hasRole('consultancy admin')
           li(class=metaData.prepared ? 'focused-menu' : '')
             a(
@@ -56,7 +56,7 @@ mixin sideNavigation(metaData)
                 src=metaData.prepared ? '/images/cog-blue.svg' : '/images/cog.svg'
                 alt=""
               )
-              p Pripravljeno
+              p= t('Pripravljeno')
         li(class=metaData.published ? 'focused-menu' : '')
           a(
             href="/svetovanje/vprasanje/admin/objavljeno"
@@ -66,7 +66,7 @@ mixin sideNavigation(metaData)
               src=metaData.published ? '/images/book-open-blue.svg' : '/images/book-open.svg'
               alt=""
             )
-            p Objavljeno
+            p= t('Objavljeno')
         //- li(class=metaData.stats ? 'focused-menu' : '')
           a(
             href="/svetovanje/vprasanje/admin/statistika"
@@ -80,11 +80,11 @@ mixin sideNavigation(metaData)
         if user.hasRole('consultancy admin')
           li(class=metaData.users ? 'focused-menu' : '')
             a(
-              href="/svetovanje/vprasanje/admin/uporabniki"
+              href="/svetovanje/vprasanje/admin/svetovalci"
               class=metaData.users ? 'active' : ''
             ) 
               img(
                 src=metaData.users ? '/images/users-blue.svg' : '/images/users.svg'
                 alt=""
               )
-              p Svetovalci
+              p= t('Svetovalci')

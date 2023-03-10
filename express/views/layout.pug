@@ -1,5 +1,5 @@
 doctype html
-html
+html(lang=language)
   head
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width,initial-scale=1")
@@ -74,6 +74,8 @@ html
     title= title ? `${portalCode} | ${title}` : 'Terminološki portal'
   body
     include /components/login-signup/login-signup
+    include /utilities/modal-reset-password
+    include /utilities/modal-reset-password-info
     block body
     script(
       nonce=cspNonce
@@ -85,6 +87,21 @@ html
       integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
       crossorigin="anonymous"
     )
+    script(
+      nonce=cspNonce
+      src="https://unpkg.com/i18next@22.4.10/dist/umd/i18next.min.js"
+      integrity="sha512-hqu1oKvqYx/BBOipLeaeoeXhUTWhQHKWWLHKD+ewvzxWKD0jk6Z1NAYvvT/pHVvCl8Ccpxdt9Er2v5cj7xJ1Rw=="
+      crossorigin="anonymous"
+    )
+    script(
+      nonce=cspNonce
+      src="https://cdn.jsdelivr.net/npm/i18next-http-backend@2.1.1/i18nextHttpBackend.min.js"
+      integrity="sha512-cL7Wvz326H2GY4YHfTEHtpy21oPBNdJVPgBdmJgVQW0/KkJhZh1hP8hioaJ4CMiHArq5jwecwZ+s/5Y6Mx3QEg=="
+      crossorigin="anonymous"
+    )
+
+    if inDevEnv
+      script(nonce=cspNonce) window.inDevEnv = true
     script(nonce=cspNonce src="/javascripts/globals.js")
     script(nonce=cspNonce src="/javascripts/scripts.js")
     script(nonce=cspNonce src="/javascripts/main-sreach-utils.js")

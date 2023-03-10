@@ -1,11 +1,16 @@
-/* global axios, initPagination, removeAllChildNodes */
+/* global axios, initPagination, removeAllChildNodes, i18next, dictionaryId */
 {
   const selectorEl = document.getElementById('select-extraction-name')
   selectorEl.addEventListener('change', () => loadCandidates(selectorEl.value))
   const resultsListEl = document.getElementById('page-results')
+  const importFormEl = document.getElementById('import-form')
+  const importButtonEl = document.getElementById('import-btn')
   let termCandidates
   let hitsPerPage
   let numberOfAllPages
+
+  importFormEl.addEventListener('submit', submitForm)
+
   async function loadCandidates(id) {
     try {
       const { data } = await axios.get(
@@ -18,6 +23,8 @@
       const results = getDataForFirstPage(data)
       renderResults(results)
       updateDemoPager(1, numberOfAllPages)
+      importFormEl.action = `/api/v1/dictionaries/${dictionaryId}/import-extraction/${id}`
+      importButtonEl.disabled = false
     } catch (error) {
       console.log(error)
     }
@@ -64,9 +71,27 @@
       tdId.textContent = sequentialCount
       tdName.textContent = candidate.kanonicnaoblika
       tdSize.textContent = candidate.ranking
-      tdDate.textContent = candidate.pogostostpojavljanja
+      tdDate.textContent = candidate.pogostostpojavljanja[0]
       rowEl.append(tdId, tdName, tdSize, tdDate)
       resultsListEl.appendChild(rowEl)
     })
+  }
+
+  async function submitForm(event) {
+    event.preventDefault()
+    const payload = Object.fromEntries(new FormData(event.target))
+
+    try {
+      await axios.post(event.target.action, payload)
+      alert(i18next.t('SLOVAR UVOŽEN'))
+    } catch (error) {
+      let message = i18next.t('Prišlo je do napake.')
+      if (error.response) {
+        message = error.response.data
+      } else if (error.request) {
+        message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+      }
+      alert(message)
+    }
   }
 }

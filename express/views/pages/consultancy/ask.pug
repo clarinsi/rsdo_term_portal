@@ -3,6 +3,7 @@ extends /layout
 block pageSpecificScipts
   //- the only reason to include the bottom script is to calibrate the padding of the content
   script(nonce=cspNonce src="/javascripts/consultancy.js")
+  script(nonce=cspNonce src="/javascripts/consultancy-search-mechanism.js")
   script(nonce=cspNonce src="/javascripts/utils.js")
 
 block body
@@ -16,8 +17,8 @@ block body
     .content-hold-prerequisites.ps-4.pe-4
       #offset-main.ps-2.pe-2
         if user
-          .consultancy-container.mb-5
-            .back-section.mt-4.mb-3.d-flex
+          .consultancy-container
+            //- .back-section.mt-4.mb-3.d-flex
               a.bg-transparent.border-0.consultancy-back-button.d-flex.align-items-center(
                 href="/svetovanje"
               )
@@ -31,10 +32,10 @@ block body
                 autocomplete="off"
                 novalidate
               )
-                h5.navigation-text-color.text-1p5rem.fw-light Zastavi terminološko vprašanje
+                h5.navigation-text-color.text-1p5rem.fw-light #{ t('Zastavi terminološko vprašanje') }
                 #name-field.mt-4
                   .subject-name
-                    label.smaller-gray-uppercase(for="name") IME IN PRIIMEK
+                    label.smaller-gray-uppercase(for="name") #{ t('IME IN PRIIMEK') }
                   .row
                     .col-sm-6
                       input#name.name-input.d-inline.form-control(
@@ -44,11 +45,11 @@ block body
                         disabled
                       )
                     .col-sm.d-flex.align-items-center
-                      span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Ime in priimek trenutno prijavljenega uporabnika.
+                      span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Ime in priimek trenutno prijavljenega uporabnika.') }
 
                   #email-field.mt-4
                   .subject-name
-                    label.smaller-gray-uppercase(for="email") ELEKTRONSKI NASLOV
+                    label.smaller-gray-uppercase(for="email") #{ t('ELEKTRONSKI NASLOV') }
                   .row
                     .col-sm-6
                       input#email.name-input.d-inline.form-control(
@@ -58,10 +59,10 @@ block body
                         disabled
                       )
                     .col-sm.d-flex.align-items-center
-                      span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Elektronski naslov trenutno prijavljenega uporabnika.
+                      span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Elektronski naslov trenutno prijavljenega uporabnika.') }
                   #institution-field.mt-4
                     .subject-name
-                      label.smaller-gray-uppercase(for="institution") INSTITUCIJA
+                      label.smaller-gray-uppercase(for="institution") #{ t('INSTITUCIJA') }
                     .row
                       .col-sm-6
                         textarea#institution.explanation-field.form-control.noScrollbar.resizeNone.institution-input(
@@ -69,11 +70,11 @@ block body
                           rows="1"
                         )
                       .col-sm.d-flex.align-items-center
-                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Institucija, kjer trenutno prijavljeni uporabnik deluje.
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Institucija, kjer trenutno prijavljeni uporabnik deluje.') }
 
                   #text-editor.mt-4
                     .subject-name
-                      span.smaller-gray-uppercase OPIS TERMINOLOŠKEGA PROBLEMA *
+                      span.smaller-gray-uppercase #{ t('OPIS TERMINOLOŠKEGA PROBLEMA') } *
                     .row
                       .col-sm-6
                         textarea#description.explanation-field.form-control.ms-0.noScrollbar.resizeNone.r-3.form-check-label(
@@ -81,13 +82,13 @@ block body
                           rows="2"
                           required
                         )
-                        .invalid-feedback Niste vpisali opisa terminološkega problema.
+                        .invalid-feedback #{ t('Niste vpisali opisa terminološkega problema.') }
                       .col-sm.d-flex.align-items-center
-                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Čim bolj natančno opišite terminološki problem, zlasti opišite vsebino pojma.
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Čim bolj natančno opišite terminološki problem, zlasti opišite vsebino pojma.') }
 
                   .cerif-area.mt-4
                     .subject-name
-                      label.smaller-gray-uppercase(for="select-cerif") PODROČJE
+                      label.smaller-gray-uppercase(for="select-cerif") #{ t('PODROČJE') }
                     .row
                       #cerif.col-sm-6
                         select#select-cerif.select-cerif.name-input.d-inline.form-control(
@@ -96,13 +97,13 @@ block body
                           option(value=-1)
                           each domain in allPrimaryDomains
                             option(value=domain.id)= domain.nameSl
-                      #invalid-section.invalid-feedback-selection.hidden-section.mt-3 Nimate izbranega področja CERIF.
+                      #invalid-section.invalid-feedback-selection.hidden-section.mt-3 #{ t('Nimate izbranega področja CERIF.') }
                       .col-sm.d-flex.align-items-center
-                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Področje, v katero sodi opisani terminološki problem.
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Področje, v katero sodi opisani terminološki problem.') }
 
                   #text-editor.mt-4
                     .subject-name
-                      span.smaller-gray-uppercase OBSTOJEČE POIMENOVALNE REŠITVE
+                      span.smaller-gray-uppercase #{ t('OBSTOJEČE POIMENOVALNE REŠITVE') }
                     .row
                       .col-sm-6
                         textarea#existing-solutions.explanation-field.form-control.noScrollbar.r-3.resizeNone(
@@ -110,11 +111,11 @@ block body
                           rows="2"
                         )
                       .col-sm.d-flex.align-items-center
-                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Morebitne že obstoječe poimenovalne rešitve, če obstajajo.
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Morebitne že obstoječe poimenovalne rešitve, če obstajajo.') }
 
                   #text-editor.mt-4
                     .subject-name
-                      span.smaller-gray-uppercase PRIMERI RABE V BESEDILIH
+                      span.smaller-gray-uppercase #{ t('PRIMERI RABE V BESEDILIH') }
                     .row
                       .col-sm-6
                         textarea#examples-of-use.explanation-field.form-control.noScrollbar.r-3.resizeNone(
@@ -122,11 +123,15 @@ block body
                           rows="2"
                         )
                       .col-sm.d-flex.align-items-center
-                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 Morebitni primeri rabe termina v besedilih ali povezave do njih, če obstajajo.
+                        span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Morebitni primeri rabe termina v besedilih ali povezave do njih, če obstajajo.') }
 
-                  .send-section.mt-5
-                    button.btn.btn-primary.send-cons-btn(type="submit") Pošlji
+                  .send-section.mt-5.flex-row.d-flex
+                    button#cancel-cons-btn.btn.btn-secondary(type="button") #{ t('Prekliči') }
+                    .d-flex.flex-grow-1.justify-content-end
+                      button.btn.btn-primary.send-cons-btn(type="submit") #{ t('Pošlji') }
 
+          include /utilities/modal-response
+          +responseModal("begin-response", t("Razumem"), "understand-btn", isOwnConsultancyEnabled?t("Hvala za poslano vprašanje, ki je bilo posredovano svetovalcem terminološkega portala. Odgovor boste prejeli na e-naslov, ki ste ga navedli ob registraciji."):t("Hvala za poslano vprašanje, ki je bilo posredovano v Terminološko svetovalnico ZRC SAZU. Odgovor boste prejeli na e-naslov, ki ste ga navedli ob registraciji."))
         else
-          p Za zastavljanje terminoloških vprašanj morate biti prijavljeni.
+          p #{ t('Za zastavljanje terminoloških vprašanj morate biti prijavljeni.') }
   include /common/footer

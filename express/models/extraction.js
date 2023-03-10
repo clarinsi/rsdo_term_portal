@@ -12,13 +12,14 @@ const {
   getFileNamesInFolder,
   getFileStatsInFolder
 } = require('./helpers/extraction')
+const { extractionApiOrigin } = require('../config/keys')
 
 const Extraction = {}
 
 // Fetch all extractions for a specific user.
 Extraction.fetchAllForUser = async userId => {
   const { rows: fetchedExtractions } = await db.query(
-    'SELECT id, name, status, corpus_id, oss_params, time_started, time_finished FROM extraction WHERE user_id = $1 ORDER BY id',
+    'SELECT id, name, status, corpus_id, oss_params, time_started, time_finished FROM extraction WHERE user_id = $1 ORDER BY status ASC, id DESC, time_finished DESC',
     [userId]
   )
 
@@ -74,19 +75,19 @@ Extraction.fetch = async id => {
   return deserialize.extraction(fetchedExtraction)
 }
 
-// Fetch author email of a specific extraction entry from DB.
-Extraction.fetchAuthorEmail = async id => {
+// Fetch data of the author of a specific extraction entry from DB.
+Extraction.fetchAuthorData = async id => {
   const {
-    rows: [{ email }]
+    rows: [authorData]
   } = await db.query(
-    `SELECT u.email
+    `SELECT u.email, u.language
     FROM extraction e
     LEFT JOIN "user" u ON u.id = e.user_id
     WHERE e.id = $1`,
     [id]
   )
 
-  return email
+  return authorData
 }
 
 // Update extraction entry in DB.
@@ -160,6 +161,18 @@ Extraction.fetchTermCandidatesCount = async function (extractionId) {
   return termCandidates.length
 }
 
+// Fetch term candidates slice for a specific extraction.
+Extraction.fetchTermCandidatesSlice = async function (
+  extractionId,
+  fromIndex,
+  toIndex
+) {
+  const termCandidatesJson = await this.fetchTermCandidatesJson(extractionId)
+  const termCandidates = JSON.parse(termCandidatesJson).terminoloski_kandidati
+  const termCandidatesSlice = termCandidates.slice(fromIndex, toIndex)
+  return termCandidatesSlice
+}
+
 // Mark extraction from own documents as began.
 Extraction.beginOwn = async (extractionId, documentsNames) => {
   let timeStarted
@@ -195,20 +208,20 @@ Extraction.beginOwn = async (extractionId, documentsNames) => {
 Extraction.beginOss = async extractionId => {
   let timeStarted
   await db.transaction(async dbClient => {
-    const insertExtractionJob = dbClient.query(
-      'INSERT INTO extraction_job (extraction_id, job_type, filename) VALUES ($1, $2, $3)',
-      [extractionId, 'oss term candidates', '']
-    )
-    const updateExtraction = dbClient.query(
-      "UPDATE extraction SET status = 'in progress', time_started = NOW() WHERE id = $1 RETURNING time_started",
-      [extractionId]
-    )
-
     ;[
       {
         rows: [{ time_started: timeStarted }]
       }
-    ] = await Promise.all([updateExtraction, insertExtractionJob])
+    ] = await Promise.all([
+      dbClient.query(
+        "UPDATE extraction SET status = 'in progress', time_started = NOW() WHERE id = $1 RETURNING time_started",
+        [extractionId]
+      ),
+      dbClient.query(
+        'INSERT INTO extraction_job (extraction_id, job_type, filename) VALUES ($1, $2, $3)',
+        [extractionId, 'oss term candidates', '']
+      )
+    ])
   })
 
   return timeStarted
@@ -235,6 +248,7 @@ Extraction.processOwn = async function (extractionId, extractionName) {
   const documentNames = await this.fetchAllDocumentsNames(extractionId)
   const conllusPath = getConllusPath(extractionId)
   const conllusPaths = []
+  const MAX_BODY_LENGTH = 10 ** 9 // 1 GB
   // Using remote API, transform each document into conllu format.
   for (const documentName of documentNames) {
     const filePath = `${documentsPath}/${documentName}`
@@ -242,17 +256,18 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     form.append('file', createReadStream(filePath), documentName)
     try {
       const { data: data1 } = await axios.post(
-        'http://rsdo.lhrs.feri.um.si:8080/datotekaVConlluAsync',
+        `${extractionApiOrigin}/datotekaVConlluAsync`,
         form,
         {
           headers: {
             ...form.getHeaders()
-          }
+          },
+          maxBodyLength: MAX_BODY_LENGTH
         }
       )
       const remotejobId = +data1.check_job_url.split('/').at(-1)
       await db.query(
-        "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1 WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
+        "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1, time_started = NOW() WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
         [remotejobId, extractionId, 'doc to conllu', documentName]
       )
 
@@ -262,10 +277,15 @@ Extraction.processOwn = async function (extractionId, extractionName) {
       while (true) {
         await sleep(5)
         const { data: data2 } = await axios.get(
-          `http://rsdo.lhrs.feri.um.si:8080/job/${remotejobId}`
+          `${extractionApiOrigin}/job/${remotejobId}`
         )
         if (data2.finished_on) {
-          if (data2.job_status !== 'finished processing (OK)') throw Error()
+          if (data2.job_status !== 'finished processing (OK)') {
+            throw Error(
+              `Remote job with id ${remotejobId} failed with result:\n${data2.job_result}`
+            )
+          }
+
           // TODO Read the response as a stream and try to parse it's contents into a file (write stream)('stream-json' package?).
           const fileSavePath = `${conllusPath}/${documentName}.conllu`
           await writeFile(fileSavePath, data2.job_result)
@@ -277,7 +297,8 @@ Extraction.processOwn = async function (extractionId, extractionName) {
           break
         }
       }
-    } catch {
+    } catch (error) {
+      logExtractionError(error, extractionId, 'doc to conllu', documentName)
       await failTheJob(extractionId, 'doc to conllu', documentName)
     }
   }
@@ -309,15 +330,18 @@ Extraction.processOwn = async function (extractionId, extractionName) {
 
   try {
     const { data: data3 } = await axios.post(
-      'http://rsdo.lhrs.feri.um.si:8080/izlusciAsync',
+      `${extractionApiOrigin}/izlusciAsync`,
       {
         conllus: conllusArr,
-        prepovedaneBesede: Array.from(stopTermsSet)
-      }
+        prepovedaneBesede: Array.from(stopTermsSet),
+        // TODO Enabled for all cases. Add a switch for users later.
+        definicije: true
+      },
+      { maxBodyLength: MAX_BODY_LENGTH }
     )
     const remotejobId = +data3.check_job_url.split('/').at(-1)
     await db.query(
-      "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1 WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
+      "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1, time_started = NOW() WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
       [remotejobId, extractionId, 'conllus to term candidates', '']
     )
 
@@ -325,14 +349,21 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     while (true) {
       await sleep(5)
       const { data: data4 } = await axios.get(
-        `http://rsdo.lhrs.feri.um.si:8080/job/${remotejobId}`
+        `${extractionApiOrigin}/job/${remotejobId}`
       )
       if (data4.finished_on) {
-        if (data4.job_status !== 'finished processing (OK)') throw Error()
+        const { job_result: jobResult } = data4
+        if (
+          data4.job_status !== 'finished processing (OK)' ||
+          !jobResult.terminoloski_kandidati
+        ) {
+          throw Error(
+            `Remote job with id ${remotejobId} failed with result:\n${jobResult}`
+          )
+        }
+
         // TODO Read the response as a stream and try to parse it's contents into a file (write stream)('stream-json' package?).
-        await writeFile(termCandidatesPath, JSON.stringify(data4.job_result))
-        // TODO Once returned JSON is properly formed, use the bottom line instead.
-        // await writeFile(termCandidatesPath, data4.job_result.terminoloski_kandidati)
+        await writeFile(termCandidatesPath, JSON.stringify(jobResult))
         await db.query(
           "UPDATE extraction_job SET status = 'finished', time_finished = NOW() WHERE extraction_id = $1 AND job_type = $2 AND filename = $3",
           [extractionId, 'conllus to term candidates', '']
@@ -340,8 +371,10 @@ Extraction.processOwn = async function (extractionId, extractionName) {
         break
       }
     }
-  } catch {
+  } catch (error) {
+    logExtractionError(error, extractionId, 'conllus to term candidates')
     await failTheJob(extractionId, 'conllus to term candidates', '')
+    await skipConcordancerJob(extractionId)
     await failExtraction(extractionId)
     return
   }
@@ -350,7 +383,7 @@ Extraction.processOwn = async function (extractionId, extractionName) {
   // Start concondancer corpus processing.
   try {
     await db.query(
-      "UPDATE extraction_job SET status = 'in progress' WHERE extraction_id = $1 AND job_type = $2 AND filename = $3",
+      "UPDATE extraction_job SET status = 'in progress', time_started = NOW() WHERE extraction_id = $1 AND job_type = $2 AND filename = $3",
       [extractionId, 'concordancer', '']
     )
     console.log('CREATING CORPUS')
@@ -361,32 +394,90 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     } = await axios.post('http://concordancer:5000/dashboard/corpus', {
       title: extractionName
     })
+
+    // Wait for creation of corpus.
+    while (true) {
+      console.log('SLEEP FOR 5 SECS')
+      await sleep(5)
+      const {
+        data: { status }
+      } = await axios.get(
+        `http://concordancer:5000/dashboard/corpus/${corpusId}`
+      )
+
+      if (status === 'Creating') continue
+      if (status === 'Active') break
+      throw Error('Error creating concorcander corpus')
+    }
     console.log('CORPUS CREATED')
-    console.log('SLEEP FOR 10 SECS')
-    await sleep(10)
+
+    const inProgressStatusList = [
+      'Waiting',
+      'Importing',
+      'ImportingCompleted',
+      'Indexing',
+      'IndexingCompleted'
+    ]
     for (const conlluPath of conllusPaths) {
       const textPathParts = conlluPath.split('/')
       textPathParts[0] = '/data'
       const textPath = textPathParts.join('/')
       console.log('ADDING TEXT')
-      await axios.post(
+      const {
+        data: {
+          entityInfo: { id: textId }
+        }
+      } = await axios.post(
         `http://concordancer:5000/dashboard/corpus/${corpusId}/text`,
         { sourceFile: textPath }
       )
+
+      // Wait for text ingestion.
+      while (true) {
+        console.log('SLEEP FOR 5 SECS')
+        await sleep(5)
+        const {
+          data: { status }
+        } = await axios.get(
+          `http://concordancer:5000/dashboard/corpus/${corpusId}/text/${textId}`
+        )
+
+        if (inProgressStatusList.includes(status)) continue
+        if (status === 'Active') break
+        throw Error('Error importing concorcander text')
+      }
       console.log('TEXT ADDED')
-      console.log('SLEEP FOR 10 SECS')
-      await sleep(10)
     }
 
     const termListPathParts = termCandidatesPath.split('/')
     termListPathParts[0] = '/data'
     const termListPath = termListPathParts.join('/')
     console.log('ADDING TERMS')
-    await axios.post(
+    const {
+      data: {
+        entityInfo: { id: termListId }
+      }
+    } = await axios.post(
       `http://concordancer:5000/dashboard/corpus/${corpusId}/termList`,
       { sourceFile: termListPath }
     )
+
+    // Wait for term list ingestion.
+    while (true) {
+      console.log('SLEEP FOR 5 SECS')
+      await sleep(5)
+      const {
+        data: { status }
+      } = await axios.get(
+        `http://concordancer:5000/dashboard/corpus/${corpusId}/termList/${termListId}`
+      )
+
+      if (inProgressStatusList.includes(status)) continue
+      if (status === 'Active') break
+      throw Error('Error importing concorcander text')
+    }
     console.log('TERMS ADDED')
+
     await db.query(
       "UPDATE extraction_job SET status = 'finished', time_finished = NOW() WHERE extraction_id = $1 AND job_type = $2 AND filename = $3",
       [extractionId, 'concordancer', '']
@@ -397,9 +488,8 @@ Extraction.processOwn = async function (extractionId, extractionName) {
       [corpusId, extractionId]
     )
     console.log('EXTRACTION SUCCESSFUL')
-  } catch (e) {
-    console.log('EXTRACTION ERROR')
-    console.log(e)
+  } catch (error) {
+    logExtractionError(error, extractionId, 'concordancer')
     await failTheJob(extractionId, 'concordancer', '')
     await failExtraction(extractionId)
   }
@@ -435,15 +525,17 @@ Extraction.processOss = async function (extractionId, ossParams) {
     ...(ossParams.documentType && { vrste: ossParams.documentType }),
     ...(ossParams.keywords && { kljucneBesede: ossParams.keywords }),
     ...(ossParams.domainUdk && { udk: ossParams.domainUdk }),
-    ...(stopTerms.length && { prepovedaneBesede: stopTerms })
+    ...(stopTerms.length && { prepovedaneBesede: stopTerms }),
+    // TODO Enabled for all cases. Add a switch for users later.
+    definicije: true
   })
 
-  const extractApiUrl = `http://rsdo.lhrs.feri.um.si:8080/oss/izlusciPoIskanjuAsync?${searchParams}`
+  const extractApiUrl = `${extractionApiOrigin}/oss/izlusciPoIskanjuAsync?${searchParams}`
   try {
     const { data: data1 } = await axios.get(extractApiUrl)
     const remotejobId = +data1.check_job_url.split('/').at(-1)
     await db.query(
-      "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1 WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
+      "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1, time_started = NOW() WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
       [remotejobId, extractionId, 'oss term candidates', '']
     )
 
@@ -451,15 +543,21 @@ Extraction.processOss = async function (extractionId, ossParams) {
     while (true) {
       await sleep(5)
       const { data: data2 } = await axios.get(
-        `http://rsdo.lhrs.feri.um.si:8080/job/${remotejobId}`
+        `${extractionApiOrigin}/job/${remotejobId}`
       )
       if (data2.finished_on) {
-        if (data2.job_status !== 'finished processing (OK)') throw Error()
+        if (
+          data2.job_status !== 'finished processing (OK)' ||
+          !Array.isArray(data2.job_result?.terminoloski_kandidati)
+        ) {
+          throw Error(
+            `Remote job with id ${remotejobId} failed with result:\n${data2.job_result}`
+          )
+        }
+
         // TODO Read the response as a stream and try to parse it's contents into a file (write stream)('stream-json' package?).
         const termCandidatesPath = getTermCandidatesPath(extractionId)
         await writeFile(termCandidatesPath, JSON.stringify(data2.job_result))
-        // TODO Once returned JSON is properly formed, use the bottom line instead.
-        // await writeFile(termCandidatesPath, data4.job_result.terminoloski_kandidati)
         await db.query(
           "UPDATE extraction_job SET status = 'finished', time_finished = NOW() WHERE extraction_id = $1 AND job_type = $2 AND filename = $3",
           [extractionId, 'oss term candidates', '']
@@ -474,7 +572,8 @@ Extraction.processOss = async function (extractionId, ossParams) {
       "UPDATE extraction SET status = 'finished', time_finished = NOW() WHERE id = $1",
       [extractionId]
     )
-  } catch {
+  } catch (error) {
+    logExtractionError(error, extractionId, 'oss term candidates')
     await failTheJob(extractionId, 'oss term candidates', '')
     await failExtraction(extractionId)
   }
@@ -487,6 +586,13 @@ async function failTheJob(extractionId, jobType, documentName) {
   )
 }
 
+async function skipConcordancerJob(extractionId) {
+  await db.query(
+    "UPDATE extraction_job SET status = 'skipped' WHERE extraction_id = $1 AND job_type = $2",
+    [extractionId, 'concordancer']
+  )
+}
+
 async function failExtraction(extractionId) {
   await db.query(
     "UPDATE extraction SET status = 'failed', time_finished = NOW() WHERE id = $1",
@@ -496,6 +602,20 @@ async function failExtraction(extractionId) {
 
 function sleep(seconds) {
   return new Promise(resolve => setTimeout(resolve, seconds * 1000))
+}
+
+function logExtractionError(error, extractionId, jobType, filename) {
+  // eslint-disable-next-line no-console
+  console.error(
+    Error(`Failed extraction job:
+      extractionId: ${extractionId},
+      jobType: ${jobType},
+      filename: ${filename}`)
+  )
+
+  if (error.isAxiosError) error = Error(`Axios message: ${error.message}`)
+  // eslint-disable-next-line no-console
+  console.error(error)
 }
 
 module.exports = Extraction

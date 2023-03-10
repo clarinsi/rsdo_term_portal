@@ -70,20 +70,23 @@ function generateTooltipWithStyles(
 ) {
   let nonEmptyContent
   if (!content) {
-    nonEmptyContent = el => {
-      el.getAttribute('data-tooltip-content')
-    }
+    return generateTooltipBase(list, function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, {
+        html: true,
+        title: tooltipTriggerEl.getAttribute('data-tooltip-content') || '',
+        customClass: styles
+      })
+    })
   } else {
     nonEmptyContent = content
-  }
-
-  return generateTooltipBase(list, function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl, {
-      html: true,
-      title: nonEmptyContent,
-      customClass: styles
+    return generateTooltipBase(list, function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, {
+        html: true,
+        title: nonEmptyContent || '',
+        customClass: styles
+      })
     })
-  })
+  }
 }
 
 function generateTooltipBase(list, fn) {

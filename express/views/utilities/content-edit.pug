@@ -13,12 +13,12 @@ form#form-edit-content.needs-validatio.mt-2(
         .col-12.col-sm-3.flex-fill.me-2
           span.term-id.normal-gray-label ID:
         .col-12.col-sm-3.flex-fill
-          span#edit-version-el.normal-gray-label Verzija 1
+          span#edit-version-el.normal-gray-label= t('Verzija 1')
       .d-sm-flex.col-xl-6.col-12.align-items-center
         .col-12.col-sm-3.flex-fill
-          span#edit-name-el.normal-gray-label Ime Priimek
+          span#edit-name-el.normal-gray-label= t('Ime Priimek')
         .col-12.col-sm-3.flex-fill.ms-sm-2
-          span.normal-gray-label Zaporedje:
+          span.normal-gray-label= t('Zaporedje:')
           input#homonym-sort.ms-2.homonym-field.form-control.d-inline(
             type="text"
             name="homonymSort"
@@ -30,9 +30,9 @@ form#form-edit-content.needs-validatio.mt-2(
           select#status-edit.form-select.select-content-state.w-auto(
             name="status"
           )
-            option(value="suggestion" disabled) Predlog
-            option(value="in_edit") V urejanju
-            option(value="complete") Urejeno
+            option(value="suggestion" disabled)= t('Predlog')
+            option(value="in_edit")= t('V urejanju')
+            option(value="complete")= t('Urejeno')
 
         .col-12.col-sm-3.flex-fill
           .form-check.form-switch
@@ -40,20 +40,20 @@ form#form-edit-content.needs-validatio.mt-2(
               type="checkbox"
               name="isPublished"
             )
-            label.normal-gray-label(for="published-cbox") Objavljeno
+            label.normal-gray-label(for="published-cbox")= t('Objavljeno')
       .d-sm-flex.col-xl-6.col-12.align-items-center
         .col-12.col-sm-3.flex-fill
           input#terminology-cbox.form-check-input.me-2(
             type="checkbox"
             name="isTerminologyReviewed"
           )
-          label.normal-gray-label(for="terminology-cbox") Strokovno pregledano
+          label.normal-gray-label(for="terminology-cbox")= t('Strokovno pregledano')
         .col-12.col-sm-3.flex-fill.ms-sm-2
           input#language-cbox.form-check-input.me-2(
             type="checkbox"
             name="isLanguageReviewed"
           )
-          label.normal-gray-label(for="language-cbox") Jezikovno pregledano
+          label.normal-gray-label(for="language-cbox")= t('Jezikovno pregledano')
   .d-flex.justify-content-between.align-items-center.collapsible-data
     .collapse-content
       .d-flex.collapsed-text.align-items-center
@@ -61,13 +61,13 @@ form#form-edit-content.needs-validatio.mt-2(
           span.status-collapsed.normal-gray.m-2 
         .published-collapsed.d-flex.d-none
           span.normal-gray.ms-2 |
-          span.normal-gray.ms-2 Objavljeno
+          span.normal-gray.ms-2= t('Objavljeno')
         .terminology-collapsed.d-flex.d-none
           span.normal-gray.ms-2 |
-          span.normal-gray.ms-2 Strokovno pregledano
+          span.normal-gray.ms-2= t('Strokovno pregledano')
         .lang-collapsed.d-flex.d-none
           span.normal-gray.ms-2 |
-          span.normal-gray.ms-2 Jezikovno pregledano
+          span.normal-gray.ms-2= t('Jezikovno pregledano')
         .homonim-collapse-div.d-flex.d-none
           span.normal-gray.ms-2 |
           span.homonim-collapsed.normal-gray.ms-2
@@ -87,10 +87,10 @@ form#form-edit-content.needs-validatio.mt-2(
           .d-grid
             .d-flex.align-items-center
               img(src="/images/alert-triangle-dark-red.svg")
-              span.ms-2.normal-red-note Slovarski sestavek je neveljaven
+              span.ms-2.normal-red-note= t('Slovarski sestavek je neveljaven')
             ul.mt-2.ms-4.mb-2
-              li.error-type-1.heavy-gray-text.d-none Tip napake 1 (ni slovenskega termina)
-              li.error-type-2.heavy-gray-text.d-none Tip napake 2 (ni definicije ali tujejezičnega termina)
+              li.error-type-1.heavy-gray-text.d-none= t('Tip napake 1 (ni slovenskega termina)')
+              li.error-type-2.heavy-gray-text.d-none= t('Tip napake 2 (ni definicije ali tujejezičnega termina)')
     .col.note-section-line.me-1.my-1.d-none
       hr.my-0
   input#hidden-dictionary-id.hidden-input-dict-id(
@@ -99,8 +99,8 @@ form#form-edit-content.needs-validatio.mt-2(
     value=dictionaryId
   )
   .term-input-group.mt-xl-4.mt-3
-    .subject-name.col-sm-6.d-flex.justify-content-between
-      label.input-name-txt(for="term-name") TERMIN
+    .subject-name.col-sm-12.col-xl-8.col-xxl-6.d-flex.justify-content-between
+      label.input-name-txt(for="term-name")= t('TERMIN')
       include /utilities/mixed-content
       - const type = 'two'
       +mixedContentBtns
@@ -112,9 +112,9 @@ form#form-edit-content.needs-validatio.mt-2(
         )
 
       .col.d-none.d-xl-flex.align-items-center
-        span.d-md-inline.d-block.name-info-txt Vnesite termin.
+        span.d-md-inline.d-block.name-info-txt= t('Vnesite termin.')
 
-  #create-headword-group.mt-sm-3.mt-2
+  //- #create-headword-group.mt-sm-3.mt-2
     .subject-name
       label.input-name-txt(for="btn-new-headword-grp") OBLIKE, NAGLASI, IZGOVOR
     .row
@@ -127,22 +127,22 @@ form#form-edit-content.needs-validatio.mt-2(
 
   #created-headword-group.mt-sm-4.mt-2.d-none
     .subject-name
-      span.input-name-txt Oblike, naglasi, izgovor
+      span.input-name-txt= t('Oblike, naglasi, izgovor')
     .col-sm-12.col-xl-8.col-xxl-6
       .table-responsive
         table#headword-table.table-striped.table
           tr
             td#term-key 
             td 
-              a(href="") Oblike
+              a(href="")= t('Oblike')
             td 
-              a(href="") Naglas
+              a(href="")= t('Naglas')
             td 
-              a(href="") Izgovor
+              a(href="")= t('Izgovor')
   if structure.hasDomainLabels
     .title.mt-sm-4.mt-2
       .subject-name
-        label.input-name-txt(for="headword-group") PODROČNE OZNAKE
+        label.input-name-txt(for="headword-group")= t('PODROČNE OZNAKE')
       .row
         .col-sm-12.col-xl-8.col-xxl-6
           select#domain-secondary.name-input.d-inline.form-control.multiple(
@@ -154,24 +154,24 @@ form#form-edit-content.needs-validatio.mt-2(
                 option(value=domain.id)= domain.name
 
         .col.d-none.d-xl-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vstavite ustrezno področno oznako, ki jo želite določiti za posamezni termin.
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Vstavite ustrezno področno oznako, ki jo želite določiti za posamezni termin.')
   if structure.hasLabel
     .title.mt-sm-4.mt-2
-      .subject-name.col-sm-6.d-flex.justify-content-between
-        label.input-name-txt(for="explanation-field") POJASNILO
+      .subject-name.col-sm-12.col-xl-8.col-xxl-6.d-flex.justify-content-between
+        label.input-name-txt(for="explanation-field")= t('POJASNILO')
         +mixedContentBtns(type)
       .row
         .col-sm-12.col-xl-8.col-xxl-6
-          textarea#explanation-field.form-control.explanation-field.mc-field(
+          textarea#explanation-field.form-control.explanation-field.mc-field.dispatch-tab(
             type="text"
             name="label"
           )
         .col.d-none.d-xl-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Pojasnilo ...
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte podatek o zunajjezikovnih okoliščinah, ki niso povezane s pojmom, npr. letnico.')
   if structure.hasDefinition
     .title.mt-sm-4.mt-2
-      .subject-name.col-sm-6.d-flex.justify-content-between
-        label.input-name-txt(for="definition-field") DEFINICIJA
+      .subject-name.col-sm-12.col-xl-8.col-xxl-6.d-flex.justify-content-between
+        label.input-name-txt(for="definition-field")= t('DEFINICIJA')
         +mixedContentBtns(type)
       .row
         .col-sm-12.col-xl-8.col-xxl-6
@@ -180,11 +180,11 @@ form#form-edit-content.needs-validatio.mt-2(
             name="definition"
           )
         .col.d-none.d-xl-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vstavite definicijo termina.
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Vstavite definicijo pojma.')
   if structure.hasSynonyms
     .title.mt-sm-4.mt-2
       .subject-name.col-sm-6.d-flex.justify-content-between
-        label.input-name-txt(for="synonyms-input") SINONIMI
+        label.input-name-txt(for="synonyms-input")= t('SINONIMI')
         //- +mixedContentBtns
       .row
         .col-sm-12.col-xl-8.col-xxl-6
@@ -193,47 +193,47 @@ form#form-edit-content.needs-validatio.mt-2(
             multiple
           )
         .col.d-none.d-xl-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vstavite sinonime, ki se za termin še uporabljajo.
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Vstavite termine, ki se za definirani pojem tudi uporabljajo.')
   if structure.hasLinks
     .title.mt-sm-4.mt-2
-      .subject-name.col-sm-6.d-flex.justify-content-between
-        label.input-name-txt(for="connections") POVEZANI TERMIN
+      .subject-name.col-12.col-xl-8.col-xxl-6.d-flex.justify-content-between
+        label.input-name-txt(for="connections")= t('POVEZANI TERMIN')
         +mixedContentBtns
       .row.align-items-center.link-row
-        .col-xl-2.col-6
+        .col-xxl-2.col-xl-3.col-4
           select.name-input.form-select.d-inline(
             type="text"
             name="type"
             placeholder="Tip"
           )
-            option(value="related") Sorodni
-            option(value="broader") Širši
-            option(value="narrow") Ožji
-        .col-sm-12.col-xl-4
-          input#connections.name-input.form-control.d-inline.mc-field(
+            option(value="related")= t('Sorodni')
+            option(value="broader")= t('Širši')
+            option(value="narrow")= t('Ožji')
+        .col-8.col-xl-5.col-xxl-4
+          input#connections.name-input.form-control.d-inline.mc-field.dispatch-tab(
             type="text"
             name="links"
             maxlength="120"
           )
 
         .col.d-none.d-xl-flex.align-items-cente
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Povezani termin ...
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte termin, ki je sicer definiran v samostojnem slovarskem sestavku, vendar je povezan s terminom, ki ga opisujete v tem slovarskem sestavku.')
 
     #add-new-connection.mt-sm-4.mt-2
       .subject-name
-        label.input-name-txt(for="input-new-connection") DODATNI POVEZANI TERMIN
+        label.input-name-txt(for="input-new-connection")= t('DODATNI POVEZANI TERMIN')
       .row
         .col-sm-12.col-xl-8.col-xxl-6
           button#input-new-connection.input-new-btn.form-control(type="button")
-            span.new-author-text-btn Dodaj povezani termin.
+            span.new-author-text-btn= t('Dodaj povezani termin.')
 
         .col.d-none.d-xl-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte termin, ki je sicer definiran v samostojnem slovarskem sestavku, vendar je povezan s terminom, ki ga opisujete v tem slovarskem sestavku.
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 
 
   if structure.hasOther
     .title.mt-sm-4.mt-2
-      .subject-name.col-sm-6.d-flex.justify-content-between
-        label.input-name-txt(for="other-field") DRUGO
+      .subject-name.col-sm-12.col-xl-8.col-xxl-6.d-flex.justify-content-between
+        label.input-name-txt(for="other-field")= t('DRUGO')
         - const br = 'br'
         +mixedContentBtns(br)
       .row
@@ -243,12 +243,12 @@ form#form-edit-content.needs-validatio.mt-2(
             name="other"
           )
         .col.d-none.d-xl-flex.align-items-center
-          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Definicija ...
+          span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Vnesite podatke, ki niso sistemsko vključeni v druga polja, npr. vir, zgled rabe.')
 
   if structure.hasForeignLanguages
     #foreign-languages-group
       .mt-sm-4.mt-2
-        span.input-name-txt TUJI JEZIKI
+        span.input-name-txt= t('TUJI JEZIKI')
       .languages-group-white.pb-3.pt-1.mt-2
         if languages.length
           each language, index in languages
@@ -260,8 +260,8 @@ form#form-edit-content.needs-validatio.mt-2(
                 name=`foreign[${language.id}][code]`
                 value=language.code
               )
-              .subject-name.mt-2.col-sm-6.d-flex.justify-content-between
-                label.input-name-txt.mt-2(for="foreign-term") TERMINI
+              .subject-name.mt-2.col-sm-12.col-xl-8.col-xxl-6.d-flex.justify-content-between
+                label.input-name-txt.mt-2(for="foreign-term")= t('TERMINI')
                 +mixedContentBtns
               .row
                 .col-sm-12.col-xl-8.col-xxl-6
@@ -270,12 +270,12 @@ form#form-edit-content.needs-validatio.mt-2(
                     multiple
                   )
                 .col.d-none.d-xl-flex.align-items-center
-                  span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte tujejezični ustreznik.
+                  span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte tujejezični ustreznik.')
 
               if structure.hasForeignDefinitions
                 .mt-sm-4.mt-2
-                  .subject-name.d-flex.justify-content-between.col-sm-6
-                    label.input-name-txt DEFINICIJA
+                  .subject-name.col-sm-12.col-xl-8.col-xxl-6.d-flex.justify-content-between.col-sm-6
+                    label.input-name-txt= t('DEFINICIJA')
                     +mixedContentBtns(type)
                   .row
                     .col-sm-12.col-xl-8.col-xxl-6
@@ -284,11 +284,11 @@ form#form-edit-content.needs-validatio.mt-2(
                         name=`foreign[${language.id}][definition]`
                       )
                     .col.d-none.d-xl-flex.align-items-center
-                      span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Vpišite definicijo v tujem jeziku.
+                      span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Vpišite definicijo v tujem jeziku.')
               if structure.hasForeignSynonyms
                 .mt-sm-4.mt-2
                   .subject-name.d-flex.justify-content-between.col-sm-6
-                    label.input-name-txt.mt-2 SINONIMI
+                    label.input-name-txt.mt-2= t('SINONIMI')
                     //- +mixedContentBtns
                   .row.mb-4
                     .col-sm-12.col-xl-8.col-xxl-6
@@ -297,12 +297,12 @@ form#form-edit-content.needs-validatio.mt-2(
                         multiple
                       )
                     .col.d-none.d-xl-flex.align-items-center
-                      span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte tujejezične ustreznike, ki se za opisani termin tudi uporabljajo v tujem jeziku.
+                      span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte tujejezične ustreznike, ki se za opisani pojem tudi uporabljajo v tujem jeziku.')
         else
           .language.px-3
             span.bold-blue-text= languages.nameSl
             .subject-name.d-flex.flex-column.mt-2
-              label.input-name-txt.mt-2(for="foreign-term") TERMINI
+              label.input-name-txt.mt-2(for="foreign-term")= t('TERMINI')
             .row
               .col-sm-12.col-xl-8.col-xxl-6
                 select.name-input.d-inline.form-control.without-dropdown(
@@ -310,15 +310,15 @@ form#form-edit-content.needs-validatio.mt-2(
                   multiple
                 )
               .col.d-none.d-xl-flex.align-items-center
-                span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodajte tujejezični ustreznik.
+                span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte tujejezični ustreznik.')
   if structure.hasImages ||  structure.hasAudio || structure.hasVideo
     .mt-sm-4.mt-2
-      span.input-name-txt MULTIMEDIJA
+      span.input-name-txt= t('MULTIMEDIJA')
     .multimedia-section.px-3.pb-3.pt-1
       if structure.hasImages
         .mt-3
           .subject-name
-            label.input-name-txt(for="image-input-field") SLIKA
+            label.input-name-txt(for="image-input-field")= t('SLIKA')
           .row
             .col-sm-12.col-xl-8.col-xxl-6
               input#image-input-field.form-control.d-inline(
@@ -327,21 +327,21 @@ form#form-edit-content.needs-validatio.mt-2(
                 placeholder="URL"
               )
             .col.d-none.d-xl-flex.align-items-center
-              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Slika ...
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte povezavo do slike.')
 
         #add-new-image.mt-sm-4.mt-2
           .subject-name
-            label.input-name-txt(for="input-new-image") NOVA SLIKA
+            label.input-name-txt(for="input-new-image")= t('NOVA SLIKA')
           .row
             .col-sm-12.col-xl-8.col-xxl-6
               button#input-new-image.input-new-btn.form-control(type="button")
-                span.new-author-text-btn Nova slika
+                span.new-author-text-btn= t('Nova slika')
             .col.d-none.d-xl-flex.align-items-center
-              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodaj video ...
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0
       if structure.hasAudio
         .mt-sm-4.mt-2
           .subject-name
-            label.input-name-txt(for="audio-input-field") ZVOK
+            label.input-name-txt(for="audio-input-field")= t('ZVOK')
           .row
             .col-sm-12.col-xl-8.col-xxl-6
               input#audio-input-field.form-control.d-inline(
@@ -350,21 +350,21 @@ form#form-edit-content.needs-validatio.mt-2(
                 placeholder="URL"
               )
             .col.d-none.d-xl-flex.align-items-center
-              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Zvok ...
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte povezavo do zvočnega posnetka.')
 
         #add-new-audio.mt-sm-4.mt-2
           .subject-name
-            label.input-name-txt(for="input-new-audio") NOV ZVOK
+            label.input-name-txt(for="input-new-audio")= t('NOV ZVOK')
           .row
             .col-sm-12.col-xl-8.col-xxl-6
               button#input-new-audio.input-new-btn.form-control(type="button")
-                span.new-author-text-btn Nov zvok
+                span.new-author-text-btn= t('Nov zvok')
             .col.d-none.d-xl-flex.align-items-center
-              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodaj zvok ...
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0
       if structure.hasVideo
         .mt-sm-4.mt-2
           .subject-name
-            label.input-name-txt(for="video-input-field") VIDEO
+            label.input-name-txt(for="video-input-field")= t('VIDEO')
           .row
             .col-sm-12.col-xl-8.col-xxl-6
               input#video-input-field.form-control.d-inline(
@@ -373,14 +373,14 @@ form#form-edit-content.needs-validatio.mt-2(
                 placeholder="URL"
               )
             .col.d-none.d-xl-flex.align-items-center
-              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Video ...
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte povezavo do videa.')
 
         #add-new-video.mt-sm-4.mt-2
           .subject-name
-            label.input-name-txt(for="input-new-video") NOV VIDEO
+            label.input-name-txt(for="input-new-video")= t('NOV VIDEO')
           .row
             .col-sm-12.col-xl-8.col-xxl-6
               button#input-new-video.input-new-btn.form-control(type="button")
-                span.new-author-text-btn Nov video
+                span.new-author-text-btn= t('Nov video')
             .col.d-none.d-xl-flex.align-items-center
-              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 Dodaj video ...
+              span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0 

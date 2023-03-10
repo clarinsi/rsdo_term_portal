@@ -1,5 +1,7 @@
+const { rm } = require('fs/promises')
 const Dictionary = require('../../../models/dictionary')
 const Entry = require('../../../models/entry')
+const Extraction = require('../../../models/extraction')
 const {
   searchEntryIndex,
   deleteEntryFromIndex,
@@ -9,6 +11,7 @@ const genEditorAllQuery = require('../../../models/helpers/search/generate-query
 const { prepareEditorEntries } = require('../../../models/helpers/search')
 const { DEFAULT_HITS_PER_PAGE } = require('../../../config/settings')
 const { minEntriesRequirementCheckAndAct } = require('../../helpers/dictionary')
+const { getExportFilesPath } = require('../../../models/helpers/dictionary')
 
 const dictionary = {}
 
@@ -115,6 +118,8 @@ dictionary.delete = async (req, res) => {
   const dictionaryId = +req.params.dictionaryId
   await Dictionary.delete(dictionaryId)
   await deleteDictionaryEntriesFromIndex(dictionaryId)
+  const exportFilesPath = getExportFilesPath(dictionaryId)
+  await rm(exportFilesPath, { recursive: true, force: true })
 
   res.end()
 }
@@ -167,6 +172,56 @@ dictionary.listDomainLabels = async (req, res) => {
   res.send({ page, numberOfAllPages, results })
 }
 
+dictionary.listFilteredDomainLabels = async (req, res) => {
+  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
+  const { dictionaryId } = req.params
+  const page = +req.query.p > 0 ? +req.query.p : 1
+
+  let { q } = req.query
+
+  if (!q) {
+    q = ''
+  }
+
+  const { pages_total: numberOfAllPages, results } =
+    await Dictionary.fetchFilteredPaginationDomainLabels(
+      dictionaryId,
+      q,
+      resultsPerPage,
+      page
+    )
+
+  res.append('page', page)
+  res.append('number-of-all-pages', numberOfAllPages)
+  res.render('utilities/response-pug-wrapper/domainLabelLister', {
+    dictionary: { id: dictionaryId },
+    numberOfAllPages,
+    results
+  })
+}
+
+dictionary.listSecondaryDomainData = async (req, res) => {
+  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
+  let { q } = req.query
+  const page = +req.query.p > 0 ? +req.query.p : 1
+
+  if (!q) {
+    q = ''
+  }
+
+  const { pages_total: numberOfAllPages, results } =
+    await Dictionary.fetchFilteredSecondaryDomains(q, resultsPerPage, page)
+
+  res.append('page', page)
+  res.append('number-of-all-pages', numberOfAllPages)
+
+  res.render('utilities/response-pug-wrapper/secondaryDomainLister', {
+    page,
+    numberOfAllPages,
+    results
+  })
+}
+
 dictionary.listSecondaryDomains = async (req, res) => {
   const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
   const page = +req.query.p > 0 ? +req.query.p : 1
@@ -176,14 +231,92 @@ dictionary.listSecondaryDomains = async (req, res) => {
   res.send({ page, numberOfAllPages, results })
 }
 
-dictionary.extractionImport = async (req, res) => {
-  // TODO Import logic (Luka's task)
-  // const { id: dictionaryId, extractionId } = req.params
-  // const { from, to } = req.query
-  // const fromIndex = +from > 1 ? Math.floor(from) - 1 : 0
-  // const toIndex = Number.isInteger(+to) ? Math.abs(to) : undefined
-  // console.log({ dictionaryId, extractionId, fromIndex, toIndex })
-  res.send('IMPORTING')
+dictionary.showImportFromFileForm = async (req, res) => {
+  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
+  const { dictionaryId } = req.params
+  const page = +req.query.p > 0 ? +req.query.p : 1
+  const { pages_total: numberOfAllPages, results } =
+    await Dictionary.fetchAllImports(dictionaryId, resultsPerPage, page)
+
+  res.send({ page, numberOfAllPages, results })
+}
+
+dictionary.showExportToFileForm = async (req, res) => {
+  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
+  const { dictionaryId } = req.params
+  const page = +req.query.p > 0 ? +req.query.p : 1
+  const { pages_total: numberOfAllPages, results } =
+    await Dictionary.fetchExports(dictionaryId, resultsPerPage, page)
+
+  res.send({ page, numberOfAllPages, results })
+}
+
+dictionary.importFromExtraction = async (req, res) => {
+  const { id: dictionaryId, extractionId } = req.params
+  const { from, to } = req.body
+  const fromIndex = +from > 1 ? Math.floor(from) - 1 : 0
+  const toIndex = Number.isInteger(+(to === '' ? undefined : to))
+    ? Math.abs(to)
+    : undefined
+
+  // TODO Authentication, authorization, validation.
+
+  const termCandidatesToImport = await Extraction.fetchTermCandidatesSlice(
+    extractionId,
+    fromIndex,
+    toIndex
+  )
+
+  await Dictionary.importFromExtraction(
+    dictionaryId,
+    req.user.id,
+    termCandidatesToImport
+  )
+
+  await Dictionary.indexIntoSearchEngine(dictionaryId)
+
+  res.end()
+}
+
+dictionary.exportBegin = async (req, res) => {
+  const dictionaryId = req.params.id
+  const exportParams = {
+    isValidFilter:
+      req.body.isValidFilter === 'on' ? undefined : req.body.isValidFilter,
+    isPublishedFilter:
+      req.body.isPublishedFilter === 'on'
+        ? undefined
+        : req.body.isPublishedFilter,
+    statusFilter:
+      req.body.statusFilter === 'complete'
+        ? 'complete'
+        : req.body.statusFilter === 'inEdit'
+        ? 'in_edit'
+        : undefined,
+    isTerminologyReviewedFilter:
+      req.body.isTerminologyReviewedFilter === 'on'
+        ? undefined
+        : req.body.isTerminologyReviewedFilter,
+    isLanguageReviewedFilter:
+      req.body.isLanguageReviewedFilter === 'on'
+        ? undefined
+        : req.body.isLanguageReviewedFilter,
+    exportFileFormat: req.body.exportFileFormat
+  }
+
+  const exportId = await Dictionary.beginExport(dictionaryId, exportParams)
+
+  res.end()
+
+  // Explicitcly catch any errors after the response has been sent
+  // since the the final error handler won't be able to send another.
+  try {
+    // TODO Consider delegating processing of export to a seperate process or at least a seperate thread (much like importing, extraction, ...).
+    await Dictionary.processExport(exportId)
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error)
+  }
 }
 
 module.exports = dictionary

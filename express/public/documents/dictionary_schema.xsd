@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="dictionary">
+		<xs:annotation>
+			<xs:documentation>Dictionary (root element)</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="entry" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Entry</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="term" type="mixedBasic">
+								<xs:annotation>
+									<xs:documentation>Slovenian Term</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="hwGrp" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Headword Group</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:attribute name="wfs" type="headwordStatus" default="no content">
+										<xs:annotation>
+											<xs:documentation>Wordforms</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="acc" type="headwordStatus" default="no content">
+										<xs:annotation>
+											<xs:documentation>Accent</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="pron" type="headwordStatus" default="no content">
+										<xs:annotation>
+											<xs:documentation>Pronunciation</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="domainLabels" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Domain Labels</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="domainLabel" type="xs:token" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Domain Label</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="label" type="mixedExtended" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Label</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="def" type="mixedExtended" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Definition</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="syns" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Synonyms</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="syn" type="mixedBasic" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Synonym</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="links" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Links</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="link" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Link</xs:documentation>
+											</xs:annotation>
+											<xs:complexType mixed="true">
+												<xs:complexContent mixed="true">
+													<xs:extension base="mixedBasic">
+														<xs:attribute name="type" type="linkType" use="required"/>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="other" type="mixedOther" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Other</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="fLangs" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Foreign Languages</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="fLang" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Foreign Language</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="fTerms">
+														<xs:annotation>
+															<xs:documentation>Foreign Terms</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="fTerm" type="mixedBasic" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>Foreign Term</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="fDef" type="mixedExtended" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Foreign Definition</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="fSyns" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Foreign Synonims</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="fSyn" type="mixedBasic" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>Foreign Synonim</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="lang" type="xs:language" use="required"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="mm" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Multimedia</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:choice maxOccurs="unbounded">
+										<xs:element name="image" type="xs:anyURI">
+											<xs:annotation>
+												<xs:documentation>Image</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="audio" type="xs:anyURI">
+											<xs:annotation>
+												<xs:documentation>Audio</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="video" type="xs:anyURI">
+											<xs:annotation>
+												<xs:documentation>Video</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sup" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Superscript</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="sub" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Subscript</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="b">
+		<xs:annotation>
+			<xs:documentation>Bold</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sup"/>
+				<xs:element ref="sub"/>
+				<xs:element ref="i"/>
+				<xs:element ref="a"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="i">
+		<xs:annotation>
+			<xs:documentation>Italic</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sup"/>
+				<xs:element ref="sub"/>
+				<xs:element ref="b"/>
+				<xs:element ref="a"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="a">
+		<xs:annotation>
+			<xs:documentation>Link</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sup"/>
+				<xs:element ref="sub"/>
+				<xs:element ref="b"/>
+				<xs:element ref="i"/>
+			</xs:choice>
+			<xs:attribute name="href" type="xs:anyURI" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="br">
+		<xs:annotation>
+			<xs:documentation>New Line</xs:documentation>
+		</xs:annotation>
+		<xs:complexType/>
+	</xs:element>
+	<xs:simpleType name="headwordStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="no content"/>
+			<xs:enumeration value="unverified"/>
+			<xs:enumeration value="unconfirmed"/>
+			<xs:enumeration value="confirmed"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="linkType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="related"/>
+			<xs:enumeration value="broader"/>
+			<xs:enumeration value="narrow"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="mixedBasic" mixed="true">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element ref="sup"/>
+			<xs:element ref="sub"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="mixedExtended" mixed="true">
+		<xs:complexContent mixed="true">
+			<xs:extension base="mixedBasic">
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="b"/>
+					<xs:element ref="i"/>
+					<xs:element ref="a"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="mixedOther" mixed="true">
+		<xs:complexContent mixed="true">
+			<xs:extension base="mixedExtended">
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="br"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

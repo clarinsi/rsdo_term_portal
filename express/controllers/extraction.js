@@ -29,7 +29,10 @@ extraction.list = async (req, res) => {
     )
   }
 
-  res.render('pages/extraction/list', { title: 'Luščenje seznam', extractions })
+  res.render('pages/extraction/list', {
+    title: req.t('Seznam luščenj'),
+    extractions
+  })
 }
 
 extraction.create = async (req, res) => {
@@ -39,7 +42,7 @@ extraction.create = async (req, res) => {
     return res.redirect(303, 'back')
   }
 
-  const extractionName = `Luščenje ${extractionCount + 1}`
+  const extractionName = req.t('Luščenje') + `${extractionCount + 1}`
   const { extractionType } = req.body
 
   let extractionId
@@ -81,7 +84,7 @@ extraction.edit = async (req, res) => {
     extraction.keywords = intoDbArray(params.keywords, 'always')
 
     res.render('pages/extraction/edit-oss', {
-      title: 'KAS + dokumenti',
+      title: req.t('Besedila'),
       id: extractionId,
       extraction,
       allPrimaryDomains,
@@ -93,7 +96,7 @@ extraction.edit = async (req, res) => {
       Extraction.fetchAllStopTermsFilesStats(extractionId)
     ])
     res.render('pages/extraction/edit-own', {
-      title: 'Besedila',
+      title: req.t('Besedila'),
       id: extractionId,
       extraction,
       extractionDocuments,
@@ -117,6 +120,7 @@ extraction.docsEdit = async (req, res) => {
   )
 
   res.render('pages/extraction/docs-edit', {
+    title: req.t('Besedila'),
     id: extractionId,
     extractionDocuments
   })
@@ -129,6 +133,7 @@ extraction.stopTermsEdit = async (req, res) => {
   )
 
   res.render('pages/extraction/stop-terms-edit', {
+    title: req.t('Stop termini'),
     id: extractionId,
     stopTermsFiles
   })
@@ -145,6 +150,7 @@ extraction.listTermCandidates = async (req, res) => {
   const firstPageOfTermCandidates = termCandidates.slice(0, hitsPerPage)
 
   res.render('pages/extraction/term-candidates', {
+    title: req.t('Terminološki kandidati'),
     extractionId,
     termCandidatesJson,
     firstPageOfTermCandidates,

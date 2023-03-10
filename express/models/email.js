@@ -3,15 +3,28 @@ const htmlToText = require('nodemailer-html-to-text').htmlToText()
 const {
   smtpHost,
   smtpPort,
-  smtpTlsRejectUnauthorized,
+  smtpUser,
+  smtpPassword,
+  smtpSecure,
+  smtpRequireTls,
+  smtpAllowInvalidCerts,
   smtpFrom
 } = require('../config/keys')
 
 const options = {
   host: smtpHost,
   port: smtpPort,
-  tls: { rejectUnauthorized: smtpTlsRejectUnauthorized }
+  secure: smtpSecure,
+  requireTLS: smtpRequireTls,
+  tls: { rejectUnauthorized: !smtpAllowInvalidCerts }
 }
+if (smtpUser || smtpPassword) {
+  options.auth = {
+    user: smtpUser,
+    pass: smtpPassword
+  }
+}
+
 const defaults = { from: smtpFrom }
 
 const transporter = nodemailer.createTransport(options, defaults)

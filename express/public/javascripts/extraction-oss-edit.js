@@ -1,4 +1,4 @@
-/* global $, axios, bootstrap */
+/* global $, axios, bootstrap, i18next */
 
 $('.pick-multiple').select2()
 $('.enter-multiple').select2({
@@ -41,8 +41,8 @@ async function handleSearch() {
 }
 
 function handleSearchError() {
-  const alertText = modalAlert.querySelector('#alert-text')
-  alertText.textContent = `NAPAKA pri iskanju`
+  const alertText = modalAlert._element.querySelector('#alert-text')
+  alertText.textContent = i18next.t('NAPAKA pri iskanju')
   modalAlert.toggle()
 }
 

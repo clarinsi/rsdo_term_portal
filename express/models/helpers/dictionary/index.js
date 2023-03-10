@@ -1,7 +1,22 @@
 const { removeHtmlTags } = require('../../helpers')
 const { searchEngineClient, ENTRY_INDEX } = require('../../search-engine')
+const { DATA_FILES_PATH } = require('../../../config/settings')
 
 exports.deserialize = {
+  dictionary(dictionary) {
+    const deserializedDictionary = {
+      id: dictionary.id,
+      nameSl: dictionary.name_sl,
+      timeModified: dictionary.time_modified,
+      status: dictionary.status,
+      countEntries: dictionary.count_entries,
+      countComments: dictionary.count_comments,
+      isAdmin: dictionary.is_admin
+    }
+
+    return deserializedDictionary
+  },
+
   primaryDomain(domain) {
     const deserializedDomain = {
       id: domain.id,
@@ -102,16 +117,78 @@ exports.deserialize = {
     return deserializedDomainLabel
   },
 
-  imports(oneImport) {
-    const deserializedImports = {
-      timeStarted: oneImport.time_started,
-      status: oneImport.status,
-      deleteExisting: oneImport.delete_existing_entries,
-      fileFormat: oneImport.file_format,
-      countValidEntries: oneImport.count_valid_entries
+  // imports(oneImport) {
+  //   const deserializedImports = {
+  //     timeStarted: oneImport.time_started,
+  //     status: oneImport.status,
+  //     deleteExisting: oneImport.delete_existing_entries,
+  //     fileFormat: oneImport.file_format,
+  //     countValidEntries: oneImport.count_valid_entries
+  //   }
+
+  //   return deserializedImports
+  // },
+
+  exports(oneExport) {
+    const deserializedExports = {
+      id: oneExport.id,
+      status: oneExport.status,
+      dateCreated: oneExport.date_created,
+      entryCount: oneExport.entry_count ?? '',
+      typeString: `${
+        oneExport.is_valid_filter === true
+          ? 2
+          : oneExport.is_valid_filter === false
+          ? 3
+          : 1
+      }${
+        oneExport.is_published_filter === true
+          ? 2
+          : oneExport.is_published_filter === false
+          ? 3
+          : 1
+      }${
+        oneExport.status_filter === 'complete'
+          ? 2
+          : oneExport.status_filter === 'in_edit'
+          ? 3
+          : 1
+      }${
+        oneExport.is_terminology_reviewed_filter === true
+          ? 2
+          : oneExport.is_terminology_reviewed_filter === false
+          ? 3
+          : 1
+      }${
+        oneExport.is_language_reviewed_filter === true
+          ? 2
+          : oneExport.is_language_reviewed_filter === false
+          ? 3
+          : 1
+      }-${
+        oneExport.export_file_format === 'xml'
+          ? 1
+          : oneExport.export_file_format === 'csv'
+          ? 2
+          : oneExport.export_file_format === 'tsv'
+          ? 3
+          : 0
+      }`
     }
 
-    return deserializedImports
+    return deserializedExports
+  },
+
+  exportDownloadMetadata(metadata) {
+    const deserializedMetadata = {
+      exportStatus: metadata.status,
+      dictionaryId: metadata.dictionary_id,
+      nameString: metadata.name_string,
+      timeString: metadata.time_string,
+      fileFormat: metadata.export_file_format
+    }
+
+    return deserializedMetadata
   }
 }
 
@@ -194,3 +271,7 @@ function prepareEntryForIndexing(entry) {
 }
 
 exports.prepareEntryForIndexing = prepareEntryForIndexing
+
+exports.getExportFilesPath = dictId => {
+  return `${DATA_FILES_PATH}/dict_export/${dictId}`
+}

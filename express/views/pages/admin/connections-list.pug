@@ -13,7 +13,7 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Povezave s portali', description: 'Svoj terminološki portal lahko povežete še z drugimi terminološkimi portali in med iskalnimi prikazujete tudi njihove zadetke.', buttons: [{ type: 'link', content: 'Dodaj povezavo', url: '/admin/povezave/nova' }] }
+  - const c = { sideMenu: true, h2: t('Povezave'), h1: t('Povezave s portali'), description: t('Svoj terminološki portal lahko povežete še z drugimi terminološkimi portali in med iskalnimi prikazujete tudi njihove zadetke.'), buttons: [{ type: 'link', content: t('Dodaj povezavo'), url: '/admin/povezave/nova' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-2
@@ -34,23 +34,23 @@ block body
                       data-link-id=link.id
                     )
                       img(src="/images/external-link.svg")
-                      span.ms-1 Pošlji
+                      span.ms-1= t('Pošlji')
                 hr.mt-2.mb-3
                 .d-sm-flex.justify-content-between
                   .d-sm-flex.align-items-center.mb-0
                     img(src="/images/x-circle-red.svg")
-                    span.normal-gray.ms-1 ZAVRJEN
+                    span.normal-gray.ms-1= t('ZAVRJEN')
                   .d-flex.align-content-center.mb-0.me-3.mt-2.mt-sm-0
                     a.btn.p-0.image-link(
                       type="link"
                       href=`/admin/povezava/${link.id}/urejanje`
                     )
                       img(src="/images/u_edit-alt.svg" alt="Uredi")
-                      span.normal-gray.ms-1 Uredi
+                      span.normal-gray.ms-1= t('Uredi')
                     .ms-3
                       button.p-0.btn.delete-task(data-link-id=link.id)
                         img(src="/images/red-trash-icon.svg" alt="")
-                        span.normal-gray.ms-2 Odstrani
+                        span.normal-gray.ms-2= t('Odstrani')
             else
               #synced-terms-div
                 .container-fluid.task.task-completed.p-3.mb-4(id='code' + link)
@@ -67,12 +67,12 @@ block body
                           data-link-id=link.id
                         )
                           img(src="/images/refresh-ccw.svg")
-                          span.ms-1 Sinhroniziraj
+                          span.ms-1= t('Sinhroniziraj')
                       a.ms-2.btn.btn-secondary.align-items-center.d-flex(
                         href=`/admin/povezave/seznam/${link.id}`
                       )
                         img(src="/images/book-colorized.svg")
-                        span.ms-1 Slovarji
+                        span.ms-1= t('Slovarji')
                   hr.mt-2.mb-3
                   .d-sm-flex.justify-content-between
                     .d-sm-flex.align-items-center.mb-0.form-check.form-switch.portal-enable-switch(
@@ -91,22 +91,22 @@ block body
                           name="isEnabled"
                           id='checkbox' + link.id
                         )
-                      label.normal-gray.ms-2.mt-1(for='checkbox' + link.id) Omogočeno
+                      label.normal-gray.ms-2.mt-1(for='checkbox' + link.id)= t('Omogočeno')
                     .d-flex.align-content-center.mb-0.me-3.mt-2.mt-sm-0
                       a.btn.p-0.image-link(
                         type="link"
                         href=`/admin/povezava/${link.id}/urejanje`
                       )
                         img(src="/images/u_edit-alt.svg" alt="Uredi")
-                        span.normal-gray.ms-1 Uredi
+                        span.normal-gray.ms-1= t('Uredi')
                       .ms-3
                         button.p-0.btn.delete-task(data-link-id=link.id)
                           img(src="/images/red-trash-icon.svg" alt="")
-                          span.normal-gray.ms-2 Odstrani
+                          span.normal-gray.ms-2= t('Odstrani')
         else
           .d-flex.justify-content-center.mt-5
-            p Nimate povezav za urejanje.
+            p= t('Nimate povezav za urejanje.')
+      include /common/footer
     include /utilities/modal-alert
     include /utilities/modal-response
     +responseModal
-  include /common/footer

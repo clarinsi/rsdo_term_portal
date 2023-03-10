@@ -2,39 +2,41 @@ mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false,
   li.nav-item
     .container
       //-<span class="nav">
-      //- if languageToolbarPresent
-        a.col-sm.nav-entry.language-desktop-entry(href="#")
+      if languageToolbarPresent
+        a.col-sm.nav-entry.language-desktop-entry(
+          href=`/spremeni-jezik/${determinedLanguage === 'sl' ? 'en' : 'sl'}`
+        )
           img(src="/images/globe.svg" alt="")
-          span#langtoggle.text-white SL
+          span#langtoggle.text-white= determinedLanguage === 'sl' ? 'EN' : 'SL'
       .col-sm.nav-entry.menu-link
         button#dropdownMenuButton1(
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         )
-          img.threedots(src="/images/threedots.svg" alt="")
+          img.threedots.mx-0(src="/images/threedots.svg" alt="")
           if menuTextPresent
-            span.text-white.menutxt MENI
+            span.text-white.menutxt= t('MENI')
         ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
           li
-            a.dropdown-item(href="/") Iskanje
+            a.dropdown-item(href="/")= t('Iskanje')
           if extractionEnabled
             li
-              a.dropdown-item(href="/luscenje") Luščenje
+              a.dropdown-item(href="/luscenje")= t('Luščenje')
           if dictionariesEnabled
             li
-              a.dropdown-item(href="/slovarji/moji") Urejanje
+              a.dropdown-item(href="/slovarji/moji")= t('Urejanje')
           if consultancyEnabled
             li
-              a.dropdown-item(href="/svetovanje") Svetovanje
+              a.dropdown-item(href="/svetovanje")= t('Svetovanje')
           if user && (user.hasRole('portal admin') || user.hasRole('dictionaries admin'))
             li
-              a.dropdown-item(href="/admin") Administracija
+              a.dropdown-item(href="/admin")= t('Administracija')
           li
-            a.dropdown-item(href="/pomoc") Pomoč
+            a.dropdown-item(href="/pomoc")= t('Pomoč')
 
       if user
-        button#dropdownAccountButton.col-sm.nav-entry.no-border.no-bg.pe-3(
+        button#dropdownAccountButton.col-sm.nav-entry.no-border.no-bg.me-2rem(
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
@@ -43,7 +45,7 @@ mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false,
           // .position-absolute
           //   .green-dot
           if userTextPresent
-            span.text-white.signintxt.position-relative.left-2 RAČUN
+            span.text-white.signintxt.position-relative.left-2= t('RAČUN')
         ul.dropdown-menu.dropdown-menu-end.py-3.children-pspe-4.children-pt-pb-1.ul-children-hover(
           aria-labelledby="dropdownAccountButton"
         )
@@ -60,7 +62,7 @@ mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false,
                 .col-3
                   img(src="/images/cog.svg" alt="")
                 .col-9
-                  span.text-header-description-gray.d-block Nastavitve
+                  span.text-header-description-gray.d-block= t('Nastavitve')
           li.pb-0.mb-0.ps-3
             form(action="/users/logout" method="post")
               button.profile-menu-button
@@ -68,7 +70,7 @@ mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false,
                   .col-3
                     img(src="/images/log-out.svg" alt="")
                   .col-9
-                    span.text-header-description-gray.d-block Odjava
+                    span.text-header-description-gray.d-block= t('Odjava')
       else
         button#login-static-backdrop-button.col-sm.nav-entry.no-border.no-bg(
           href="#"
@@ -78,4 +80,4 @@ mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false,
         )
           img(src="/images/profile.svg" alt="")
           if userTextPresent
-            span.text-white.signintxt.ps-2 PRIJAVA
+            span.text-white.signintxt.ps-2= t('PRIJAVA')

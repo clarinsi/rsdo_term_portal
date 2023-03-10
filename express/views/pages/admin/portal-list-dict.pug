@@ -12,13 +12,11 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: 'Povezave', h1: 'Povezani slovarji', description: 'Seznam slovarjev s povezanega portala.', buttons: [{ type: 'button', form: 'all-linked-dictionaries', content: 'Shrani' }] }
+  - const c = { sideMenu: true, h2: t('Povezave'), h1: t('Povezani slovarji'), description: t('Seznam slovarjev s povezanega portala.'), buttons: [{ type: 'button', form: 'all-linked-dictionaries', content: t('Shrani') }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container
-      .d-flex.justify-content-between
-        .d-flex.flex-row.mb-4
-          include /components/search-and-filter/inline-search
+      .d-flex.justify-content-end
         .d-flex.me-3
           include /utilities/pager
           +pager
@@ -27,10 +25,10 @@ block body
         .table-responsive
           table.styled-table
             thead
-              tr
+              tr#thead
                 th= ''
-                th= 'Naslov'
-                th= 'Oznaka portala'
+                th= t('Naslov')
+                th= t('Oznaka portala')
             tbody#page-results 
               if results.length
                 each result in results
@@ -48,6 +46,6 @@ block body
                       if result.code
                         td= result.code
               else
-                p Ni še povezanih portalov
+                p= ('Ni še povezanih portalov')
 
   include /common/footer

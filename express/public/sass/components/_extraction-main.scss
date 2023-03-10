@@ -83,6 +83,14 @@
 }
 
 .task-name {
+  width: unset;
+}
+
+.td-index {
+  width: 5%;
+}
+
+.td-cannon {
   width: 45%;
 }
 
@@ -165,40 +173,53 @@
   font-size: 1rem;
 }
 
-// li {
-//   list-style: none;
-// }
-
-#terminology-candidates {
+.terminology-candidates {
   width: 100%;
 }
 
-#user-corpus-btn {
+.ext-secondary-btn {
   width: 100%;
 }
 
-#kas-corpus-btn {
-  width: 100%;
+@media screen and (min-width: v.$layout-breakpoint-small) {
+  .task-name {
+    width: 295px;
+  }
+
+  .dates-div {
+    margin-left: 60px;
+  }
 }
 
 @media screen and (min-width: v.$layout-breakpoint-large) {
-  #terminology-candidates {
+  .terminology-candidates {
     width: unset;
     height: 49px;
   }
 
-  #user-corpus-btn {
+  .ext-secondary-btn {
     width: unset;
     height: 49px;
   }
 
-  #kas-corpus-btn {
-    width: unset;
-    height: 49px;
+  .task-name {
+    width: 295px;
+  }
+
+  .dates-div {
+    margin-left: 60px;
   }
 }
 @media screen and (min-width: v.$layout-breakpoint-x-large) {
   .extraction-margin-left {
     margin-left: 1.6rem;
+  }
+
+  .task-name {
+    width: 745px;
+  }
+
+  .dates-div {
+    margin-left: 80px;
   }
 }

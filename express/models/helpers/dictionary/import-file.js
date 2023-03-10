@@ -250,7 +250,7 @@ function customTagHandler(tag, html, { isWhite, isClosing }) {
   const matchUrl = html.match(/href="?(?<url>https?:\/\/.*?)"?[\s>]/)
   const url = matchUrl ? xss.escapeAttrValue(matchUrl.groups.url) : undefined
 
-  return `<a href${url ? `="${url}" target="_blank"` : ''}>`
+  return `<a href="${url || ''}" target="_blank">`
 }
 
 function toText(markupObj) {

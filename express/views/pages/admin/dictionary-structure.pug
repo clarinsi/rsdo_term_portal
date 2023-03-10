@@ -1,7 +1,7 @@
 extends /layout
 
 block pageSpecificScipts
-  script(nonce=cspNonce src="/javascripts/admin.js")
+  script(nonce=cspNonce src="/javascripts/dictionaries.js")
 
 block body
   section#fixed-top-section
@@ -12,12 +12,13 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: 'Struktura slovarskega sestavka', description: 'V tem razdelku lahko določite elemente slovarskega sestavka. Z izbiro elementov se vam prikazuje podoba slovarskega sestavka. Izbiro lahko tudi med urejanjem vsebine kadarkoli spremenite.', helpLink: { linkHref: '/pomoc', linkText: 'Več ...' }, buttons: [{ type: 'disabled', content: 'Shrani', form: 'form-dictionary-structure' }] }
+  //- TODO I18n 
+  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: t('Struktura slovarskega sestavka'), description: t('V tem razdelku lahko določite elemente slovarskega sestavka. Z izbiro elementov se vam prikazuje podoba slovarskega sestavka. Izbiro lahko tudi med urejanjem vsebine kadarkoli spremenite.'), helpLink: { linkHref: '/pomoc#help-structure-dict', linkText: t('Več ...') }, buttons: [{ type: 'disabled', content: t('Shrani'), form: 'form-dictionary-structure' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container
       form#form-dictionary-structure(method="post")
         include /utilities/dictionary-structure-input
+      include /common/footer
   include /utilities/modal-alert-mixin
-  +alertModal('unsaved-data', 'Shrani', 'Ne', 'modal-save-btn', 'modal-dont-save-btn', 'Imate neshranjene spremebe. Ali jih želite shraniti?')
-  include /common/footer
+  +alertModal('unsaved-data', t('Shrani'), t('Ne'), 'modal-save-btn', 'modal-dont-save-btn', t('Imate neshranjene spremebe. Ali jih želite shraniti?'))

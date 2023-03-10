@@ -18,9 +18,14 @@ block body
       .ps-lg-5.pe-lg-4
         .p-squeeze-lg.text-center
           img.mx-auto(src="/images/search-error.svg" alt="Search Error")
-          h1.text-blue-info-title Ni zadetkov
-          p.pb-5.mt-5.px-10-large.text-center Vaše iskanje ni bilo uspešno. Vpišite novo iskalno poizvedbo in poizkusite znova.
-          //- p.mt-5.px-20-large.h-41
-            button.btn.btn-secondary.d-inline-block.h-41.mx-2 Opcija A
-            button.btn.btn-primary.d-inline-block.h-41.mx-2 Opcija B
+          h1.text-blue-info-title #{ t("Ni zadetkov") }
+          p.pb-5.mt-5.px-10-large.text-center #{ t("Vaše iskanje ni bilo uspešno. Vpišite novo iskalno poizvedbo in poizkusite znova.") }
+          //- p.mt-5.px-20-large.h-41px
+            button.btn.btn-secondary.d-inline-block.h-41px.mx-2 Opcija A
+            button.btn.btn-primary.d-inline-block.h-41px.mx-2 Opcija B
+      .mt-4.row
+        .col.d-flex.justify-content-center
+          if (consultancyHits > 0)
+            #consulancy-results-container
+              include /components/search-and-filter/consultancy-results-content
   include /common/footer

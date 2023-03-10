@@ -5,12 +5,12 @@ mixin decision(sel)
         a#headword.m-auto.d-inline-block.text-header-title-gray(
           href="#"
           class=sel == 0 ? 'selected' : ''
-        ) TERMIN
+        )= t('TERMIN')
         a#translation.m-auto.ps-3.d-inline-block.text-header-title-gray(
           href="#"
           class=sel == 1 ? 'selected' : ''
-        ) TUJI TERMIN
+        )= t('TUJI TERMIN')
         a#other.m-auto.ps-3.d-inline-block.text-header-title-gray(
           href="#"
           class=sel == 2 ? 'selected' : ''
-        ) DRUGO
+        )= t('DRUGO')

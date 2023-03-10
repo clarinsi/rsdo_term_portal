@@ -4,12 +4,16 @@
  * Module dependencies.
  */
 
+// Temporary noop function to be used until i18n is fully in place.
+global.__ = str => str
+
 const db = require('../models/db')
 const cache = require('../models/cache')
 const searchEngine = require('../models/search-engine')
 const email = require('../models/email')
+const init = require('../config/init')
 const { seedDummyData } = require('../models/comment')
-const { initDemoData } = require('../models/demo-paginacija')
+// const { initDemoData } = require('../models/demo-paginacija')
 const app = require('../app')
 const debug = require('debug')('termPortal:server')
 const http = require('http')
@@ -37,7 +41,8 @@ const server = http.createServer(app)
     db.waitForConnection(),
     cache.waitForConnection(),
     searchEngine.waitForConnection(),
-    email.waitForConnection()
+    email.waitForConnection(),
+    init()
   ])
   await searchEngine.initEntryIndex()
   await searchEngine.initConsultancyEntryIndex()
@@ -102,5 +107,7 @@ function onError(error) {
 function onListening() {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
+  // eslint-disable-next-line no-console
+  console.log('Started listening')
   debug('Listening on ' + bind)
 }

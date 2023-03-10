@@ -1,9 +1,14 @@
-/* global $, axios, currentPagePath, initPagination, removeAllChildNodes, transferText, tooltipTriggerList, tooltipList, reinitalizeDefaultTooltipSet, createTooltip */
+/* global $, axios, currentPagePath, initPagination,
+ removeAllChildNodes, transferText, tooltipTriggerList,
+  tooltipList, createTooltip, resetTooltipTriggerList,
+  transferTextExtended, i18next */
 
 // position correction functions
 
 function adjustOffsetBy() {
   // const { offsetMain, fixedTopSection } = window.dictionaryElements
+
+  const BROWSER_UNUSUAL_OFFSET = 17 // computer from chrome
 
   const offsetMain = document.querySelector('#offset-main')
   const fixedTopSection = document.querySelector('#fixed-top-section')
@@ -14,7 +19,7 @@ function adjustOffsetBy() {
   // const adminNavMobile = document.getElementsByClassName('admin-nav')
   const headerPadding = document.getElementById('header-padding')
 
-  if (document.body.clientWidth < 1200) {
+  if (document.body.clientWidth + BROWSER_UNUSUAL_OFFSET < 1200) {
     if (offsetHeaderPadding !== null) offsetMain.style.paddingTop = `0px`
   } else {
     for (let i = 0; i < offsetHeader.length; i++) {
@@ -80,8 +85,14 @@ function mobileMoveContent() {
     '.header-container-divider-right'
   )
 
+  // let actualInnerWidth = $("body").prop("clientWidth"); // El. width minus scrollbar width
+  // let actualInnerWidth = $("body").prop("scrollWidth"); // El. width minus scrollbar width
+
+  // const BROWSER_UNUSUAL_OFFSET = 17 // computer from chrome
+
+  // console.log($('body').innerWidth() + BROWSER_UNUSUAL_OFFSET)
   try {
-    if (document.body.clientWidth <= 1200) {
+    if (window.innerWidth < 1200) {
       if (secondaryButton) {
         mobileRightHolder.appendChild(secondaryButton)
         // secondaryButton.style.height = '28px'
@@ -98,9 +109,11 @@ function mobileMoveContent() {
         primaryButton.style.whiteSpace = 'nowrap'
       }
       navTitle.textContent = siteHeadingTextContent
-      siteHeading.style.display = 'none'
+      // siteHeading.style.display = 'none'
+
+      siteHeading.style.display = 'inline' // I know this is hacky, but sadly due to design this is mandatory in order to fix the bug
     }
-    if (document.body.clientWidth > 1200) {
+    if (window.innerWidth >= 1200) {
       if (secondaryButton) {
         headerContainerRight.appendChild(secondaryButton)
         secondaryButton.style.height = ''
@@ -117,7 +130,7 @@ function mobileMoveContent() {
         primaryButton.style.whiteSpace = ''
       }
 
-      navTitle.textContent = 'Urejanje'
+      navTitle.textContent = i18next.t('Urejanje')
       siteHeading.style.display = 'block'
     }
   } catch (e) {}
@@ -128,7 +141,11 @@ if (resultsListEl) {
   resultsListEl.addEventListener('click', onResultClick)
 }
 const initialPage = +new URL(location).searchParams.get('p') || 1
-const updatePager = initPagination('pagination', onPageChange, initialPage)
+const updatePager = initPagination(
+  ['pagination-top', 'pagination-bottom'],
+  onPageChange,
+  initialPage
+)
 
 async function onPageChange(newPage) {
   const receivedPageNumber = await changePage(newPage)
@@ -146,7 +163,16 @@ async function changePage(newPage) {
     removeAllChildNodes(resultsListEl)
     renderResults(resultsMarkup)
     updatePager(page, numberOfAllPages)
-    reinitalizeDefaultTooltipSet()
+    // reinitalizeDefaultTooltipSet()
+    // console.log($('[data-toggle="tooltip"]'))
+    // $('[data-toggle="tooltip"]').tooltip()
+
+    // toltip reinitialization after moving a page
+    resetTooltipTriggerList()
+    if (tooltipTriggerList.length > 0) {
+      // initialize tooltips
+      tooltipList(null, 'dark-gray-tooltip') // ADD for tooltip debug in the end -> [0].show()
+    }
 
     /*
       try {
@@ -160,12 +186,12 @@ async function changePage(newPage) {
     return page
   } catch (error) {
     // console.log(error)
-    let message = 'Prišlo je do napake.'
+    let message = i18next.t('Prišlo je do napake.')
     if (error.response?.data) {
       message = error.response.data
     } else if (error.request) {
       return // return to bypass error caused (assumed) by popstate on iOS/MacOS
-      message = 'Strežnik ni dosegljiv. Poskusite kasneje.'
+      message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
     }
     alert(message)
     updatePager()
@@ -210,118 +236,9 @@ function onResultClick(e) {
 try {
   if (tooltipTriggerList.length > 0) {
     // initialize tooltips
-    tooltipList(null, 'gray-tooltip') // ADD for tooltip debug in the end -> [0].show()
+    tooltipList(null, 'dark-gray-tooltip') // ADD for tooltip debug in the end -> [0].show()
   }
 } catch (e) {}
-
-/*
-  // refresh: bool
-  function largeStringsOnSmallScreen(alwaysRefresh) {
-    let headwordTexts
-    let translationWords
-    let synonymWords
-    function init() {
-      headwordTexts = [...$('.rihw')]
-      translationWords = [...$('.term-h')].map(e => {
-        return e.children[0]
-      })
-      synonymWords = [...$('.syn-h'), ...$('.risy')]
-    }
-
-    function setupToolTips() {
-      setDynamicTooltipList([])
-      if (headwordTexts) {
-        headwordTexts.map(ttElement =>
-          createTooltip(ttElement, ttElement.innerHTML, '')
-        )
-        // setDynamicTooltipList([...dynamicTooltipList, ...tt])
-      }
-      if (translationWords) {
-        translationWords.map(ttElement =>
-          createTooltip(ttElement, ttElement.innerHTML, '')
-        )
-        // setDynamicTooltipList([...dynamicTooltipList, ...tt])
-      }
-      if (synonymWords) {
-        synonymWords.map(ttElement =>
-          createTooltip(ttElement, ttElement.innerHTML, '')
-        )
-        // setDynamicTooltipList([...dynamicTooltipList, ...tt])
-      }
-      // console.log(dynamicTooltipList)
-    }
-
-    if (!headwordTexts || !translationWords || !synonymWords || alwaysRefresh) {
-      init()
-    }
-
-    function initTooltips() {
-      try {
-        // if (dynamicTooltipList.length || alwaysRefresh) {
-        setupToolTips()
-        // }
-      } catch (e) {}
-    }
-
-    function removeTooltips() {
-      try {
-        $('.rihw').tooltip('dispose')
-        $('.term-h').children().tooltip('dispose')
-        $('.syn-h').tooltip('dispose')
-        $('.risy').tooltip('dispose')
-      } catch (e) {}
-    }
-
-    function manageResize() {
-      const tmpTerms = [...$('.term-h')].map(e => {
-        return e.children[0]
-      })
-      const elements = [...tmpTerms, ...$('.syn-h')]
-      // console.log(document.documentElement.clientWidth)
-
-      const dcw = document.documentElement.clientWidth
-      const checkBorders = (dcw > 991 && dcw < 1600) || dcw < 370
-      if (checkBorders) {
-        const TEXT_LIMIT = 17
-        elements.forEach(el => {
-          el.dataset.textStore = el.innerHTML.includes('...')
-            ? el.dataset.textStore
-            : el.innerHTML
-          el.innerHTML = `${el.innerHTML.slice(0, TEXT_LIMIT)}${
-            el.innerHTML.length > TEXT_LIMIT ? '...' : ''
-          }`
-        })
-
-        initTooltips()
-      } else {
-        elements.forEach(el => {
-          if (el.dataset.textStore) {
-            el.innerHTML = el.dataset.textStore
-          }
-        })
-        removeTooltips()
-      }
-    }
-
-    return {
-      init: function () {
-        init()
-      },
-      refresh: function () {
-        init()
-        try {
-          setupToolTips()
-        } catch (e) {}
-      },
-      manageResize: manageResize
-    }
-  }
-  const textsScreenManager = largeStringsOnSmallScreen(true)
-
-  textsScreenManager.manageResize()
-
-  window.onresize = textsScreenManager.manageResize
-  */
 
 // refresh: bool
 function largeStringsOnSmallScreen(alwaysRefresh) {
@@ -335,30 +252,6 @@ function largeStringsOnSmallScreen(alwaysRefresh) {
     })
     synonymWords = [...$('.syn-h'), ...$('.risy')]
   }
-
-  /*
-    function setupToolTips() {
-      setDynamicTooltipList([])
-      if (headwordTexts) {
-        headwordTexts.map(ttElement =>
-          createTooltip(ttElement, ttElement.innerHTML, '')
-        )
-        // setDynamicTooltipList([...dynamicTooltipList, ...tt])
-      }
-      if (translationWords) {
-        translationWords.map(ttElement =>
-          createTooltip(ttElement, ttElement.innerHTML, '')
-        )
-        // setDynamicTooltipList([...dynamicTooltipList, ...tt])
-      }
-      if (synonymWords) {
-        synonymWords.map(ttElement =>
-          createTooltip(ttElement, ttElement.innerHTML, '')
-        )
-        // setDynamicTooltipList([...dynamicTooltipList, ...tt])
-      }
-      // console.log(dynamicTooltipList)
-    } */
 
   if (!headwordTexts || !translationWords || !synonymWords || alwaysRefresh) {
     init()
@@ -379,169 +272,20 @@ function largeStringsOnSmallScreen(alwaysRefresh) {
       ttElement.tooltip('dispose')
     } catch (e) {}
   }
-
-  /*
-    function initTooltips() {
-      try {
-        // if (dynamicTooltipList.length || alwaysRefresh) {
-        setupToolTips()
-        // }
-      } catch (e) {}
-    }
-
-    function removeTooltips() {
-      try {
-        $('.rihw').tooltip('dispose')
-        $('.term-h').children().tooltip('dispose')
-        $('.syn-h').tooltip('dispose')
-        $('.risy').tooltip('dispose')
-      } catch (e) {}
-    }
-    */
-
-  /*     let OLD_TEXT_LIMIT = 5000 // Guard to not prevent overdisposing
-    function manageResize() {
-      const tmpTerms = [...$('.term-h')].map(e => {
-        return e.children[0]
-      })
-      const elements = [...tmpTerms, ...$('.syn-h')]
-      // console.log(document.documentElement.clientWidth) */
-
-  /*
-      $('.word-constraint').each((i, element) => {
-        // WRONG const wordBr = $(`.word-constraint:nth-child(${i}) > .word-breakable`)
-        const wordList = $(element).find('.word-breakable')
-
-        wordList.each((i, wordElement) => {
-          // console.log(wordElement.innerText)
-
-          if (
-            wordElement.clientWidth > element.clientWidth &&
-            wordElement.innerText.split(' ').length <= 1
-          ) {
-            console.log('Lion')
-            createTooltip($(wordElement))
-            wordElement.classList.push('text-ellipsis')
-          } else {
-            removeTooltip($(wordElement))
-            // console.log(wordElement.classList)
-            wordElement.className = Array.from(wordElement.classList)
-              .filter(e => e !== 'text-ellipsis')
-              .join(' ')
-            // console.log(wordElement.classList)
-          }
-        })
-        // console.log(wordBr)
-      })
-      */
-
-  /*       const dcw = document.documentElement.clientWidth
-      // const checkBorders = (dcw > 420 && dcw < 750) || dcw < 370
-
-      let borderIndex
-
-      // check _common.scc long-text-strip and make sure the widths are aligned
-      if (dcw < 420) {
-        borderIndex = 0 // width = 8 chars (<420)
-      } else if (dcw < 750 || (dcw > 990 && dcw < 1750)) {
-        borderIndex = 1 // width = 12 chars (420 - 750, 990-1750)
-      } else if (dcw > 1750) {
-        borderIndex = 3 // width = 100% (>1759)
-      } else {
-        borderIndex = 2 // width = 25 chars (750-990)
-      }
-
-      let TEXT_LIMIT
-      if (borderIndex === 0) {
-        TEXT_LIMIT = 8
-      } else if (borderIndex === 1) {
-        TEXT_LIMIT = 12
-      } else if (borderIndex === 2) {
-        TEXT_LIMIT = 25
-      } else {
-        TEXT_LIMIT = null
-      }
-
-      if (OLD_TEXT_LIMIT !== TEXT_LIMIT) {
-        elements.forEach(el => {
-          // console.log(el.innerHTML)
-          if (TEXT_LIMIT && el.innerHTML.length > TEXT_LIMIT) {
-            console.log(`DEBUG TEXT LIMIT: ${TEXT_LIMIT}`)
-            console.log(`DEBUG EL LEN: ${el.innerHTML.length}`)
-            console.log(`DEBUG EL TEXT: ${el.innerHTML}`)
-            console.log('TOOLTIP CREATED')
-            createTooltipEl(el, 'gray-tooltip')
-          } else {
-            removeTooltip($(el))
-          }
-        })
-      }
-
-      OLD_TEXT_LIMIT = TEXT_LIMIT */
-
-  /*
-      if (checkBorders) {
-        console.log('HEYOO')
-        const TEXT_LIMIT = 17
-        elements.forEach(el => {
-          el.dataset.textStore = el.innerHTML.includes('...')
-            ? el.dataset.textStore
-            : el.innerHTML
-          el.innerHTML = `${el.innerHTML.slice(0, TEXT_LIMIT)}${
-            el.innerHTML.length > TEXT_LIMIT ? '...' : ''
-          }`
-        })
-
-        initTooltips()
-      } else {
-        elements.forEach(el => {
-          if (el.dataset.textStore) {
-            el.innerHTML = el.dataset.textStore
-          }
-        })
-        removeTooltips()
-      }
-
-      */
-  /* }
-
-    return {
-      init: function () {
-        init()
-      },
-      refresh: function () {
-        init()
-      },
-      manageResize: manageResize
-    } */
 }
 
-// const textsScreenManager = largeStringsOnSmallScreen(true)
-
-// textsScreenManager.manageResize()
-
-// window.onresize = textsScreenManager.manageResize
-
-/*
-function transferText(sideMenuText) {
-  const siteHeading = document.getElementById('site-heading')
-  const siteHeadingTextContent = siteHeading.textContent
-  const navTitle = document.getElementById('nav-title')
-
-  if (document.body.clientWidth <= 1200) {
-    navTitle.textContent = siteHeadingTextContent
-    siteHeading.style.display = 'none'
-  } else {
-    navTitle.textContent = sideMenuText
-  }
-}
-*/
+window.addEventListener('load', () => {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 function handleProperTextDisplay() {
+  // const BROWSER_UNUSUAL_OFFSET = 17
   if (/\/iskanje/.test(currentPagePath)) {
-    transferText('Iskanje po slovarjih', true)
+    transferText('Iskanje po slovarjih', true, 'site-heading') //,
+    // BROWSER_UNUSUAL_OFFSET
+    // )
   } else if (/\/termin/.test(currentPagePath)) {
-    transferText('', true)
+    transferText('', true, 'site-heading') // , BROWSER_UNUSUAL_OFFSET)
   }
 }
 

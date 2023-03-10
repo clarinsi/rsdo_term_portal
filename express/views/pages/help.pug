@@ -15,5 +15,8 @@ block body
           data-bs-target="#list-example"
           tabindex="0"
         )
-        include /utilities/help-text
-  include /common/footer
+        if determinedLanguage === 'sl'
+          include /utilities/help-text_sl
+        else
+          include /utilities/help-text_en
+      include /common/footer

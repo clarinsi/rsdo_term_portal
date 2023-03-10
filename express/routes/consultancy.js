@@ -17,7 +17,7 @@ router.use((req, res, next) => {
 
 router.get('/vprasanje/admin/novo', consultancyAdmin.new)
 
-router.get('/vprasanje/admin/uporabniki', consultancyAdmin.users)
+router.get('/vprasanje/admin/svetovalci', consultancyAdmin.users)
 
 router.get('/vprasanje/admin/zavrnjeno', consultancyAdmin.rejected)
 

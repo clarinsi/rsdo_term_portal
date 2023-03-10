@@ -4,15 +4,15 @@ mixin sideMenuEntry(id, selectMoreId , title, content, contentRoot, disabledSect
     .nav-section-header
       span(class=disabledSection ? 'disabled-opacity' : '')= title
       span.btn-area
-        button.btn.btn-primary(
+        button.border-0(
           id=selectMoreId
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#modal-filter"
           disabled=disabledSection
         )
-          span.select-more-text IZBERI VEČ
-          div
+          span.select-more-text= t('IZBERI VEČ')
+          .ps-2
             img(src="/images/fi_copy.svg" alt="")
     ul.nav-section-content(id=id)
       //- root struct check in case of empty results
@@ -35,7 +35,7 @@ mixin sideMenuEntry(id, selectMoreId , title, content, contentRoot, disabledSect
         if isAtLeastOneChecked
           a.showall(href="#" id='show-all-' + id)
             img(src="/images/chevron-left-blue.svg" alt="")
-            span PRIKAŽI VSE
+            span= t('PRIKAŽI VSE')
 
 mixin sfSideNavigation(sideNavigationData)
   .admin-nav
@@ -46,17 +46,17 @@ mixin sfSideNavigation(sideNavigationData)
             src="/images/burger-menu-button-icon.svg"
             alt="Meni"
           )
-        span#nav-title.nav-title Iskanje po slovarjih
+        span#nav-title.nav-title= t('Iskanje po slovarjih')
       #mobile-right-holder
     nav
       .admin-nav-content.slidable.sf-min-h.nav-bg.ps-2rem.sf-correct
-        .search-filter-nav-content.w24rem.me-0.ps-2rem
+        .search-filter-nav-content.w24rem.me-0.ps-2rem.pe-0
           .slidable-list.scroller-style
             a#clear-filters.clear-filter-section.d-flex(href="#")
               img.align-self-center(src="/images/square-minus.svg" alt="")
-              span.fs-075rem.fw-400 POČISTI FILTRE
-            +sideMenuEntry("src-lang-side", "select-src-langs", "Izvorni jeziki", sideNavigationData.sourceLanguages, sideNavigationData, disabledSideMenuFilters.sourceLanguages)
-            +sideMenuEntry("dest-lang-side", "select-dest-langs", "Ciljni jeziki", sideNavigationData.targetLanguages, sideNavigationData, disabledSideMenuFilters.targetLanguages)
-            +sideMenuEntry("domain-side", "select-domains", "Področja", sideNavigationData.primaryDomains, sideNavigationData, disabledSideMenuFilters.primaryDomains)
-            +sideMenuEntry("dict-side", "select-dicts", "Slovarji", sideNavigationData.dictionaries, sideNavigationData, disabledSideMenuFilters.dictionaries)
-            +sideMenuEntry("source-side", "select-sources", "Viri", sideNavigationData.sources, sideNavigationData, disabledSideMenuFilters.sources)
+              span.ps-2.fs-075rem.fw-400= t('POČISTI FILTRE')
+            +sideMenuEntry("src-lang-side", "select-src-langs", t("Jeziki iskanja"), sideNavigationData.sourceLanguages, sideNavigationData, disabledSideMenuFilters.sourceLanguages)
+            +sideMenuEntry("dest-lang-side", "select-dest-langs", t("Ciljni jeziki"), sideNavigationData.targetLanguages, sideNavigationData, disabledSideMenuFilters.targetLanguages)
+            +sideMenuEntry("domain-side", "select-domains", t("Področja"), sideNavigationData.primaryDomains, sideNavigationData, disabledSideMenuFilters.primaryDomains)
+            +sideMenuEntry("dict-side", "select-dicts", t("Slovarji"), sideNavigationData.dictionaries, sideNavigationData, disabledSideMenuFilters.dictionaries)
+            +sideMenuEntry("source-side", "select-sources", t("Viri"), sideNavigationData.sources, sideNavigationData, disabledSideMenuFilters.sources)

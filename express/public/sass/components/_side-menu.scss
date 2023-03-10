@@ -2,7 +2,9 @@
 @use "search-filter/search-filter-navigation" as sf;
 
 // current footer size: 80px
-$navbarSize: calc(100vh - 130px - 72px); // 130px from top minus footer size
+$footer-size: 35px;
+$navbarSize: calc(100vh - 130px - 35px); // 130px from top minus footer size
+// $navbarSizeDict: calc(100vh - 130px - 80px);
 
 .slidable {
   list-style: none;
@@ -31,6 +33,10 @@ $navbarSize: calc(100vh - 130px - 72px); // 130px from top minus footer size
   // max-height: calc(100vh - 80px);
   max-height: $navbarSize;
   overflow-y: auto;
+
+  // &.bottom-offset-dict {
+  // max-height: $navbarSizeDict;
+  // }
 }
 
 @media (min-width: v.$layout-breakpoint-x-large) {
@@ -41,6 +47,12 @@ $navbarSize: calc(100vh - 130px - 72px); // 130px from top minus footer size
     background-color: v.$nav-white;
     padding-top: 0;
     top: 130px;
+  }
+}
+
+.admin-nav-content {
+  a.sel-anchr {
+    align-items: start;
   }
 }
 

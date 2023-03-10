@@ -7,6 +7,7 @@ exports.deserialize = {
       lastName: user.last_name,
       email: user.email,
       hitsPerPage: user.hits_per_page,
+      language: user.language,
       userRoles: user.user_roles,
       assignedConsultancyEntries: user.assigned_consultancy_entries
     }
@@ -21,7 +22,8 @@ exports.deserialize = {
       firstName: userData.first_name,
       lastName: userData.last_name,
       email: userData.email,
-      password: userData.password
+      status: userData.status,
+      language: userData.language
     }
 
     return deserializedData

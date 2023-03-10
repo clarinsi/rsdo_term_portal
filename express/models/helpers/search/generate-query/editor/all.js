@@ -2,7 +2,7 @@ const { EDITOR_MAX_HITS } = require('../../../../../config/settings')
 
 module.exports = function (dictionaryId, filters, searchFieldFilters) {
   const queryDsl = {
-    _source: ['id', 'isValid', 'isPublished', 'term'],
+    _source: ['id', 'isValid', 'isPublished', 'term', 'homonymSort'],
     fields: ['foreignEntries.terms'],
     script_fields: {
       commentActivityIndicator: {

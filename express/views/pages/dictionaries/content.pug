@@ -30,7 +30,7 @@ block body
           #content-data-section.mt-2
             #no-entries-text.d-flex.justify-content-center
               .justify-content-center.mt-5
-                p Ni slovarskih sestavkov za urejanje.
+                p= t('Ni slovarskih sestavkov za urejanje.')
             #entry-preview-section.d-none
               #classic-overview
                 include /utilities/content-classic-overview
@@ -42,6 +42,8 @@ block body
         include /utilities/comments-with-pager
   include /utilities/modal-alert
   include /utilities/modal-alert-mixin
-  +alertModal("delete-modal", "Izbriši", "Prekliči", "modal-del-btn", "cancel-btn", 'Ali želite izbrisati geslo?')
+  include /utilities/modal-response
+  +alertModal("delete-modal", t("Izbriši"), t("Prekliči"), "modal-del-btn", "cancel-btn", t('Ali želite izbrisati slovarski sestavek?'))
+  +responseModal("duplicate-modal", t("Razumem"), "understand-btn", t("Vsebina slovarskega sestavka je bila duplicirana."))
   .mb-3
   //- include /common/footer

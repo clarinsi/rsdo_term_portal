@@ -20,9 +20,16 @@ services:
       PGDATABASE: term_portal
       SMTP_HOST: "${SMTP_HOST:?}"
       SMTP_PORT: "${SMTP_PORT:?}"
-      SMTP_TLS_REJECT_UNAUTHORIZED: "${SMTP_TLS_REJECT_UNAUTHORIZED:?}"
+      SMTP_USER: "${SMTP_USER?}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD?}"
+      SMTP_SECURE: "${SMTP_SECURE:?}"
+      SMTP_REQUIRE_TLS: "${SMTP_REQUIRE_TLS:?}"
+      SMTP_TLS_ALLOW_INVALID_CERTS: "${SMTP_TLS_ALLOW_INVALID_CERTS:?}"
       SMTP_FROM: "${SMTP_FROM:?}"
       ORIGIN: http://localhost:${EXPRESS_LISTEN_PORT:?}
+      PORTAL_ADMIN_INITIAL_EMAIL: "${PORTAL_ADMIN_INITIAL_EMAIL:?}"
+      PORTAL_ADMIN_INITIAL_PASSWORD: "${PORTAL_ADMIN_INITIAL_PASSWORD:?}"
+      EXTRACTION_API_ORIGIN: "${EXTRACTION_API_ORIGIN:?}"
     volumes:
       # When developing/debugging concordancer, disable express bind mount and node_modules volume and enable express-data.
       # - express-data:/usr/src/app/data_files
@@ -35,7 +42,7 @@ services:
     tty: true
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:15.1-alpine3.17
     # Use any of the two custom Dockerfiles below for debugging PL/pgSQL functions.
     # Disable docker-entrypoint-initdb.d bind mount when doing so.
     # build:
@@ -95,7 +102,7 @@ services:
       - "127.0.0.1:${OS_DASHBOARDS_LISTEN_PORT:?}:5601"
 
   concordancer:
-    # image: ghcr.io/clarinsi/rsdo-concordancer-api:v1.0.0
+    # image: ghcr.io/clarinsi/rsdo-concordancer-api:v1.0.3
     build: concordancer
     profiles:
       - develop-concordancer
@@ -114,7 +121,7 @@ services:
       - sloleks:/sloleks
 
   concordancer-manager:
-    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.0
+    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.3
     profiles:
       - develop-concordancer
     depends_on:
@@ -146,7 +153,11 @@ services:
   #     PGDATABASE: term_portal
   #     SMTP_HOST: "${SMTP_HOST:?}"
   #     SMTP_PORT: "${SMTP_PORT:?}"
-  #     SMTP_TLS_REJECT_UNAUTHORIZED: "${SMTP_TLS_REJECT_UNAUTHORIZED:?}"
+  #     SMTP_USER: "${SMTP_USER?}"
+  #     SMTP_PASSWORD: "${SMTP_PASSWORD?}"
+  #     SMTP_SECURE: "${SMTP_SECURE:?}"
+  #     SMTP_REQUIRE_TLS: "${SMTP_REQUIRE_TLS:?}"
+  #     SMTP_TLS_ALLOW_INVALID_CERTS: "${SMTP_TLS_ALLOW_INVALID_CERTS:?}"
   #     SMTP_FROM: "${SMTP_FROM:?}"
   #   volumes:
   #     - /usr/src/app/node_modules

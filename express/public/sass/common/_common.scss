@@ -6,6 +6,67 @@
   padding: 0;
 }
 
+body {
+  color: v.$tp-black;
+}
+
+// .check {
+//   -webkit-appearance: none; /*hides the default checkbox*/
+//   height: 20px;
+//   width: 20px;
+//   position: relative;
+//   top: 20px;
+//   left: 20px;
+//   transition: 0.10s;
+//   background-color: #FE0006;
+//   text-align: center;
+//   font-weight: 600;
+//   color: white;
+//   border-radius: 3px;
+//   outline: none;
+// }
+
+/*
+input[type="checkbox"]:checked {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  font-size: 10px !important;
+  transition: 0.1s;
+  background-color: v.$navigation-maincolor;
+  text-align: center;
+  // font-weight: 600;
+  color: white;
+  border-radius: 3px;
+  outline: none;
+
+  &:before {
+    content: "✔";
+  }
+}*/
+
+/*
+.check:checked {
+  background-color: #0E9700;
+}
+
+.check:before {
+  content: "✖";
+}
+.check:checked:before {
+  content: "✔";
+}
+
+.check:hover {
+  cursor: pointer; 
+  opacity: 0.8;
+}
+*/
+
+.dropdown-item:active {
+  background-color: v.$navigation-maincolor;
+}
+
 // input:focus-visible,
 // button:focus-visible,
 // button:focus {
@@ -15,6 +76,15 @@
 
 .outline {
   cursor: pointer;
+}
+
+.outline-enabled {
+  outline: auto;
+}
+
+.hover-opacity-blue:hover {
+  color: v.$navigation-maincolor;
+  opacity: 0.8;
 }
 
 .index-font-size {
@@ -76,9 +146,31 @@
   margin-top: 0.25rem;
 }
 
-.h-41 {
+.rpm-corr {
+  margin-top: -1.75rem;
+}
+
+.h-40px {
+  height: 40px !important;
+}
+
+// Todo check if this is needed
+.h-41px {
   display: block;
   height: 41px !important;
+}
+// end check
+
+.w320px {
+  width: 320px !important;
+}
+
+.rm-outline:focus {
+  outline: none;
+}
+
+.max-512px {
+  max-width: 512px !important;
 }
 
 .navigation-text-color {
@@ -123,6 +215,11 @@
   width: 32px !important;
 }
 
+.i40x40 {
+  height: 40px !important;
+  width: 40px !important;
+}
+
 .height60 {
   height: 60px !important;
 }
@@ -145,6 +242,10 @@
   @media (min-width: 1200px) {
     width: 40rem !important;
   }
+}
+
+.clipx {
+  overflow-x: hidden;
 }
 
 .strength500 {
@@ -278,6 +379,14 @@
   border: 1px solid v.$gray-2;
 }
 
+.mt-minus-1 {
+  margin-top: -0.25rem;
+}
+
+.mt-minus-p3 {
+  margin-top: -0.3rem;
+}
+
 .ps-2rem {
   padding-left: 2rem !important;
 }
@@ -328,6 +437,7 @@
 
 .pager {
   white-space: nowrap;
+  // min-width: 13.4rem;
 
   * {
     display: inline-block;
@@ -335,6 +445,14 @@
 
   button:disabled {
     opacity: 25%;
+  }
+
+  button {
+    opacity: 75%;
+  }
+
+  button:not([disabled]):hover {
+    opacity: 100%;
   }
 
   .pager-input {
@@ -428,11 +546,18 @@
 
   .termin-offset-up-wide {
     top: 85px !important;
+    max-height: calc(
+      100vh - 130px + 10px
+    ) !important; // correction due to bigger panel size
   }
 }
 
 .mx-2rem {
   margin-left: 2rem !important;
+  margin-right: 2rem !important;
+}
+
+.me-2rem {
   margin-right: 2rem !important;
 }
 
@@ -475,7 +600,7 @@
     .txt {
       font-size: 0.75rem !important;
     }
-    $padding-wide: 3rem;
+    $padding-wide: 2rem;
     img.rsmzk {
       height: 30px;
       padding-left: $padding-wide;

@@ -31,7 +31,7 @@ ul#extraction-list
         a(href=`poc/korpus/${e.corpusId}` target="_blank") Uporabniški korpus
       if e.status === 'finished' && e.ossParams
         a(
-          href="https://www.clarin.si/noske/run.cgi/corp_info?corpname=oss&struct_attr_stats=1"
+          href="https://www.clarin.si/ske/#dashboard?corpname=oss"
           target="_blank"
         ) Korpus KAS+
       | ) (ZAČETEK: #[span.extraction-time-started= e.timeStarted ? e.timeStarted.toLocaleString('sl-SI') : 'ni še bilo začeto'],

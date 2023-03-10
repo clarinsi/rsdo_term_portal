@@ -241,13 +241,21 @@ html {
 
       border: none;
       background: none;
+
+      @media screen and (min-width: v.$layout-breakpoint-medium) {
+        font-size: 1.3rem;
+      }
+
+      &.pdf {
+        font-size: 1rem;
+      }
     }
 
     .search-button-keyboard {
       display: flex;
       flex-shrink: 0;
       margin: 0 20px;
-      width: 30px;
+      // width: 30px;
       height: 100%;
       line-height: 10px;
       align-items: center;
@@ -312,6 +320,7 @@ html {
   }
 
   .menutxt {
+    margin-left: 0.5rem;
     display: flex !important;
   }
 
@@ -421,7 +430,7 @@ html {
 
       .search-button-keyboard {
         margin: 0 20px;
-        width: 25px;
+        // width: 25px;
         line-height: 10px;
       }
     }
@@ -429,7 +438,7 @@ html {
 
   .descriptionArea {
     width: 48rem;
-    padding: 5rem 2rem;
+    padding: 5rem 2rem 3.5rem; // add specific bottom padding to align with footer padding
     margin: 0 auto;
   }
 

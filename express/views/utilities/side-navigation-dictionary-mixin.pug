@@ -1,3 +1,5 @@
+//- TODO MARK FOR DELETION
+
 mixin sideNavigation(sideNavigationData)
   .admin-nav
     .admin-nav-mobile
@@ -7,7 +9,7 @@ mixin sideNavigation(sideNavigationData)
           alt="Meni"
         )
       span.nav-title
-    ul.admin-nav-content.slidable
+    ul.admin-nav-content.slidable.scroller-style
       block admin-nav-content
       p.side-nav-title Urejanje
       li.admin-nav-item
@@ -20,15 +22,15 @@ mixin sideNavigation(sideNavigationData)
           p Lastnosti
         ul.sub-links
           li
-            a(href="#" class=sideNavigationData.classNameImeOpis) Ime in opis
+            a(href="#" class=sideNavigationData.classNameImeOpis) ${ t('Ime in opis') }
           li
-            a(href="#" class=sideNavigationData.classNameUporabniki) Uporabniki
+            a(href="#" class=sideNavigationData.classNameUporabniki) ${ t('Uporabniki') }
           li
-            a(href="#" class=sideNavigationData.classNameStruktura) Struktura
+            a(href="#" class=sideNavigationData.classNameStruktura) ${ t('Struktura') }
           li
-            a(href="#" class=sideNavigationData.classNameNapredno) Napredno
+            a(href="#" class=sideNavigationData.classNameNapredno) ${ t('Napredno') }
           li
-            a(href="#" class=sideNavigationData.classNameKomentarji) Komentarji
+            a(href="#" class=sideNavigationData.classNameKomentarji) ${ t('Komentarji') }
       li.admin-nav-item
         a(href="#")
           img(src="/images/book.svg" alt="")

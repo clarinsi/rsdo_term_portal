@@ -6,6 +6,11 @@
   align-items: center;
 }
 
+.pager-container {
+  display: flex;
+  width: 130px;
+}
+
 .comments-container {
   list-style: none;
   margin: 0;
@@ -173,7 +178,7 @@ form.comment-form::after {
 
 .comments-top-hr {
   color: #b6bec4;
-  opacity: 0.7;
+  opacity: 0.8;
   margin-top: 0.063rem;
   margin-bottom: 0rem;
   height: 10%;
@@ -354,7 +359,7 @@ form.comment-reply-form button {
 
   .comments-top-hr {
     color: #b6bec4;
-    opacity: 0.7;
+    opacity: 0.8;
     margin-top: 0.63rem;
     margin-bottom: 0rem;
     height: 10%;
@@ -450,7 +455,7 @@ form.comment-reply-form button {
 .comments-holder {
   padding-left: 16px;
 }
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: v.$layout-breakpoint-x-large) {
   .comments-holder {
     padding-left: 36px;
   }
