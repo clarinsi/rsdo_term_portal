@@ -168,7 +168,7 @@ mixin dictionary-description(dictionaryId)
                   option(
                     value=domain.id
                     selected=domain.id === dictionary.domainPrimary
-                  )= domain.nameSl
+                  )= domain.name
             #invalid-section.invalid-feedback-selection.hidden-section.mt-3= t('Nimate izbranega področja CERIF.')
             .col-sm.d-flex.align-items-center
               span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Izberite področje svojega terminološkega slovarja na seznamu področij.')
@@ -184,9 +184,9 @@ mixin dictionary-description(dictionaryId)
               )
                 each domain in allSecondaryDomains
                   if associatedSecondaryDomains.some(associatedDomain => associatedDomain.id === domain.id)
-                    option(value=domain.id selected)= domain.nameSl
+                    option(value=domain.id selected)= domain[`name${capitalize(determinedLanguage)}`]
                   else
-                    option(value=domain.id)= domain.nameSl
+                    option(value=domain.id)= domain[`name${capitalize(determinedLanguage)}`]
             .col-sm.d-flex.align-items-center
               span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3= t('Podpodročje.')
 

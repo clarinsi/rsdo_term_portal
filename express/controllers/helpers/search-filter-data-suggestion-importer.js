@@ -4,24 +4,23 @@ const { getInstanceSetting } = require('../../models/helpers')
 
 const helper = {}
 
-helper.initialize = async () => {
+helper.initialize = async determinedLanguage => {
   const initializers = {}
 
-  // TODO Once english language is implemented, gather selected language (sl/en) from request ~ (cookies?)
-  // TODO i18n name_sl
-  const language = 'name_sl'
-
   // TODO Consider parallelizing following queries. Single vs pooled clients?
-  initializers.allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
-  initializers.sourceLanguages = await Dictionary.fetchAllLanguages(language)
-  initializers.targetLanguages = (
-    await Dictionary.fetchAllLanguages(language)
-  ).filter(
+  initializers.allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains(
+    determinedLanguage
+  )
+  const allLanguages = await Dictionary.fetchAllLanguages(determinedLanguage)
+  initializers.sourceLanguages = allLanguages
+  initializers.targetLanguages = allLanguages.filter(
     // drop slovene language
     l => l.id !== 32
   )
 
-  initializers.allDictionaryNames = await Dictionary.fetchAll()
+  initializers.allDictionaryNames = await Dictionary.fetchAll(
+    determinedLanguage
+  )
 
   initializers.portals = []
   initializers.portals.push({

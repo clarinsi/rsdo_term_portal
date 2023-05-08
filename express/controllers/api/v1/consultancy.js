@@ -1,3 +1,4 @@
+const user = require('../../../middleware/user')
 const ConsultancyEntry = require('../../../models/consultancy-entry')
 const Domain = require('../../../models/domain')
 const User = require('../../../models/user')
@@ -15,20 +16,6 @@ const { DEFAULT_HITS_PER_PAGE } = require('../../../config/settings')
 const generateQuery = require('../../../models/helpers/search/generate-query')
 
 const consultancy = {}
-
-consultancy.listEntries = async (req, res) => {
-  const consultancyEntryList = await ConsultancyEntry.fetchAll()
-  const data = {}
-  data.consEntryList = consultancyEntryList
-  res.send(data)
-}
-
-consultancy.listNewEntries = async (req, res) => {
-  const consultancyNewEntryList = await ConsultancyEntry.fetchAllNew()
-  const data = {}
-  data.consultancyNewEntryList = consultancyNewEntryList
-  res.send(data)
-}
 
 consultancy.sendPaginationData = async (req, res) => {
   let requestType = req.query.type
@@ -325,9 +312,12 @@ consultancy.publish = async (req, res) => {
   const author = await User.fetchUser(entry.authorId)
   const portalName = await getInstanceSetting(`portal_name_${author.language}`)
   const renderAsync = promisify(req.app.render.bind(req.app))
-  const emailHtml = await renderAsync('email/consultancy-publish-notify', {
-    portalName
-  })
+  const emailHtml = await renderAsync(
+    `email/consultancy-publish-notify_${author.language}`,
+    {
+      portalName
+    }
+  )
   await email.send({
     to: author.email,
     subject: i18next.t('Objava terminološkega vprašanja', {
@@ -342,29 +332,38 @@ consultancy.publish = async (req, res) => {
   res.send()
 }
 
-consultancy.updateQuestion = async (req, res) => {
-  const { id, questionTitle, domain: domainId, question, answer } = req.body
+consultancy.updateQuestion = [
+  (req, res, next) => {
+    const { id } = req.body
 
-  if (!id) return res.status(400).send({})
+    if (!id) return res.status(400).send({})
 
-  if (questionTitle === '' || question === '' || answer === '') {
-    return res
-      .status(422)
-      .send(req.t('Polja naslov, vprašanje in mnenje so obvezna!'))
+    req.entryId = id
+    next()
+  },
+  user.canConsultEntry,
+  async (req, res) => {
+    const { id, questionTitle, domain: domainId, question, answer } = req.body
+
+    if (questionTitle === '' || question === '' || answer === '') {
+      return res
+        .status(422)
+        .send(req.t('Polja naslov, vprašanje in mnenje so obvezna!'))
+    }
+
+    const entry = await ConsultancyEntry.fetchById(id)
+    entry.domainPrimaryId = domainId > 0 ? domainId : null
+    entry.question = question
+    entry.answer = answer // helper.removeHtmlTags(answer).trim()
+    entry.title = questionTitle
+
+    // TODO Luka: Miha, update only fields that were updated.
+    await ConsultancyEntry.updateQuestion(entry)
+    await ConsultancyEntry.indexIntoSearchEngine(id, true)
+
+    res.send({})
   }
-
-  const entry = await ConsultancyEntry.fetchById(id)
-  entry.domainPrimaryId = domainId > 0 ? domainId : null
-  entry.question = question
-  entry.answer = answer // helper.removeHtmlTags(answer).trim()
-  entry.title = questionTitle
-
-  // TODO Luka: Miha, update only fields that were updated.
-  await ConsultancyEntry.updateQuestion(entry)
-  await ConsultancyEntry.indexIntoSearchEngine(id, true)
-
-  res.send({})
-}
+]
 
 consultancy.insertNonModerator = async (req, res) => {
   const questionId = req.body.question_id

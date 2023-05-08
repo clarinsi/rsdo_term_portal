@@ -96,7 +96,7 @@ block body
                         )
                           option(value=-1)
                           each domain in allPrimaryDomains
-                            option(value=domain.id)= domain.nameSl
+                            option(value=domain.id)= domain.name
                       #invalid-section.invalid-feedback-selection.hidden-section.mt-3 #{ t('Nimate izbranega področja CERIF.') }
                       .col-sm.d-flex.align-items-center
                         span.d-md-inline.d-block.smaller-gray-info.ms-xxl-3.ms-md-3 #{ t('Področje, v katero sodi opisani terminološki problem.') }
@@ -133,5 +133,8 @@ block body
           include /utilities/modal-response
           +responseModal("begin-response", t("Razumem"), "understand-btn", isOwnConsultancyEnabled?t("Hvala za poslano vprašanje, ki je bilo posredovano svetovalcem terminološkega portala. Odgovor boste prejeli na e-naslov, ki ste ga navedli ob registraciji."):t("Hvala za poslano vprašanje, ki je bilo posredovano v Terminološko svetovalnico ZRC SAZU. Odgovor boste prejeli na e-naslov, ki ste ga navedli ob registraciji."))
         else
-          p #{ t('Za zastavljanje terminoloških vprašanj morate biti prijavljeni.') }
+          .consultancy-container
+            .text-center.mt-5
+              .pt-3
+                p #{ t('Za zastavljanje terminoloških vprašanj morate biti prijavljeni.') }
   include /common/footer

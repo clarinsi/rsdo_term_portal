@@ -12,8 +12,7 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  //- TODO I18n 
-  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: t('Osnovni podatki'), description: t('Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.'), helpLink: { linkHref: '/pomoc#help-edit-dict', linkText: t('Več ...') }, buttons: [{ type: 'disabled', content: t('Shrani'), form: 'admin-description' }] }
+  - const c = { sideMenu: true, h2: dictionary[`name${capitalize(determinedLanguage)}`], h1: t('Osnovni podatki'), description: t('Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.'), helpLink: { linkHref: '/pomoc#help-edit-dict', linkText: t('Več ...') }, buttons: [{ type: 'disabled', content: t('Shrani'), form: 'admin-description' }] }
   +mainHeader(c)
   include /utilities/dictionary-description-mixin
   +dictionary-description(dictionary.id)

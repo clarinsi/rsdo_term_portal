@@ -455,27 +455,28 @@ Portal.getSlovenianLanguageId = async () => {
 Portal.getSearchAggregateNames = async (
   primaryDomainIds,
   dictionaryIds,
-  languageIds
+  languageIds,
+  determinedLanguage
 ) => {
   const text = `
     SELECT jsonb_build_object(
       'primaryDomains', jsonb_object(
         ARRAY(
-          SELECT ARRAY [id, name_sl]::TEXT[]
+          SELECT ARRAY [id, name_${determinedLanguage}]::TEXT[]
           FROM domain_primary
           WHERE id = ANY ($1)
         )
       ),
       'dictionaries', jsonb_object(
         ARRAY(
-          SELECT ARRAY [id, name_sl]::TEXT[]
+          SELECT ARRAY [id, name_${determinedLanguage}]::TEXT[]
           FROM dictionary
           WHERE id = ANY ($2)
         )
       ),
       'languages', jsonb_object(
         ARRAY(
-          SELECT ARRAY [id, name_sl]::TEXT[]
+          SELECT ARRAY [id, name_${determinedLanguage}]::TEXT[]
           FROM language
           WHERE id = ANY ($3)
         )

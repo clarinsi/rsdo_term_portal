@@ -2,7 +2,7 @@ mixin result-item(headword, entry, isLast=false)
   -
     const foreignEntries = entry.foreignEntries ? entry.foreignEntries : []
     const synonyms = entry.synonyms?entry.synonyms:[]
-    const domain = entry.primaryDomain&&entry.primaryDomain.nameSl?entry.primaryDomain.nameSl:""
+    const domain = entry.primaryDomain?entry.primaryDomain[`name${capitalize(determinedLanguage)}`]:""
     const slovenianDefinitionExists = !!entry.definition
     let foreignDefinitionExists = !!entry.foreignEntries && entry.foreignEntries.length > 0 
     let checkAllForeignDefinitions = false
@@ -92,7 +92,7 @@ mixin result-item(headword, entry, isLast=false)
               .results-sources.d-flex.flex-shrink-1.justify-content-end.align-items-center
                 .results-dict.d-flex.justify-content-end.align-items-center.me-2.px-2(
                   data-bs-toggle="tooltip"
-                  title=`${entry.dictionary.nameSl}`
+                  title=`${entry.dictionary[`name${capitalize(determinedLanguage)}`]}`
                 ) #{ entry.dictionary.nameSlShort }
                 .results-portal.d-flex.justify-content-end.align-items-center.te(
                   data-bs-toggle="tooltip"

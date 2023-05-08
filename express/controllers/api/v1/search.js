@@ -178,7 +178,8 @@ exports.listFilteredDictionaries = async (req, res) => {
     hitsPerPage,
     page,
     orderAttribute,
-    orderIndex
+    orderIndex,
+    req.determinedLanguage
   )
 
   dictionaries = dictionaries.map(e => {
@@ -246,6 +247,9 @@ exports.showModalFilterResults = async (req, res) => {
 
   const aggregationRaw = await searchEntryIndex(aggregateQuery)
 
-  const aggregation = await prepareAggregation(aggregationRaw)
+  const aggregation = await prepareAggregation(
+    aggregationRaw,
+    req.determinedLanguage
+  )
   res.send(prepareSeachFilterData(aggregation, filters))
 }

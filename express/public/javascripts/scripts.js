@@ -953,85 +953,45 @@ if (registerSwithcButton) {
 
   $(document).ready(function () {
     // TODO refactor wth specific select2
-    $('.select-search-field').select2({})
 
-    initSelect2('.select-domain-field', 'Področje')
-    initSelect2('.select-src-lang-field', 'Jezik iskanja')
-    initSelect2('.select-dest-lang-field', 'Ciljni jezik')
-    initSelect2('.select-dict-field', 'Slovar')
-    initSelect2('.select-source-field', 'Vir')
+    isI18nReady.then(t => {
+      $('.select-search-field').select2({})
 
-    $('b[role="presentation"]').hide()
-    $('.select2-selection__arrow').append(
-      '<img src="/images/chevron-down-darker.svg" alt="V"></img>'
-    )
+      initSelect2('.select-domain-field', t('Področje'))
+      initSelect2('.select-src-lang-field', t('Jezik iskanja'))
+      initSelect2('.select-dest-lang-field', t('Ciljni jezik'))
+      initSelect2('.select-dict-field', t('Slovar'))
+      initSelect2('.select-source-field', t('Vir'))
 
-    $('.select-search-field').on('select2:select', function (e) {
-      selectActiveElementFromInput(e)
-      // console.log(activeInput)
-      // console.log(e.target.parentNode.children[2])
-      // const label = e.target.parentNode.children[2]
+      $('b[role="presentation"]').hide()
+      $('.select2-selection__arrow').append(
+        '<img src="/images/chevron-down-darker.svg" alt="V"></img>'
+      )
 
-      // console.log(activeInput)
-      // console.log(activeInput)
-      activeInput.addTag(e.params.data._resultId)
-      activeInput.labelJump()
-    })
+      $('.select-search-field').on('select2:select', function (e) {
+        selectActiveElementFromInput(e)
+        // console.log(activeInput)
+        // console.log(e.target.parentNode.children[2])
+        // const label = e.target.parentNode.children[2]
 
-    $('.select-search-field').on('select2:unselect', function (e) {
-      selectActiveElementFromInput(e)
-      // console.log(activeInput)
-      // console.log(activeInput)
-      activeInput.removeTag(e.params.data._resultId)
-      activeInput.labelJump()
-      // console.log('DELETED ' + e)
-    })
+        // console.log(activeInput)
+        // console.log(activeInput)
+        activeInput.addTag(e.params.data._resultId)
+        activeInput.labelJump()
+      })
 
-    inputs.forEach(e => {
-      e.input = e.domElement.querySelector('.select2-search__field')
-    })
-  })
+      $('.select-search-field').on('select2:unselect', function (e) {
+        selectActiveElementFromInput(e)
+        // console.log(activeInput)
+        // console.log(activeInput)
+        activeInput.removeTag(e.params.data._resultId)
+        activeInput.labelJump()
+        // console.log('DELETED ' + e)
+      })
 
-  /* TODO REMOVE OTHER SCRIPTS WHEN YOU FINISH MODULARIZING THINGS THAT COULD BE MODULARIZED */
-
-  $(document).ready(function () {
-    // TODO refactor wth specific select2
-    $('.select-search-field').select2({})
-
-    initSelect2('.select-domain-field', 'Področje')
-    initSelect2('.select-src-lang-field', 'Jezik iskanja')
-    initSelect2('.select-dest-lang-field', 'Ciljni jezik')
-    initSelect2('.select-dict-field', 'Slovar')
-    initSelect2('.select-source-field', 'Vir')
-
-    $('b[role="presentation"]').hide()
-    $('.select2-selection__arrow').append(
-      '<img src="/images/chevron-down-darker.svg" alt="V"></img>'
-    )
-
-    $('.select-search-field').on('select2:select', function (e) {
-      selectActiveElementFromInput(e)
-      // console.log(activeInput)
-      // console.log(e.target.parentNode.children[2])
-      // const label = e.target.parentNode.children[2]
-
-      // console.log(activeInput)
-      // console.log(activeInput)
-      activeInput.addTag(e.params.data._resultId)
-      activeInput.labelJump()
-    })
-
-    $('.select-search-field').on('select2:unselect', function (e) {
-      selectActiveElementFromInput(e)
-      // console.log(activeInput)
-      // console.log(activeInput)
-      activeInput.removeTag(e.params.data._resultId)
-      activeInput.labelJump()
-      // console.log('DELETED ' + e)
-    })
-
-    inputs.forEach(e => {
-      e.input = e.domElement.querySelector('.select2-search__field')
+      inputs.forEach(e => {
+        e.input = e.domElement.querySelector('.select2-search__field')
+      })
     })
   })
 
@@ -1192,7 +1152,7 @@ const forgottenPasswordInvoker = new StateManagerInvoker(stateManager, () => {
   }
 
   function apllyDescriptionAccordingToState() {
-    $('#alert-text').text(stateManager.getState().fpassWindowDescription)
+    $('#fpi-text').text(stateManager.getState().fpassWindowDescription)
   }
 
   closeAllFPRelatedModals()
@@ -1233,8 +1193,21 @@ function onCancelForgotPassword() {
 }
 
 function onSendForgottenEmailRequest() {
+  if (document.getElementById('forgot-pass-input').value === '') {
+    stateManager.setState({
+      fpassWindowDescription: i18next.t(
+        'Prosimo vnesite vaš elektronski naslov.'
+      )
+    })
+
+    forgottenPasswordInvoker.setState({
+      fpassWindowState: ForgotPasswordState.FORGOT_PASSWORD_ERROR
+    })
+    return
+  }
+
   axios
-    .post('/REPLACETHISDUMMYURL', {
+    .post('/api/v1/users/reset-password-init', {
       usernameOrEmail: document.getElementById('forgot-pass-input').value
     })
     .then(res => {
@@ -1253,11 +1226,18 @@ function onSendForgottenEmailRequest() {
       })
     })
     .catch(err => {
-      stateManager.setState({
-        fpassWindowDescription: i18next.t(
-          'Prišlo je do napake pri pošiljanju sporočila na vaš elektronski naslov. Poskusite ponovno.'
-        )
-      })
+      if (err.response && err.response.data) {
+        stateManager.setState({
+          fpassWindowDescription: err.response.data
+        })
+      } else {
+        stateManager.setState({
+          fpassWindowDescription: i18next.t(
+            'Prišlo je do napake pri pošiljanju sporočila na vaš elektronski naslov. Poskusite ponovno.'
+          )
+        })
+      }
+
       forgottenPasswordInvoker.setState({
         fpassWindowState: ForgotPasswordState.FORGOT_PASSWORD_ERROR
       })

@@ -254,7 +254,7 @@ form#form-edit-content.needs-validatio.mt-2(
           each language, index in languages
             hr(class=index ? 'hr-languages' : 'd-none')
             .language.px-3(data-langauge-id=language.id)
-              span.bold-blue-text= language.nameSl
+              span.bold-blue-text= language.name
               input(
                 type="hidden"
                 name=`foreign[${language.id}][code]`
@@ -300,7 +300,7 @@ form#form-edit-content.needs-validatio.mt-2(
                       span.d-md-inline.d-block.name-info-txt.mt-3.mt-sm-0= t('Dodajte tujejezične ustreznike, ki se za opisani pojem tudi uporabljajo v tujem jeziku.')
         else
           .language.px-3
-            span.bold-blue-text= languages.nameSl
+            span.bold-blue-text= languages.name
             .subject-name.d-flex.flex-column.mt-2
               label.input-name-txt.mt-2(for="foreign-term")= t('TERMINI')
             .row

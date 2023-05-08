@@ -17,14 +17,18 @@ class Dictionary {
   // TODO Add (language sensitive) dictionary status text conversion.
   constructor({
     id,
+    name,
     name_sl: nameSl,
+    name_en: nameEn,
     time_modified: timeModified,
     status,
     count_entries: countEntries,
     count_comments: countComments
   }) {
     this.id = id
+    this.name = name
     this.nameSl = nameSl
+    this.nameEn = nameEn
     this.timeModified = timeModified
     this.status = status
     this.countEntries = countEntries
@@ -32,13 +36,12 @@ class Dictionary {
   }
 
   // Fetch all dictionaries from DB.
-  // TODO i18n name_sl
-  static async fetchAll() {
+  static async fetchAll(determinedLanguage) {
     // TODO Implement SQL stored procedures or functions.
     const { rows: fetchedDictionaries } = await db.query(`
       SELECT
         id,
-        name_sl,
+        name_${determinedLanguage} name,
         time_modified,
         status,
         count_entries,
@@ -51,36 +54,13 @@ class Dictionary {
     return deserializedDictionaries
   }
 
-  /*
-  // Fetch all dictionaries from DB by it's ID.
-  static async fetchAllByUser(id) {
-    // TODO Implement SQL stored procedures or functions.
-    const text = `
-      SELECT
-        id,
-        name_sl,
-        time_modified,
-        status,
-        count_entries,
-        count_comments
-      FROM dictionary
-      WHERE id=$1
-    `
-    const values = [id]
-    const { rows: fetchedDictionaries } = await db.query(text, values)
-    const deserializedDictionary = new this(fetchedDictionaries[0])
-    return deserializedDictionary
-  }
-  */
-
-  // TODO i18n name_sl
   // Fetch all dictionaries from DB for which the user has at least one dictionary role.
-  static async fetchAllByUser(userId) {
+  static async fetchAllByUser(userId, determinedLanguage) {
     // TODO Implement SQL stored procedures or functions.
     const text = `
       SELECT
         id,
-        name_sl,
+        name_${determinedLanguage} name,
         time_modified,
         status,
         count_entries,
@@ -107,16 +87,14 @@ class Dictionary {
   }
 
   // Fetch all primary domains from DB.
-  static async fetchAllPrimaryDomains() {
+  static async fetchAllPrimaryDomains(determinedLanguage) {
     // TODO Implement SQL stored procedures or functions.
     const { rows: fetchedDomains } = await db.query(`
-      SELECT id, name_sl, name_en
+      SELECT id, name_${determinedLanguage} name
       FROM domain_primary
-      ORDER BY id`)
-    const deserializedDomains = fetchedDomains.map(domain =>
-      deserialize.primaryDomain(domain)
-    )
-    return deserializedDomains
+      ORDER BY name_${determinedLanguage}`)
+
+    return fetchedDomains
   }
 
   // Fetch primary domain for a specific dictionary from DB.
@@ -152,18 +130,16 @@ class Dictionary {
   }
 
   // Fetch all languages from DB.
-  static async fetchAllLanguages(lang, excludeSlovene) {
+  static async fetchAllLanguages(determinedLanguage, excludeSlovene) {
     // TODO Implement SQL stored procedures or functions.
     const { rows: fetchedLanguages } = await db.query(`
       SELECT
         id,
-        ${lang}
+        name_${determinedLanguage} name
       FROM language${excludeSlovene ? "\nWHERE code <> 'sl'" : ''}
-      ORDER BY ${lang}`)
-    const deserializedLanguages = fetchedLanguages.map(language =>
-      deserialize.language(language)
-    )
-    return deserializedLanguages
+      ORDER BY name_${determinedLanguage}`)
+
+    return fetchedLanguages
   }
 
   // Create new dictionary in DB and assign the creator as its admin.
@@ -304,11 +280,11 @@ class Dictionary {
   }
 
   // Fetch single dictionary data for editing users from DB.
-  static async fetchEditUsers(dictionaryId) {
+  static async fetchEditUsers(dictionaryId, determinedLanguage) {
     const text = `
       SELECT
         id,
-        name_sl,
+        name_${determinedLanguage} name,
         entries_have_terminology_review_flag,
         entries_have_language_review_flag,
         status
@@ -385,6 +361,7 @@ class Dictionary {
       SELECT
         id,
         name_sl,
+        name_en,
         entries_have_domain_labels,
         entries_have_label,
         entries_have_definition,
@@ -412,21 +389,19 @@ class Dictionary {
   }
 
   // Fetch single dictionary data for viewing details about it
-  static async fetchDictionaryBasicInfo(dictionaryId) {
-    const isInEnglish = false
-    const lang = isInEnglish ? 'd.name_en' : 'd.name_sl'
+  static async fetchDictionaryBasicInfo(dictionaryId, determinedLanguage) {
     const text = `
     SELECT
       d.id,
-      ${lang} dictionarysl,
+      d.name_${determinedLanguage} dictionarysl,
       d.count_entries,
       to_char(d.time_modified,'YYYY-MM-DD') time_modified,
       d.issn,
       d.author,
-      dp.name_sl domain_primary,
+      dp.name_${determinedLanguage} domain_primary,
       description,
-      l.name_sl languageSl,
-      ds.name_sl domainSecondarySl,
+      l.name_${determinedLanguage} languageSl,
+      ds.name_${determinedLanguage} domainSecondarySl,
       lp.name portalnamesl,
       lp.code portalcode
     FROM
@@ -551,7 +526,8 @@ class Dictionary {
     resultsPerPage,
     page,
     orderType,
-    orderIndex
+    orderIndex,
+    determinedLanguage
   ) {
     let queryAppend = ''
     if (domainQuery.length > 0) {
@@ -580,22 +556,21 @@ class Dictionary {
       }
     }
 
-    const isInEnglish = false
-    const lang = isInEnglish ? 'name_en' : 'name_sl'
-
-    const orderBy = `${orderType}.${lang} ${orderIndex ? 'DESC' : 'ASC'}`
+    const orderBy = `${orderType}.name_${determinedLanguage} ${
+      orderIndex ? 'DESC' : 'ASC'
+    }`
 
     // TODO domain primary language toggle!
     const text = `
     SELECT
       distinct (d.id),
-      d.${lang} dictionarysl,
+      d.name_${determinedLanguage} dictionarysl,
       d.count_entries,
       d.count_comments,
       to_char(d.time_modified,'YYYY-MM-DD') time_modified,
       d.issn,
       d.author,
-      dp.name_sl domain_primary,
+      dp.name_${determinedLanguage} domain_primary,
       description,
       lp.name portalnamesl,
       lp.code portalcode
@@ -605,7 +580,7 @@ class Dictionary {
       INNER JOIN domain_primary dp ON d.domain_primary_id = dp.id
       LEFT JOIN linked_dictionary ld ON  ld.target_dictionary_id = d.id
       LEFT JOIN linked_portal lp ON ld.linked_portal_id = lp.id
-      WHERE d.status = 'published' AND LOWER(d.name_sl) LIKE '%' || LOWER($1) || '%' ${queryAppend}
+      WHERE d.status = 'published' AND LOWER(d.name_${determinedLanguage}) LIKE '%' || LOWER($1) || '%' ${queryAppend}
       ORDER BY ${orderBy}
       LIMIT $2
       OFFSET $3`
@@ -737,13 +712,12 @@ class Dictionary {
   }
 
   // Fetch languages associated with a single dictionary from DB.
-  static async fetchLanguages(dictionaryId) {
+  static async fetchLanguages(dictionaryId, determinedLanguage) {
     const text = `
       SELECT
         l.id,
         l.code,
-        l.name_sl,
-        l.name_en
+        l.name_${determinedLanguage} name
       FROM dictionary d
       INNER JOIN dictionary_language dl ON d.id = dl.dictionary_id
       INNER JOIN language l ON dl.language_id = l.id
@@ -753,20 +727,16 @@ class Dictionary {
 
     const { rows: fetchedLanguages } = await db.query(text, value)
 
-    const deserializedLanguages = fetchedLanguages.map(language =>
-      deserialize.language(language)
-    )
-    return deserializedLanguages
+    return fetchedLanguages
   }
 
   // Fetch latest 3 dictionaries by publish date
-  static async fetchLatest3DictsByPublishDate(isInEnglish) {
-    const lang = isInEnglish ? 'd.name_en' : 'd.name_sl'
+  static async fetchLatest3DictsByPublishDate(determinedLanguage) {
     const text = `
     SELECT
     d.id,
-    ${lang} dictionarysl,
-    dp.name_sl domain_primary,
+    d.name_${determinedLanguage} dictionarysl,
+    dp.name_${determinedLanguage} domain_primary,
     d.count_comments
     FROM dictionary d
     INNER JOIN domain_primary dp ON d.domain_primary_id = dp.id
@@ -842,7 +812,11 @@ class Dictionary {
     await db.query(text, values)
   }
 
-  static async fetchAllAdminDictionaries(resultsPerPage, page) {
+  static async fetchAllAdminDictionaries(
+    determinedLanguage,
+    resultsPerPage,
+    page
+  ) {
     // TODO Implement SQL stored procedures or functions.
     const {
       rows: [{ result }]
@@ -856,7 +830,7 @@ class Dictionary {
         'results', ARRAY(
           SELECT jsonb_build_object(
             'id', id,
-            'name', name_sl,
+            'name', name_${determinedLanguage},
             'timeCreated', time_created,
             'timeModified', time_modified,
             'status', status
@@ -1162,12 +1136,12 @@ class Dictionary {
   }
 
   // Fetch single dictionary's name from DB.
-  static async fetchName(dictionaryId) {
+  static async fetchName(dictionaryId, determinedLanguage) {
     const { rows } = await db.query(
-      'SELECT name_sl FROM dictionary WHERE id = $1',
+      `SELECT name_${determinedLanguage} name FROM dictionary WHERE id = $1`,
       [dictionaryId]
     )
-    const dictionaryName = rows[0].name_sl
+    const dictionaryName = rows[0].name
     return dictionaryName
   }
 

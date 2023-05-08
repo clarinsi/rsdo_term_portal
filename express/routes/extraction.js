@@ -1,6 +1,5 @@
 const router = require('express-promise-router')()
 const extraction = require('../controllers/extraction')
-const extractionPocRouter = require('./extraction-poc')
 
 // List all extractions.
 router.get('/', extraction.list)
@@ -8,54 +7,33 @@ router.get('/', extraction.list)
 // All further routes are only available to authenticated users.
 router.use((req, res, next) => {
   if (req.isAuthenticated()) return next()
-  res.redirect(req.baseUrl)
+  res.redirect(303, req.baseUrl)
 })
 
 // Create new extraction.
 router.post('/', extraction.create)
 
-router.use('/poc', extractionPocRouter)
-
 // Edit extraction.
-router.get('/:id', extraction.edit)
+router.get('/:id', extraction.validateOwnership, extraction.edit)
 
 // Update extraction (own documents).
-router.post('/:id', extraction.updateOwn)
+router.post('/:id', extraction.validateOwnership, extraction.updateOwn)
 
 // Edit documents.
-router.get('/:id/besedila', extraction.docsEdit)
+router.get('/:id/besedila', extraction.validateOwnership, extraction.docsEdit)
 
 // Edit stop terms.
-router.get('/:id/stop-termini', extraction.stopTermsEdit)
+router.get(
+  '/:id/stop-termini',
+  extraction.validateOwnership,
+  extraction.stopTermsEdit
+)
 
 // List term candidates for extraction and display export interface.
-router.get('/:id/kandidati', extraction.listTermCandidates)
-
-// // TODO: Ask Luka or Miro what to do with this page.
-// router.get('/id_luscenja/kandidati', (req, res) => {
-//   res.render('pages/extraction/terms', {
-//     title: 'Terminološki kandidati'
-//   })
-// })
-
-// // Show a form to export a dictionary
-// router.get('/id_luscenja/dokumenti/besedila', (req, res) => {
-//   res.render('pages/extraction/docs-edit', {
-//     title: 'Besedila'
-//   })
-// })
-
-// // Show a form to export a dictionary
-// router.get('/id_luscenja/oss', (req, res) => {
-//   res.render('pages/extraction/edit-oss', {
-//     title: 'KAS + dokumenti'
-//   })
-// })
-
-// router.get('/id_luscenja/dokumenti/termini', (req, res) => {
-//   res.render('pages/extraction/stop-terms-edit', {
-//     title: 'Termini'
-//   })
-// })
+router.get(
+  '/:id/kandidati',
+  extraction.validateOwnership,
+  extraction.listTermCandidates
+)
 
 module.exports = router

@@ -100,6 +100,13 @@ html(lang=language)
       crossorigin="anonymous"
     )
 
+    if flashInfo.length
+      include /utilities/modal-response
+      +responseModal("flash-modal", t("Razumem"), "understand-btn", flashInfo[0])
+      script(nonce=cspNonce).
+        const flashModal = new bootstrap.Modal(document.getElementById('flash-modal'));
+        flashModal.toggle();
+
     if inDevEnv
       script(nonce=cspNonce) window.inDevEnv = true
     script(nonce=cspNonce src="/javascripts/globals.js")

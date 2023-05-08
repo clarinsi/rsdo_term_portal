@@ -1,4 +1,4 @@
-/* global $, axios, bootstrap, currentPagePath, initPagination, removeAllChildNodes, unsavedData, replaceContainer, i18next */
+/* global $, axios, bootstrap, currentPagePath, initPagination, removeAllChildNodes, unsavedData, replaceContainer, isI18nReady, i18next, validator */
 
 // const currentPagePath = location.pathname
 
@@ -144,62 +144,64 @@ function initAdmin() {
   }
 
   if (currentPagePath === '/admin/uporabniki/seznam') {
-    const resultsListEl = document.getElementById('page-results')
+    isI18nReady.then(t => {
+      const resultsListEl = document.getElementById('page-results')
 
-    const updatePager = initPagination('pagination', onPageChange)
+      const updatePager = initPagination('pagination', onPageChange)
 
-    async function onPageChange(newPage) {
-      try {
-        const { page, numberOfAllPages, results } = await getDataForPage(
-          newPage
-        )
-        removeAllChildNodes(resultsListEl)
-        renderResults(results)
-        updatePager(page, numberOfAllPages)
-      } catch (error) {
-        let message = i18next.t('Prišlo je do napake.')
-        if (error.response?.data) {
-          message = error.response.data
-        } else if (error.request) {
-          message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+      async function onPageChange(newPage) {
+        try {
+          const { page, numberOfAllPages, results } = await getDataForPage(
+            newPage
+          )
+          removeAllChildNodes(resultsListEl)
+          renderResults(results)
+          updatePager(page, numberOfAllPages)
+        } catch (error) {
+          let message = i18next.t('Prišlo je do napake.')
+          if (error.response?.data) {
+            message = error.response.data
+          } else if (error.request) {
+            message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+          }
+          alert(message)
+          updatePager()
         }
-        alert(message)
-        updatePager()
       }
-    }
 
-    async function getDataForPage(page) {
-      const url = `/api/v1/users/listAllUsers?p=${page}`
-      const { data } = await axios.get(url)
-      return data
-    }
+      async function getDataForPage(page) {
+        const url = `/api/v1/users/listAllUsers?p=${page}`
+        const { data } = await axios.get(url)
+        return data
+      }
 
-    function renderResults(results) {
-      results.forEach(result => {
-        const rowEl = document.createElement('tr')
-        const td1 = document.createElement('td')
-        const td2 = document.createElement('td')
-        const td3 = document.createElement('td')
-        const td4 = document.createElement('td')
-        const aEl = document.createElement('a')
-        const imgEl = document.createElement('img')
-        const spanEl = document.createElement('span')
-        td1.textContent = result.userName
-        td2.textContent = result.email
-        td3.textContent = result.status
-        aEl.classList.add('image-link')
-        aEl.type = 'link'
-        aEl.href = `/admin/uporabniki/${result.id}/urejanje`
-        imgEl.src = '/images/u_edit-alt.svg'
-        imgEl.alt = i18next.t('Uredi')
-        spanEl.className = 'normal-gray ms-1'
-        spanEl.textContent = i18next.t('Uredi')
-        td4.append(aEl)
-        aEl.append(imgEl, spanEl)
-        rowEl.append(td1, td2, td3, td4)
-        resultsListEl.appendChild(rowEl)
-      })
-    }
+      function renderResults(results) {
+        results.forEach(result => {
+          const rowEl = document.createElement('tr')
+          const td1 = document.createElement('td')
+          const td2 = document.createElement('td')
+          const td3 = document.createElement('td')
+          const td4 = document.createElement('td')
+          const aEl = document.createElement('a')
+          const imgEl = document.createElement('img')
+          const spanEl = document.createElement('span')
+          td1.textContent = result.userName
+          td2.textContent = result.email
+          td3.textContent = t(`userStatus${result.status}`)
+          aEl.classList.add('image-link')
+          aEl.type = 'link'
+          aEl.href = `/admin/uporabniki/${result.id}/urejanje`
+          imgEl.src = '/images/u_edit-alt.svg'
+          imgEl.alt = i18next.t('Uredi')
+          spanEl.className = 'normal-gray ms-1'
+          spanEl.textContent = i18next.t('Uredi')
+          td4.append(aEl)
+          aEl.append(imgEl, spanEl)
+          rowEl.append(td1, td2, td3, td4)
+          resultsListEl.appendChild(rowEl)
+        })
+      }
+    })
   }
 
   if (currentPagePath === '/admin/slovarji') {
@@ -280,12 +282,16 @@ function initAdmin() {
     }
   }
 
-  if (/\/admin\/slovarji\/\d+\/podatki/.test(currentPagePath)) {
+  if (
+    /\/admin\/slovarji\/\d+\/podatki/.test(currentPagePath) ||
+    /\/slovarji\/\d+\/podatki/.test(currentPagePath)
+  ) {
     const formEl = document.getElementById('admin-description')
     const imgTrashIcon = document.querySelectorAll('.delete-author-btn')
     const inputNewAuthorEl = document.getElementById('input-new-author')
     const inputNewAreaEl = document.getElementById('input-new-area')
     const dictSideMenu = document.querySelector('.admin-nav-content')
+    $('.without-addition').on('change', enableButton)
     unsavedData(formEl, dictSideMenu)
     formEl.addEventListener('input', enableButton)
     if (imgTrashIcon !== null) {
@@ -946,7 +952,7 @@ function mobileMoveContent() {
       // primaryButton.style.marginRight = '10px'
       primaryButton.style.whiteSpace = 'nowrap'
     }
-    navTitle.textContent = siteHeadingTextContent
+    if (navTitle) navTitle.textContent = siteHeadingTextContent
     siteHeading.style.display = 'none'
   }
   if (document.body.clientWidth > 1200) {
@@ -966,12 +972,14 @@ function mobileMoveContent() {
       primaryButton.style.whiteSpace = ''
     }
 
-    if (
-      currentPagePath.includes('slovarji') &&
-      !currentPagePath.includes('admin')
-    )
-      navTitle.textContent = i18next.t('Urejanje')
-    else navTitle.textContent = i18next.t('Administracija')
+    if (navTitle) {
+      if (
+        currentPagePath.includes('slovarji') &&
+        !currentPagePath.includes('admin')
+      )
+        navTitle.textContent = i18next.t('Urejanje')
+      else navTitle.textContent = i18next.t('Administracija')
+    }
     siteHeading.style.display = 'block'
   }
 }
@@ -1180,7 +1188,7 @@ $('.summernote').summernote({
   const profileForm = document.getElementById('profileForm')
 
   if (profileForm) {
-    profileForm.addEventListener('change', e => {
+    profileForm.addEventListener('input', e => {
       enableButton()
     })
 
@@ -1189,12 +1197,30 @@ $('.summernote').summernote({
 
       const data = Object.fromEntries(new FormData(e.target))
 
+      const notifyAction = () => {
+        document.getElementById('fpi-text').innerHTML = i18next.t(
+          'Izpolnite vsa prazna polja.'
+        )
+        $('#reset-pass-info').modal('show')
+      }
+
       if (data.numberOfHits) {
         await handleUpdateHitsPerPage(data.numberOfHits)
       }
 
-      if (data.name && data.surname) {
-        await handleUpdateUsersName(data.name, data.surname)
+      if (data.firstName && data.lastName && data.email) {
+        await handleUpdateBasicData(data)
+      } else if (location.pathname === '/moj-racun') {
+        // if missing the required data on endpoint /moj-racun, notify!
+        notifyAction()
+        return
+      }
+
+      if (data.passwordOld && data.passwordNew && data.passwordNewRepeat) {
+        await handleUpdatePassword(data)
+      } else if (location.pathname === '/spremeni-geslo') {
+        // if missing the required data on endpoint /spremeni-geslo, notify!
+        notifyAction()
       }
 
       // console.log(data)
@@ -1204,23 +1230,60 @@ $('.summernote').summernote({
   async function handleUpdateHitsPerPage(hitAmount) {
     try {
       await axios.post('/api/v1/users/hitsPerPage', { hitAmount })
-    } catch (error) {
-      // console.log(error)
-    } finally {
       location.reload(true)
+    } catch (error) {
+      displayError(error)
     }
   }
 
-  async function handleUpdateUsersName(name, surname) {
+  async function handleUpdateBasicData(payload) {
     try {
-      await axios.post('/api/v1/users/nameAndSurname', {
-        name,
-        surname
-      })
-    } catch (error) {
-      // console.log(error)
-    } finally {
+      if (!validator.isEmail(payload.email)) {
+        document.getElementById('fpi-text').innerHTML =
+          i18next.t('Neveljavna e-pošta')
+        $('#reset-pass-info').modal('show')
+        return
+      }
+      await axios.post('/api/v1/users/basic-data', payload)
       location.reload(true)
+    } catch (error) {
+      displayError(error)
     }
+  }
+
+  async function handleUpdatePassword(payload) {
+    try {
+      if (payload.passwordNew !== payload.passwordNewRepeat) {
+        document.getElementById('fpi-text').innerHTML = i18next.t(
+          'Gesli se ne ujemata'
+        )
+        $('#reset-pass-info').modal('show')
+        return
+      }
+
+      if (!validator.isLength(payload.passwordNew, { min: 8 })) {
+        document.getElementById('fpi-text').innerHTML =
+          i18next.t('Geslo je prekratko')
+        $('#reset-pass-info').modal('show')
+        return
+      }
+
+      await axios.post('/api/v1/users/password', payload)
+      location.reload(true)
+    } catch (error) {
+      displayError(error)
+    }
+  }
+
+  function displayError(error) {
+    let message = i18next.t('Prišlo je do napake.')
+    if (error.response) {
+      message = error.response.data
+    } else if (error.request) {
+      message = i18next.t('Strežnik ni dosegljiv. Poskusite kasneje.')
+    }
+
+    document.getElementById('fpi-text').textContent = message
+    $('#reset-pass-info').modal('show')
   }
 }

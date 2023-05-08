@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const favicon = require('serve-favicon')
 const cookieParser = require('cookie-parser')
 const createError = require('http-errors')
+const flash = require('connect-flash-plus')
 const i18next = require('i18next')
 const i18nextMiddleware = require('i18next-http-middleware')
 // const debug = require('debug')('termPortal:app')
@@ -18,7 +19,8 @@ const i18n = require('./middleware/i18n')
 const passport = require('./middleware/auth')
 const user = require('./middleware/user')
 const settings = require('./middleware/settings')
-const { enhanceLocals } = require('./middleware')
+const { enhanceLocals, adjustHeaders } = require('./middleware')
+const { capitalize } = require('./utils')
 
 // Import Routers.
 const apiRouter = require('./routes/api')
@@ -41,16 +43,22 @@ app.locals.basedir = viewsPath
 const inDevEnv = app.get('env') === 'development'
 if (isBehindProxy) app.set('trust proxy', 1) // Trust first proxy.
 app.locals.inDevEnv = inDevEnv
+app.locals.capitalize = capitalize
 
 // Mount middleware.
 app.use(logger('dev'))
 app.use(helmet(helmetConfig))
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')))
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    maxAge: inDevEnv ? 0 : '1h'
+  })
+)
 app.use(express.json({ type: ['application/json', 'application/csp-report'] }))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser(secret))
 app.use(session)
+app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(passport.authenticate('remember-me'))
@@ -59,6 +67,7 @@ app.use(i18nextMiddleware.handle(i18next))
 app.use(user.enhance)
 app.use(settings.prepareRequiredSettings)
 app.use(enhanceLocals)
+app.use(adjustHeaders)
 
 if (inDevEnv) {
   app.post(

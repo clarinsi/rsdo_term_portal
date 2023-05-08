@@ -15,7 +15,7 @@ mixin consultancySM(adminFields=false)
             )
               //- option.d-none(value="-1")= ' '
               each domain in allPrimaryDomains
-                option(value=domain.id selected=domain.selected) #{ domain.nameSl }
+                option(value=domain.id selected=domain.selected)= domain.name
             span.advanced-input-label
             //- span.advanced-input-label Področje
           //- img#area-img(src="/images/chevron-down-darker.svg" alt="")

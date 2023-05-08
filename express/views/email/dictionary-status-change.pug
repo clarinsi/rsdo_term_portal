@@ -1,12 +1,12 @@
 p Pozdravljeni,
 case type
   when 'status'
-    p oseba: #[b #{ changerEmail }] je spremenila stanje vašega slovarja: #[b #{ nameSl }].
+    p oseba: #[b #{ changerEmail }] je spremenila stanje vašega slovarja: #[b #{ name }].
   when 'unpublish'
-    p oseba: #[b #{ changerEmail }] je spremenila status slovarja #[b #{ nameSl }], ki ni več objavljen.
+    p oseba: #[b #{ changerEmail }] je spremenila status slovarja #[b #{ name }], ki ni več objavljen.
   when 'delete'
-    p slovar: #[b #{ nameSl }] ima manjše število gesel kot je nastavljeno.
+    p slovar: #[b #{ name }] ima manjše število gesel kot je nastavljeno.
   when 'publish-approval'
-    p slovar #[b #{ nameSl }] je bil dan v stanje preverjanja. Prosimo, da ga odprete/zaprete.
+    p slovar #[b #{ name }] je bil dan v stanje preverjanja. Prosimo, da ga odprete/zaprete.
   when 'publish-no-approval'
-    p slovar #[b #{ nameSl }] je bil objavljen.
+    p slovar #[b #{ name }] je bil objavljen.

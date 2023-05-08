@@ -43,10 +43,10 @@ mixin result_detail(data)
             li.text-gray-1.fw-500 #{ t('Jeziki') }
               .text-header-description-gray.fw-400= data.languages
           if data.time_modified
-            li.text-gray-1.fw-500 Spremenjen
+            li.text-gray-1.fw-500 #{ t('Spremenjen') }
               .text-header-description-gray.fw-400= data.time_modified
           if data.count_entries
-            li.text-gray-1.fw-500 Število slovarskih sestavkov
+            li.text-gray-1.fw-500 #{ t('Število slovarskih sestavkov') }
               .text-header-description-gray.fw-400= data.count_entries
           if data.issn
             li.text-gray-1.fw-500 #{ t('ISSN') }

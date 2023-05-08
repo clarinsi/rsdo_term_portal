@@ -68,11 +68,20 @@ Extraction.fetch = async id => {
   const {
     rows: [fetchedExtraction]
   } = await db.query(
-    'SELECT id, name, status, corpus_id, oss_params, time_started, time_finished FROM extraction WHERE id = $1',
+    'SELECT id, user_id, name, status, corpus_id, oss_params, time_started, time_finished FROM extraction WHERE id = $1',
     [id]
   )
 
   return deserialize.extraction(fetchedExtraction)
+}
+
+// Fetch oss document types from DB.
+Extraction.fetchOssDocumentTypes = async determinedLanguage => {
+  const { rows: fetchedDocumentTypes } = await db.query(
+    `SELECT id, name_${determinedLanguage} name FROM extraction_oss_document_types`
+  )
+
+  return fetchedDocumentTypes
 }
 
 // Fetch data of the author of a specific extraction entry from DB.
@@ -249,21 +258,29 @@ Extraction.processOwn = async function (extractionId, extractionName) {
   const conllusPath = getConllusPath(extractionId)
   const conllusPaths = []
   const MAX_BODY_LENGTH = 10 ** 9 // 1 GB
+  const RETRY_SECONDS_INTERVAL = 60 // 1 minute
+  const RETRY_SECONDS_MAX = 60 * 60 * 24 // 1 day
   // Using remote API, transform each document into conllu format.
   for (const documentName of documentNames) {
     const filePath = `${documentsPath}/${documentName}`
-    const form = new FormData()
-    form.append('file', createReadStream(filePath), documentName)
     try {
-      const { data: data1 } = await axios.post(
-        `${extractionApiOrigin}/datotekaVConlluAsync`,
-        form,
-        {
-          headers: {
-            ...form.getHeaders()
-          },
-          maxBodyLength: MAX_BODY_LENGTH
-        }
+      const { data: data1 } = await retry(
+        async () => {
+          const form = new FormData()
+          form.append('file', createReadStream(filePath), documentName)
+          return await axios.post(
+            `${extractionApiOrigin}/datotekaVConlluAsync`,
+            form,
+            {
+              headers: {
+                ...form.getHeaders()
+              },
+              maxBodyLength: MAX_BODY_LENGTH
+            }
+          )
+        },
+        RETRY_SECONDS_INTERVAL,
+        RETRY_SECONDS_MAX
       )
       const remotejobId = +data1.check_job_url.split('/').at(-1)
       await db.query(
@@ -276,9 +293,14 @@ Extraction.processOwn = async function (extractionId, extractionName) {
       // Poll job until finished.
       while (true) {
         await sleep(5)
-        const { data: data2 } = await axios.get(
-          `${extractionApiOrigin}/job/${remotejobId}`
+        const { data: data2 } = await retry(
+          async () => {
+            return await axios.get(`${extractionApiOrigin}/job/${remotejobId}`)
+          },
+          RETRY_SECONDS_INTERVAL,
+          RETRY_SECONDS_MAX
         )
+
         if (data2.finished_on) {
           if (data2.job_status !== 'finished processing (OK)') {
             throw Error(
@@ -326,18 +348,25 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     stopTerms.forEach(stopTerm => stopTermsSet.add(stopTerm.trim()))
   }
   stopTermsSet.delete('')
+  const stopTermsArr = Array.from(stopTermsSet)
   const termCandidatesPath = getTermCandidatesPath(extractionId)
 
   try {
-    const { data: data3 } = await axios.post(
-      `${extractionApiOrigin}/izlusciAsync`,
-      {
-        conllus: conllusArr,
-        prepovedaneBesede: Array.from(stopTermsSet),
-        // TODO Enabled for all cases. Add a switch for users later.
-        definicije: true
+    const { data: data3 } = await retry(
+      async () => {
+        return await axios.post(
+          `${extractionApiOrigin}/izlusciAsync`,
+          {
+            conllus: conllusArr,
+            prepovedaneBesede: stopTermsArr,
+            // TODO Enabled for all cases. Add a switch for users later.
+            definicije: true
+          },
+          { maxBodyLength: MAX_BODY_LENGTH }
+        )
       },
-      { maxBodyLength: MAX_BODY_LENGTH }
+      RETRY_SECONDS_INTERVAL,
+      RETRY_SECONDS_MAX
     )
     const remotejobId = +data3.check_job_url.split('/').at(-1)
     await db.query(
@@ -348,8 +377,12 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     // Poll job until finished.
     while (true) {
       await sleep(5)
-      const { data: data4 } = await axios.get(
-        `${extractionApiOrigin}/job/${remotejobId}`
+      const { data: data4 } = await retry(
+        async () => {
+          return await axios.get(`${extractionApiOrigin}/job/${remotejobId}`)
+        },
+        RETRY_SECONDS_INTERVAL,
+        RETRY_SECONDS_MAX
       )
       if (data4.finished_on) {
         const { job_result: jobResult } = data4
@@ -394,6 +427,11 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     } = await axios.post('http://concordancer:5000/dashboard/corpus', {
       title: extractionName
     })
+
+    await db.query('UPDATE extraction SET corpus_id = $1 WHERE id = $2', [
+      corpusId,
+      extractionId
+    ])
 
     // Wait for creation of corpus.
     while (true) {
@@ -484,8 +522,8 @@ Extraction.processOwn = async function (extractionId, extractionName) {
     )
 
     await db.query(
-      "UPDATE extraction SET status = 'finished', time_finished = NOW(), corpus_id = $1 WHERE id = $2",
-      [corpusId, extractionId]
+      "UPDATE extraction SET status = 'finished', time_finished = NOW() WHERE id = $1",
+      [extractionId]
     )
     console.log('EXTRACTION SUCCESSFUL')
   } catch (error) {
@@ -503,6 +541,8 @@ Extraction.processOss = async function (extractionId, ossParams) {
   // TODO Probably not, at least not while the the OSS enpoint is GET, due to limited length of URLs.
   // TODO Also consider refactoring certain parts,
   // TODO as some are identical or similar to Own variants or used earlier in the same pipeline.
+  const RETRY_SECONDS_INTERVAL = 60 // 1 minute
+  const RETRY_SECONDS_MAX = 60 * 60 * 24 // 1 day
   const stopTermsPath = getStopTermsPath(extractionId)
   const stopTermsFilesNames = await this.fetchAllStopTermsFilesNames(
     extractionId
@@ -532,7 +572,13 @@ Extraction.processOss = async function (extractionId, ossParams) {
 
   const extractApiUrl = `${extractionApiOrigin}/oss/izlusciPoIskanjuAsync?${searchParams}`
   try {
-    const { data: data1 } = await axios.get(extractApiUrl)
+    const { data: data1 } = await retry(
+      async () => {
+        return await axios.get(extractApiUrl)
+      },
+      RETRY_SECONDS_INTERVAL,
+      RETRY_SECONDS_MAX
+    )
     const remotejobId = +data1.check_job_url.split('/').at(-1)
     await db.query(
       "UPDATE extraction_job SET status = 'in progress', remote_job_id = $1, time_started = NOW() WHERE extraction_id = $2 AND job_type = $3 AND filename = $4",
@@ -542,8 +588,12 @@ Extraction.processOss = async function (extractionId, ossParams) {
     // Poll job until finished.
     while (true) {
       await sleep(5)
-      const { data: data2 } = await axios.get(
-        `${extractionApiOrigin}/job/${remotejobId}`
+      const { data: data2 } = await retry(
+        async () => {
+          return await axios.get(`${extractionApiOrigin}/job/${remotejobId}`)
+        },
+        RETRY_SECONDS_INTERVAL,
+        RETRY_SECONDS_MAX
       )
       if (data2.finished_on) {
         if (
@@ -616,6 +666,51 @@ function logExtractionError(error, extractionId, jobType, filename) {
   if (error.isAxiosError) error = Error(`Axios message: ${error.message}`)
   // eslint-disable-next-line no-console
   console.error(error)
+}
+
+async function retry(callback, everySeconds, maxSeconds) {
+  const startTime = new Date()
+  let numOfRetries = 0
+
+  /* eslint-disable no-console */
+  while (true) {
+    try {
+      const result = await callback()
+      if (numOfRetries) {
+        console.log(
+          `Recovered after ${numOfRetries} retries and ${Math.floor(
+            (new Date() - startTime) / 1000
+          )} seconds`
+        )
+      }
+      return result
+    } catch (error) {
+      const secondsSinceStart = Math.floor((new Date() - startTime) / 1000)
+      const nextRetrySeconds = secondsSinceStart + everySeconds
+
+      console.log('Failed inside retry')
+      console.log(
+        error.isAxiosError ? `Axios message: ${error.message}` : error
+      )
+      console.log({
+        numOfRetries,
+        secondsSinceStart,
+        everySeconds,
+        nextRetrySeconds,
+        maxSeconds
+      })
+
+      if (nextRetrySeconds > maxSeconds) {
+        console.log('FAILING RETRIES')
+        throw error
+      }
+
+      console.log(`RETRYING IN ${everySeconds} SECONDS`)
+      numOfRetries++
+      await sleep(everySeconds)
+    }
+  }
+  /* eslint-enable no-console */
 }
 
 module.exports = Extraction

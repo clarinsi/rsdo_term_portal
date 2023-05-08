@@ -13,7 +13,7 @@ router.get('/:dictionaryId/o-slovarju', dictionary.dictionaryDetails)
 // All further routes are only available to authenticated users.
 router.use((req, res, next) => {
   if (req.isAuthenticated()) return next()
-  res.redirect(req.baseUrl)
+  res.redirect(303, req.baseUrl)
 })
 
 // Show a form to create a new dictionary.
@@ -91,13 +91,6 @@ router.get(
   user.canContentEdit,
   dictionary.showContent
 )
-
-// Validate and update dictionary content entries.
-// router.post(
-//   '/:dictionaryId/vsebina',
-//   user.isDictionaryEditor,
-//   dictionary.updateContent
-// )
 
 // Show a form to export a dictionary.
 router.get(

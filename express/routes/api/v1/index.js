@@ -7,7 +7,6 @@ const dictionariesRouter = require('./dictionaries')
 const portalsRouter = require('./portals')
 const searchRouter = require('./search')
 const consultancyRouter = require('./consultancy')
-const demoPaginacijaRouter = require('./demo-paginacija')
 const extractionRouter = require('./extraction')
 
 router.use('/comments', commentsRouter)
@@ -18,7 +17,6 @@ router.use('/dictionaries', dictionariesRouter)
 router.use('/portals', portalsRouter)
 router.use('/search', searchRouter)
 router.use('/consultancy', consultancyRouter)
-router.use('/demo-paginacija', demoPaginacijaRouter)
 router.use('/extraction', extractionRouter)
 
 module.exports = router

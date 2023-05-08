@@ -17,7 +17,7 @@ portal.updateInstaceSettings = async (req, res) => {
   const payload = req.body
   await Portal.updateInstaceSettings(payload)
   await clearCachedInstanceSettings()
-  res.redirect('/admin/nastavitve/portal')
+  res.redirect(303, '/admin/nastavitve/portal')
 }
 
 portal.instanceDictSettings = async (req, res) => {
@@ -33,7 +33,7 @@ portal.updateInstanceDictSettings = async (req, res) => {
   const payload = req.body
   await Portal.updateInstaceDictSettings(payload)
   await clearCachedInstanceSettings()
-  res.redirect('/admin/nastavitve/slovarji')
+  res.redirect(303, '/admin/nastavitve/slovarji')
 }
 
 portal.instanceConsultancySettings = async (req, res) => {
@@ -48,7 +48,7 @@ portal.updateInstanceConusltacySettings = async (req, res) => {
   const payload = req.body
   await Portal.updateInstaceConsultancySettings(payload)
   await clearCachedInstanceSettings()
-  res.redirect('/admin/nastavitve/svetovalnica')
+  res.redirect(303, '/admin/nastavitve/svetovalnica')
 }
 
 portal.new = async (req, res) => {
@@ -80,7 +80,7 @@ portal.updatePortal = async (req, res) => {
   const portalId = req.params.portalId
   const payload = req.body
   await Portal.update(portalId, payload)
-  res.redirect('/admin/povezave/seznam')
+  res.redirect(303, '/admin/povezave/seznam')
 }
 
 portal.fetchSelectedLinkedDictionaries = async (req, res) => {
@@ -101,7 +101,7 @@ portal.fetchSelectedLinkedDictionaries = async (req, res) => {
 portal.updateSelectedDictionaries = async (req, res) => {
   const linkedId = req.params.portalId
   await Portal.updateSelectedDictionaries(linkedId, req.body)
-  res.redirect('back')
+  res.redirect(303, 'back')
 }
 
 portal.fetchAllLinkedDictionaries = async (req, res) => {
@@ -119,7 +119,7 @@ portal.fetchAllLinkedDictionaries = async (req, res) => {
 
 portal.updateAllDictionaries = async (req, res) => {
   await Portal.updateAllDictionaries(req.body)
-  res.redirect('back')
+  res.redirect(303, 'back')
 }
 
 portal.comments = async (req, res) => {

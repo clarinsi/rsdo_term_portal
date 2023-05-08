@@ -1,7 +1,7 @@
 extends /layout
 
 block pageSpecificScipts
-  script(nonce=cspNonce src="/javascripts/dictionaries.js")
+  script(nonce=cspNonce src="/javascripts/admin.js")
 
 block body
   section#fixed-top-section
@@ -12,8 +12,7 @@ block body
   - const d = { activeLvl1: 'attributes', activeLvl2: 'description' }
   +sideNavigation(d)
   include /utilities/dictionaries-main-panel-header
-  //- TODO I18n 
-  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: t('Osnovni podatki'), description: t('Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.'), helpLink: { linkHref: '/pomoc#help-edit-dict', linkText: t('Več ...') }, buttons: [{ type: 'disabled', content: t('Shrani'), form: 'form-dictionary-description' }] }
+  - const c = { sideMenu: true, h2: dictionary[`name${capitalize(determinedLanguage)}`], h1: t('Osnovni podatki'), description: t('Izpolnite polja in na kratko opišite vsebino terminološkega slovarja.'), helpLink: { linkHref: '/pomoc#help-edit-dict', linkText: t('Več ...') }, buttons: [{ type: 'disabled', content: t('Shrani'), form: 'admin-description' }] }
   +mainHeader(c)
   include /utilities/dictionary-description-mixin
   +dictionary-description

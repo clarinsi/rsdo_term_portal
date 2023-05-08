@@ -2,8 +2,6 @@ const router = require('express-promise-router')()
 
 const {
   assign,
-  listEntries,
-  listNewEntries,
   createQuestion,
   deleteQuestion,
   updateDomain,
@@ -22,10 +20,6 @@ const {
 } = require('../../../controllers/api/v1/consultancy')
 
 router.get('/entry-pagination', sendPaginationData)
-
-router.get('/entry', listEntries)
-
-router.get('/new-entry', listNewEntries)
 
 // All routes require an authenticated user.
 router.use((req, res, next) => {

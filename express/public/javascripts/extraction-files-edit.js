@@ -197,7 +197,7 @@ function updateFileListEl(fileListEl, { status, fileStats, index }) {
     deleteImgEl.alt = ''
     const deleteSpanEl = document.createElement('span')
     deleteSpanEl.className = 'ms-2'
-    deleteSpanEl.textContent = 'Briši'
+    deleteSpanEl.textContent = i18next.t('Briši')
     const deleteButtonEl = document.createElement('button')
     deleteButtonEl.className = 'p-0 delete-file delete-btn-table'
     deleteButtonEl.append(deleteImgEl, deleteSpanEl)

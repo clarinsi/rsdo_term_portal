@@ -102,7 +102,7 @@ services:
       - "127.0.0.1:${OS_DASHBOARDS_LISTEN_PORT:?}:5601"
 
   concordancer:
-    # image: ghcr.io/clarinsi/rsdo-concordancer-api:v1.0.3
+    # image: ghcr.io/clarinsi/rsdo-concordancer-api:v1.0.4
     build: concordancer
     profiles:
       - develop-concordancer
@@ -121,7 +121,7 @@ services:
       - sloleks:/sloleks
 
   concordancer-manager:
-    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.3
+    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.4
     profiles:
       - develop-concordancer
     depends_on:

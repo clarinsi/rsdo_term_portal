@@ -11,6 +11,25 @@ exports.listComments = async (req, res) => {
     filters.ctxId = null
   }
 
+  if (filters.ctxType === 'entry_dict_int') {
+    const { dictionary_id: dictionaryId } = await Entry.fetch(filters.ctxId)
+    const isEditor = req.user.hasAnyDictionaryRole(dictionaryId)
+    const isPortalAdmin = req.user.hasRole('portal admin')
+    const isDictionariesAdmin = req.user.hasRole('dictionaries admin')
+    if (!(isEditor || isPortalAdmin || isDictionariesAdmin)) {
+      return res.status(400).end()
+    }
+  } else if (filters.ctxType === 'entry_consult_int') {
+    const isConsultantForEntry = req.user.isEditorOfConsultancyEntry(
+      filters.ctxId
+    )
+    const isPortalAdmin = req.user.hasRole('portal admin')
+    const isConsultancyAdmin = req.user.hasRole('consultancy admin')
+    if (!(isConsultantForEntry || isPortalAdmin || isConsultancyAdmin)) {
+      return res.status(400).end()
+    }
+  }
+
   const {
     pages_total: numberOfAllPages,
     comments,
@@ -38,20 +57,55 @@ exports.createComment = async (req, res) => {
   res.send({ comments, pagesTotal })
 }
 
-exports.seedComments = async (req, res) => {
-  const { commentCount } = req.params
-  await Comment.seed(commentCount)
-  res.send(`${commentCount} new comments generated`)
-}
-
-exports.clearComments = async (req, res) => {
-  await Comment.clear()
-  res.send('All comments cleared')
-}
-
 exports.updateStatus = async (req, res) => {
   const commentId = req.body.params.id
   const commentStatus = req.body.params.status
+
+  const { ctxType, ctxId } = await Comment.fetchContextById(commentId)
+
+  let canUpdateStatus = false
+  switch (ctxType) {
+    case 'portal':
+      if (req.user.hasRole('portal admin')) canUpdateStatus = true
+      break
+
+    case 'dictionary':
+      if (
+        req.user.hasRole('portal admin') ||
+        req.user.hasRole('dictionaries admin')
+      ) {
+        canUpdateStatus = true
+      }
+      break
+
+    case 'consultancy':
+      if (
+        req.user.hasRole('portal admin') ||
+        req.user.hasRole('consultancy admin')
+      ) {
+        canUpdateStatus = true
+      }
+      break
+
+    case 'entry_dict_ext': {
+      const { dictionary_id: dictionaryId } = await Entry.fetch(ctxId)
+
+      if (
+        req.user.hasRole('portal admin') ||
+        req.user.hasRole('dictionaries admin') ||
+        req.user.hasDictionaryRole(dictionaryId, 'administration')
+      ) {
+        canUpdateStatus = true
+      }
+      break
+    }
+
+    default:
+      throw Error('Invalid context type')
+  }
+
+  if (!canUpdateStatus) return res.status(400).end()
+
   await Comment.updateStatus(commentId, commentStatus)
   res.send('Visibility changed')
 }

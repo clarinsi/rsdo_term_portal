@@ -6,7 +6,7 @@ DROP TYPE IF EXISTS user_role_name;
 DROP TYPE IF EXISTS user_hits_per_page;
 DROP TYPE IF EXISTS user_status;
 
-CREATE TYPE user_status AS ENUM ('registered', 'active', 'inactive');
+CREATE TYPE user_status AS ENUM ('registered', 'active', 'inactive', 'closed');
 
 CREATE TYPE user_hits_per_page AS ENUM ('10', '20', '50', '100');
 
@@ -24,6 +24,7 @@ CREATE TABLE "user" (
   bcrypt_hash VARCHAR NOT NULL,
   time_registered TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   time_activated TIMESTAMPTZ,
+  time_closed TIMESTAMPTZ,
   hits_per_page user_hits_per_page NOT NULL DEFAULT '10',
   language user_language NOT NULL DEFAULT 'sl'
 );
@@ -37,6 +38,19 @@ CREATE TABLE user_token_activation (
 CREATE TABLE user_token_remember_me (
   token VARCHAR PRIMARY KEY,
   user_id INT NOT NULL REFERENCES "user",
+  time_created TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE user_token_reset_password (
+  token VARCHAR PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES "user",
+  time_created TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE user_token_change_email (
+  token VARCHAR PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES "user",
+  new_email VARCHAR NOT NULL,
   time_created TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

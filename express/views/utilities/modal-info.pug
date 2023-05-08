@@ -1,0 +1,27 @@
+mixin modalInfo(id="info-modal", text=t(''), title=t('Obvestilo'), btnText=t('Zapri'))
+  .modal.fade(
+    id=id
+    tabindex="-1"
+    aria-labelledby="modal-alert-label"
+    aria-hidden="true"
+  )
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-header
+          h5#modal-info-label.modal-title.modal-title-blue #{ title }
+          button.btn-close(
+            type="button"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          )
+        .modal-body.d-flex.align-items-center
+          .d-flex.modal-alert.me-3
+            img(src="/images/alert-circle-big.svg")
+          .d-flex.modal-alert-content
+            p#info-text.normal-gray #{ text }
+
+        .modal-footer.d-flex.justify-content-center.align-items-center
+          button#modal-fp-info-close.btn.btn-primary(
+            type="button"
+            data-bs-dismiss="modal"
+          ) #{ btnText }

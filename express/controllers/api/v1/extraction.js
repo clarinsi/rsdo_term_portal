@@ -166,7 +166,7 @@ extraction.ossSearch = [
 
 extraction.ossConfirmParams = async (req, res) => {
   const { id: extractionId } = req.params
-  const { ossParams } = await Extraction.fetch(extractionId)
+  const { ossParams } = req.extractionData
   if (ossParams.status !== 'valid') throw Error('OSS params not valid')
   await Extraction.updateOssParams(extractionId, {
     params: ossParams.params,
@@ -177,7 +177,7 @@ extraction.ossConfirmParams = async (req, res) => {
 
 extraction.begin = async (req, res) => {
   const extractionId = req.params.id
-  const extraction = await Extraction.fetch(extractionId)
+  const extraction = req.extractionData
   const canBegin = await checkIfcanBegin(extraction)
   if (!canBegin) throw Error('Extraction does not qualify to be ran')
 
@@ -266,11 +266,6 @@ extraction.termCandidatesExport = async (req, res) => {
   } finally {
     await unlink(exportFilePath)
   }
-}
-
-extraction.listFinishedForUser = async (req, res) => {
-  const extractions = await Extraction.fetchFinishedForUser(req.user.id)
-  res.send(extractions)
 }
 
 extraction.listTermCandidates = async (req, res) => {

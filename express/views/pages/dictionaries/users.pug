@@ -12,8 +12,7 @@ block body
   +sideNavigation(d)
 
   include /utilities/dictionaries-main-panel-header
-  //- TODO I18n 
-  - const c = { sideMenu: true, h2: dictionary.nameSl, h1: t('Uporabniki'), description: t('Registrirani uporabniki lahko dobijo različne vloge na portalu. Kot administrator jim lahko dodelite tudi vlogo skrbnika slovarjev in/ali skrbnika svetovalnice.'), buttons: [{ type: 'disabled', content: t('Shrani'), form: 'admin-dictionary-users' }] }
+  - const c = { sideMenu: true, h2: dictionary.name, h1: t('Uporabniki'), description: t('Registrirani uporabniki lahko dobijo različne vloge na portalu. Kot administrator jim lahko dodelite tudi vlogo skrbnika slovarjev in/ali skrbnika svetovalnice.'), buttons: [{ type: 'disabled', content: t('Shrani'), form: 'admin-dictionary-users' }] }
   +mainHeader(c)
   .content-hold-prerequisites
     #offset-main.main-container.mt-1

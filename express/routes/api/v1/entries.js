@@ -1,5 +1,6 @@
 // This page refers to dictionary entries, not consultancy or other entries
 const router = require('express-promise-router')()
+const user = require('../../../middleware/user')
 
 const {
   getEntry,
@@ -10,7 +11,8 @@ const {
   getEntryVersionSnapshot
 } = require('../../../controllers/api/v1/dictionaries')
 
-// TODO Add authorization.
+// All further routes are only available to authenticated users with dictionary content editing rights.
+router.use(user.isAuthenticated, user.canContentEdit)
 
 // Render entry data for the selected entry
 router.get('/', getEntry)

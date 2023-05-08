@@ -2,6 +2,7 @@ const { unlink } = require('fs/promises')
 const { promisify } = require('util')
 const multer = require('multer')
 const debug = require('debug')('termPortal:controllers/dictionary')
+const user = require('../middleware/user')
 const Dictionary = require('../models/dictionary')
 const Entry = require('../models/entry')
 const User = require('../models/user')
@@ -19,6 +20,7 @@ const {
 const SFDSuggestionImporter = require('./helpers/search-filter-data-suggestion-importer')
 const Extraction = require('../models/extraction')
 const { isGeneratorFunction } = require('util/types')
+const { capitalize } = require('../utils')
 
 const importFileBodyParser = multer({
   dest: `${DATA_FILES_PATH}/dict_import_temp`,
@@ -38,7 +40,10 @@ const dictionary = {}
 dictionary.list = async (req, res) => {
   let dictionaries
   if (req.isAuthenticated()) {
-    dictionaries = await Dictionary.fetchAllByUser(req.user.id)
+    dictionaries = await Dictionary.fetchAllByUser(
+      req.user.id,
+      req.determinedLanguage
+    )
   }
   res.render('pages/dictionaries/list', {
     title: req.t('Seznam slovarjev'),
@@ -47,13 +52,11 @@ dictionary.list = async (req, res) => {
 }
 
 dictionary.new = async (req, res) => {
-  // TODO Once english language is implemented, gather selected language (sl/en) from request ~ (cookies?)
-  const language = 'name_sl'
   const [allPrimaryDomains, allSecondaryDomains, allLanguages] =
     await Promise.all([
-      Dictionary.fetchAllPrimaryDomains(),
+      Dictionary.fetchAllPrimaryDomains(req.determinedLanguage),
       Dictionary.fetchAllApprovedSecondaryDomains(),
-      Dictionary.fetchAllLanguages(language, true)
+      Dictionary.fetchAllLanguages(req.determinedLanguage, true)
     ])
 
   res.render('pages/dictionaries/new', {
@@ -66,7 +69,7 @@ dictionary.new = async (req, res) => {
 
 dictionary.create = async (req, res) => {
   await Dictionary.create(req.body, req.user.id)
-  res.redirect('/slovarji/moji')
+  res.redirect(303, '/slovarji/moji')
 }
 
 dictionary.editDescription = async (req, res) => {
@@ -77,7 +80,7 @@ dictionary.editDescription = async (req, res) => {
     dictionary,
     associatedSecondaryDomains
   ] = await Promise.all([
-    Dictionary.fetchAllPrimaryDomains(),
+    Dictionary.fetchAllPrimaryDomains(req.determinedLanguage),
     Dictionary.fetchAllApprovedSecondaryDomains(),
     Dictionary.fetchEditDescription(dictionaryId),
     Dictionary.fetchSecondaryDomains(dictionaryId)
@@ -103,14 +106,14 @@ dictionary.updateDescription = async (req, res) => {
     Dictionary.updateSecondaryDomains(dictionaryId, body)
   ])
 
-  res.redirect('back')
+  res.redirect(303, 'back')
 }
 
 dictionary.editUsers = async (req, res) => {
   const dictionaryId = req.params.dictionaryId
   const [dictionary, userRights, entriesCount, minEntries, publishApproval] =
     await Promise.all([
-      Dictionary.fetchEditUsers(dictionaryId),
+      Dictionary.fetchEditUsers(dictionaryId, req.determinedLanguage),
       User.fetchAllWithDictionaryRights(dictionaryId),
       Dictionary.countPublishedEntries(dictionaryId),
       getInstanceSetting('min_entries_per_dictionary'),
@@ -144,9 +147,9 @@ dictionary.updateUsers = async (req, res) => {
 
   const newDictStatus = await determineNewStatus(isPublished)
 
-  // TODO I18n - nameSl
-  const { nameSl, status: oldDictStatus } = await Dictionary.fetchEditUsers(
-    dictionaryId
+  const { name, status: oldDictStatus } = await Dictionary.fetchEditUsers(
+    dictionaryId,
+    req.determinedLanguage
   )
 
   await Promise.all([
@@ -165,23 +168,20 @@ dictionary.updateUsers = async (req, res) => {
     dictionaryId,
     isPublished,
     oldDictStatus,
-    nameSl,
+    name,
     req.app,
     req.user
   )
 
-  res.redirect('back')
+  res.redirect(303, 'back')
 }
 
 dictionary.editStructure = async (req, res) => {
-  // TODO Once english language is implemented, gather selected language (sl/en) from request ~ (cookies?)
-  // TODO I18n - nameSl
-  const language = 'name_sl'
   const { dictionaryId } = req.params
   const [dictionary, associatedLanguages, allLanguages] = await Promise.all([
     Dictionary.fetchEditStructure(dictionaryId),
-    Dictionary.fetchLanguages(dictionaryId),
-    Dictionary.fetchAllLanguages(language, true)
+    Dictionary.fetchLanguages(dictionaryId, req.determinedLanguage),
+    Dictionary.fetchAllLanguages(req.determinedLanguage, true)
   ])
 
   let viewPath
@@ -211,12 +211,15 @@ dictionary.updateStructure = async (req, res) => {
     Dictionary.deleteLanguages(dictionaryId),
     Dictionary.updateLanguages(dictionaryId, body)
   ])
-  res.redirect('back')
+  res.redirect(303, 'back')
 }
 
 dictionary.editAdvanced = async (req, res) => {
   const { dictionaryId } = req.params
-  const dictionaryName = await Dictionary.fetchName(dictionaryId)
+  const dictionaryName = await Dictionary.fetchName(
+    dictionaryId,
+    req.determinedLanguage
+  )
   let viewPath
   switch (req.baseUrl) {
     case '/slovarji':
@@ -243,7 +246,7 @@ dictionary.comments = async (req, res) => {
   const [{ comments, pages_total: numberOfAllPages }, dictionaryName] =
     await Promise.all([
       Comment.list(filters, req.user, resultsPerPage, 1),
-      Dictionary.fetchName(dictionaryId)
+      Dictionary.fetchName(dictionaryId, req.determinedLanguage)
     ])
 
   switch (req.baseUrl) {
@@ -269,7 +272,7 @@ dictionary.showImportFromFileForm = async (req, res) => {
   const [{ pages_total: numberOfAllPages, results }, dictionaryName] =
     await Promise.all([
       Dictionary.fetchAllImports(dictionaryId, resultsPerPage, 1),
-      Dictionary.fetchName(dictionaryId)
+      Dictionary.fetchName(dictionaryId, req.determinedLanguage)
     ])
   let viewPath
   switch (req.baseUrl) {
@@ -293,7 +296,11 @@ dictionary.listAdminDictionaries = async (req, res) => {
   const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
 
   const { pages_total: numberOfAllPages, results } =
-    await Dictionary.fetchAllAdminDictionaries(resultsPerPage, 1)
+    await Dictionary.fetchAllAdminDictionaries(
+      req.determinedLanguage,
+      resultsPerPage,
+      1
+    )
 
   res.render('pages/admin/dictionaries-list', {
     title: req.t('Seznam slovarjev'),
@@ -311,7 +318,7 @@ dictionary.adminEditDescription = async (req, res) => {
     associatedSecondaryDomains,
     status
   ] = await Promise.all([
-    Dictionary.fetchAllPrimaryDomains(),
+    Dictionary.fetchAllPrimaryDomains(req.determinedLanguage),
     Dictionary.fetchAllApprovedSecondaryDomains(),
     Dictionary.fetchEditDescription(dictionaryId),
     Dictionary.fetchSecondaryDomains(dictionaryId),
@@ -357,15 +364,19 @@ dictionary.updateAdminDescription = async (req, res) => {
     newDictStatus,
     oldDictStatus,
     req.app,
+    req.determinedLanguage,
     req.user
   )
 
-  res.redirect('back')
+  res.redirect(303, 'back')
 }
 
 dictionary.showImportFromExtractionForm = async (req, res) => {
   const { dictionaryId } = req.params
-  const dictionaryName = await Dictionary.fetchName(dictionaryId)
+  const dictionaryName = await Dictionary.fetchName(
+    dictionaryId,
+    req.determinedLanguage
+  )
   const extractions = await Extraction.fetchFinishedForUser(req.user.id)
   let viewPath, title
   switch (req.baseUrl) {
@@ -391,7 +402,7 @@ dictionary.showExportToFileForm = async (req, res) => {
   const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
   const [dictionaryName, { pages_total: numberOfAllPages, results }] =
     await Promise.all([
-      Dictionary.fetchName(dictionaryId),
+      Dictionary.fetchName(dictionaryId, req.determinedLanguage),
       Dictionary.fetchExports(dictionaryId, resultsPerPage, 1)
     ])
   let viewPath
@@ -418,7 +429,7 @@ dictionary.editDomainLabels = async (req, res) => {
   const [{ pages_total: numberOfAllPages, results }, dictionaryName] =
     await Promise.all([
       Dictionary.fetchPaginationDomainLabels(dictionaryId, resultsPerPage, 1),
-      Dictionary.fetchName(dictionaryId)
+      Dictionary.fetchName(dictionaryId, req.determinedLanguage)
     ])
 
   let viewPath
@@ -445,16 +456,14 @@ dictionary.showContent = async (req, res) => {
   const [
     hits,
     canPublishEntriesInEdit,
-    dictionaryName,
     structure,
     languages,
     entryDomainLabels
   ] = await Promise.all([
     searchEntryIndex(hitsQuery),
     getInstanceSetting('can_publish_entries_in_edit'),
-    Dictionary.fetchName(dictionaryId),
     Dictionary.fetchEditStructure(dictionaryId),
-    Dictionary.fetchLanguages(dictionaryId),
+    Dictionary.fetchLanguages(dictionaryId, req.determinedLanguage),
     Dictionary.fetchDomainLabels(dictionaryId)
   ])
 
@@ -464,7 +473,7 @@ dictionary.showContent = async (req, res) => {
     title: req.t('Vsebina slovarja'),
     terms,
     canPublishEntriesInEdit,
-    dictionaryName,
+    dictionaryName: structure[`name${capitalize(req.determinedLanguage)}`],
     structure,
     languages,
     dictionaryId,
@@ -510,7 +519,8 @@ dictionary.dictionaryList = async (req, res) => {
     hitsPerPage,
     page,
     orderAttribute,
-    orderIndex
+    orderIndex,
+    req.determinedLanguage
   )
 
   const numberOfAllHits = parseInt(
@@ -518,7 +528,9 @@ dictionary.dictionaryList = async (req, res) => {
   )
   const numberOfAllPages = Math.ceil(numberOfAllHits / hitsPerPage)
 
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains(
+    req.determinedLanguage
+  )
 
   /*
   /// filter selected domains for the prompt ///
@@ -567,9 +579,12 @@ dictionary.dictionaryDetails = async (req, res) => {
     targetLanguages,
     allDictionaryNames,
     portals
-  } = await SFDSuggestionImporter.initialize()
+  } = await SFDSuggestionImporter.initialize(req.determinedLanguage)
 
-  const dictionaryData = await Dictionary.fetchDictionaryBasicInfo(dictId)
+  const dictionaryData = await Dictionary.fetchDictionaryBasicInfo(
+    dictId,
+    req.determinedLanguage
+  )
 
   const filters = { ctxType: 'dictionary', ctxId: dictId }
   // TODO: integrate numberOfAllPages, commentCount with pug
@@ -711,21 +726,34 @@ dictionary.importFromFile = async (req, res) => {
   }
 }
 
-dictionary.exportDownload = async (req, res) => {
-  // TODO Add authentication and authorization.
+dictionary.exportDownload = [
+  async (req, res, next) => {
+    const { exportId } = req.params
+    const exportDownloadMetadata = await Dictionary.fetchExportDownloadMetadata(
+      exportId
+    )
 
-  const { exportId } = req.params
-  const { exportStatus, dictionaryId, nameString, timeString, fileFormat } =
-    await Dictionary.fetchExportDownloadMetadata(exportId)
-  if (exportStatus !== 'finished') {
-    throw Error("Can't request file for unfinished export")
+    req.dictionaryId = exportDownloadMetadata.dictionaryId
+    req.exportDownloadMetadata = exportDownloadMetadata
+
+    next()
+  },
+  user.isDictionaryEditor,
+  (req, res) => {
+    const { exportId } = req.params
+    const { exportStatus, dictionaryId, nameString, timeString, fileFormat } =
+      req.exportDownloadMetadata
+
+    if (exportStatus !== 'finished') {
+      throw Error("Can't request file for unfinished export")
+    }
+    const exportFilesPath = getExportFilesPath(dictionaryId)
+    const exportFilePath = `${exportFilesPath}/${exportId}`
+    const exportFileName = `${nameString}_${timeString}.${fileFormat}`
+
+    res.download(exportFilePath, exportFileName)
   }
-  const exportFilesPath = getExportFilesPath(dictionaryId)
-  const exportFilePath = `${exportFilesPath}/${exportId}`
-  const exportFileName = `${nameString}_${timeString}.${fileFormat}`
-
-  res.download(exportFilePath, exportFileName)
-}
+]
 
 function importFileFilter(req, file, cb) {
   if (file.mimetype !== 'text/xml') {

@@ -50,7 +50,7 @@ exports.prepareEntries = hits => {
 }
 
 // Transform search engine's aggregation raw output into correct and friendly format.
-exports.prepareAggregation = async aggregationRaw => {
+exports.prepareAggregation = async (aggregationRaw, determinedLanguage) => {
   const { aggregations, hits } = aggregationRaw.body
 
   const hitsCount = hits.total.value
@@ -107,7 +107,8 @@ exports.prepareAggregation = async aggregationRaw => {
   const names = await Portal.getSearchAggregateNames(
     primaryDomainIds,
     dictionaryIds,
-    languageIds
+    languageIds,
+    determinedLanguage
   )
 
   const aggregation = {

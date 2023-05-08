@@ -336,17 +336,16 @@ block input-structure
       if dictionary
         if dictionary.hasForeignLanguages
           .col-sm-6.select-languages
-            //- TODO I18n 
             select#languages-input.without-addition(
               name="language"
               multiple
               required
             )
               each language in associatedLanguages
-                option(value=language.id selected)= language.nameSl
+                option(value=language.id selected)= language.name
               each language in allLanguages
                 if !associatedLanguages.some(associated => associated.id === language.id)
-                  option(value=language.id)= language.nameSl
+                  option(value=language.id)= language.name
         else
           .col-sm-6.select-languages
             select#languages-input.without-addition(
@@ -356,7 +355,7 @@ block input-structure
               required
             )
               each language in allLanguages
-                option(value=language.id)= language.nameSl
+                option(value=language.id)= language.name
       else
         .col-sm-6.select-languages
           select#languages-input.form-control.without-addition(
@@ -365,7 +364,7 @@ block input-structure
             required
           )
             each language in allLanguages
-              option(value=language.id)= language.nameSl
+              option(value=language.id)= language.name
       .col-sm.d-flex.align-items-center
         span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Izberite vse tuje jezike, ki jih bo terminološki slovar vseboval.')
       #invalid-language-section.invalid-feedback-selection.hidden-section.mt-3

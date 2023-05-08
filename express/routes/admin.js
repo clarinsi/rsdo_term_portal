@@ -6,18 +6,18 @@ const portal = require('../controllers/portals')
 // All routes require an authenticated user.
 router.use((req, res, next) => {
   if (req.isAuthenticated()) return next()
-  res.redirect('/')
+  res.redirect(303, '/')
 })
 
 // Menu entry point. Redirect based on role.
 router.get('/', (req, res, next) => {
   const { user, baseUrl } = req
   if (user.hasRole('portal admin')) {
-    return res.redirect(`${baseUrl}/nastavitve/portal`)
+    return res.redirect(303, `${baseUrl}/nastavitve/portal`)
   } else if (user.hasRole('dictionaries admin')) {
-    return res.redirect(`${baseUrl}/slovarji`)
+    return res.redirect(303, `${baseUrl}/slovarji`)
   }
-  res.redirect('/')
+  res.redirect(303, '/')
 })
 
 // Authorize endpoints for portal admin.
@@ -25,14 +25,14 @@ router.use(
   ['/nastavitve', '/povezave', '/uporabniki', '/komentarji'],
   (req, res, next) => {
     if (req.user.hasRole('portal admin')) return next()
-    res.redirect('/')
+    res.redirect(303, '/')
   }
 )
 
 // Authorize endpoints for dictionaries admin.
-router.use(['/slovarji', '/podrocja'], (req, res, next) => {
+router.use(['/slovarji', '/podpodrocja'], (req, res, next) => {
   if (req.user.hasRole('dictionaries admin')) return next()
-  res.redirect('/')
+  res.redirect(303, '/')
 })
 
 router.get('/nastavitve/portal', portal.instanceSettings)
@@ -59,9 +59,9 @@ router.get('/povezave/seznam/:portalId', portal.fetchSelectedLinkedDictionaries)
 
 router.post('/povezave/seznam/:portalId', portal.updateSelectedDictionaries)
 
-router.get('/povezava/:portalId/urejanje', portal.fetchPortal)
+router.get('/povezave/:portalId/urejanje', portal.fetchPortal)
 
-router.post('/povezava/:portalId/urejanje', portal.updatePortal)
+router.post('/povezave/:portalId/urejanje', portal.updatePortal)
 
 // Show a list of user's dictionaries.
 router.get('/slovarji', dictionary.listAdminDictionaries)

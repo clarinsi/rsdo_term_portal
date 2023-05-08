@@ -35,12 +35,12 @@ block body
 
         .mt-4
           .subject-name
-            label.input-name-txt(for="profile-name") #{ t('IME') }
+            label.input-name-txt(for="profile-first-name") #{ t('IME') }
           .row
             .col-sm-6
-              input#profile-name.name-input.form-control.d-inline(
+              input#profile-first-name.name-input.form-control.d-inline(
                 type="text"
-                name="name"
+                name="firstName"
                 minLength="1"
                 value=user.firstName
               )
@@ -51,12 +51,12 @@ block body
 
         .mt-4
           .subject-name
-            label.input-name-txt(for="profile-surname") #{ t('PRIIMEK') }
+            label.input-name-txt(for="profile-last-name") #{ t('PRIIMEK') }
           .row
             .col-sm-6
-              input#profile-surname.name-input.form-control.d-inline(
+              input#profile-last-name.name-input.form-control.d-inline(
                 type="text"
-                name="surname"
+                name="lastName"
                 minLength="1"
                 value=user.lastName
               )
@@ -67,10 +67,10 @@ block body
 
         .mt-4
           .subject-name
-            label.input-name-txt(for="profile-surname") #{ t('ELEKTRONSKI NASLOV') }
+            label.input-name-txt(for="profile-email") #{ t('ELEKTRONSKI NASLOV') }
           .row
             .col-sm-6
-              input#profile-surname.name-input.form-control.d-inline(
+              input#profile-email.name-input.form-control.d-inline(
                 type="text"
                 name="email"
                 minLength="1"

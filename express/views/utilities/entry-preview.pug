@@ -66,11 +66,11 @@
       if (structure.hasForeignLanguages)
         .preview-languages-container.mt-2
           if (languages.length)
-            hr.language-line
+            hr.start-line
             each language, index in languages
               .preview-one-language.d-none
                 .preview-foreign-language
-                  span.smaller-black-info= language.nameSl
+                  span.smaller-black-info= language.name
                 .preview-foreign-terms.mt-1.d-flex.align-items-baseline.row
                   .d-sm-block.col-sm-4.preview-column-width
                     span.smaller-gray-info= t('TERMIN:')

@@ -3,19 +3,11 @@ const router = require('express-promise-router')()
 const {
   listComments,
   createComment,
-  seedComments,
-  clearComments,
   updateStatus
 } = require('../../../controllers/api/v1/comments')
 
 // List comments (one page).
 router.get('/', listComments)
-
-// TEMP - Seed comments.
-router.get('/seed/:commentCount', seedComments)
-
-// TEMP - Clear comments.
-router.get('/clear', clearComments)
 
 // All further routes are only available to authenticated users.
 router.use((req, res, next) => {

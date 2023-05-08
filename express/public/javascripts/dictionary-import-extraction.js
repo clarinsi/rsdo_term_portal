@@ -62,6 +62,10 @@
   }
 
   function renderResults(results) {
+    const tableContainer = document.querySelector(
+      '.list-terminology-candidates'
+    )
+    tableContainer.classList.remove('d-none')
     results.forEach(([sequentialCount, candidate]) => {
       const rowEl = document.createElement('tr')
       const tdId = document.createElement('td')

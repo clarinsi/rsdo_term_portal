@@ -36,7 +36,7 @@ block body
                 tr
                   td= result.userName
                   td= result.email
-                  td= result.status
+                  td= t(`userStatus${result.status}`)
                   td
                     a.image-link(
                       type="link"

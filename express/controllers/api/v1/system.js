@@ -1,9 +1,10 @@
-const debug = require('debug')('termPortal:controllers/api/v1/system')
 const Eurotermbank = require('../../../models/system/eurotermbank')
+// const debug = require('debug')('termPortal:controllers/api/v1/system')
 
 exports.handleCspReports = (req, res) => {
-  debug(req.body)
-  res.sendStatus(200)
+  // eslint-disable-next-line no-console
+  console.error(req.body)
+  res.end()
 }
 
 exports.syncWithEurotermbank = async (req, res) => {

@@ -1,3 +1,4 @@
+const xss = require('xss')
 const { removeHtmlTags } = require('../../helpers')
 const { searchEngineClient, ENTRY_INDEX } = require('../../search-engine')
 const { DATA_FILES_PATH } = require('../../../config/settings')
@@ -6,7 +7,7 @@ exports.deserialize = {
   dictionary(dictionary) {
     const deserializedDictionary = {
       id: dictionary.id,
-      nameSl: dictionary.name_sl,
+      name: dictionary.name,
       timeModified: dictionary.time_modified,
       status: dictionary.status,
       countEntries: dictionary.count_entries,
@@ -48,16 +49,16 @@ exports.deserialize = {
     return deserializedDomain
   },
 
-  language(language) {
-    const deserializedLanguage = {
-      id: language.id,
-      code: language.code,
-      nameSl: language.name_sl,
-      nameEn: language.name_en
-    }
+  // language(language) {
+  //   const deserializedLanguage = {
+  //     id: language.id,
+  //     code: language.code,
+  //     nameSl: language.name_sl,
+  //     nameEn: language.name_en
+  //   }
 
-    return deserializedLanguage
-  },
+  //   return deserializedLanguage
+  // },
 
   editDescription(dictionary) {
     const deserializedDictionary = {
@@ -77,7 +78,7 @@ exports.deserialize = {
   editUsers(dictionary) {
     const deserializedDictionary = {
       id: dictionary.id,
-      nameSl: dictionary.name_sl,
+      name: dictionary.name,
       terminologyReviewFlag: dictionary.entries_have_terminology_review_flag,
       languageReviewFlag: dictionary.entries_have_language_review_flag,
       status: dictionary.status
@@ -90,6 +91,7 @@ exports.deserialize = {
     const deserializedDictionary = {
       id: dictionary.id,
       nameSl: dictionary.name_sl,
+      nameEn: dictionary.name_en,
       hasDomainLabels: dictionary.entries_have_domain_labels,
       hasLabel: dictionary.entries_have_label,
       hasDefinition: dictionary.entries_have_definition,
@@ -274,4 +276,80 @@ exports.prepareEntryForIndexing = prepareEntryForIndexing
 
 exports.getExportFilesPath = dictId => {
   return `${DATA_FILES_PATH}/dict_export/${dictId}`
+}
+
+const markupFilter = {
+  noMixed: new xss.FilterXSS({
+    whiteList: {},
+    stripIgnoreTag: true,
+    stripIgnoreTagBody: ['script', 'style']
+  }),
+
+  mixedBasic: new xss.FilterXSS({
+    whiteList: {
+      sup: [],
+      sub: []
+    },
+    stripIgnoreTag: true,
+    stripIgnoreTagBody: ['script', 'style']
+  }),
+
+  mixedExtended: new xss.FilterXSS({
+    whiteList: {
+      sup: [],
+      sub: [],
+      b: [],
+      i: [],
+      a: ['href']
+    },
+    stripIgnoreTag: true,
+    stripIgnoreTagBody: ['script', 'style'],
+    onTag: customTagHandler
+  }),
+
+  mixedOther: new xss.FilterXSS({
+    whiteList: {
+      sup: [],
+      sub: [],
+      b: [],
+      i: [],
+      a: ['href'],
+      br: []
+    },
+    stripIgnoreTag: true,
+    stripIgnoreTagBody: ['script', 'style'],
+    onTag: customTagHandler
+  })
+}
+
+function customTagHandler(tag, html, { isWhite, isClosing }) {
+  // Special treatment only for whitelisted opening anchor tags.
+  if (tag !== 'a' || !isWhite || isClosing) return
+
+  const matchUrl = html.match(/href="?(?<url>https?:\/\/.*?)"?[\s>]/)
+  const url = matchUrl ? xss.escapeAttrValue(matchUrl.groups.url) : undefined
+
+  return `<a href="${url || ''}" target="_blank">`
+}
+
+function sanitize(string, filter) {
+  return filter.process(string).replace(/\s+/g, ' ').trim()
+}
+
+exports.sanitizeField = {
+  toText(string) {
+    return sanitize(string, markupFilter.noMixed)
+  },
+
+  toMixedBasic(string) {
+    return sanitize(string, markupFilter.mixedBasic)
+  },
+
+  toMixedExtended(string) {
+    return sanitize(string, markupFilter.mixedExtended)
+  },
+
+  toMixedOther(string) {
+    return sanitize(string, markupFilter.mixedOther)
+  }
 }

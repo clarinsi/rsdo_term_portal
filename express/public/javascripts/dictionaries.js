@@ -845,7 +845,7 @@ function initDictionaries() {
                   }
                 }
                 if (listForeignSynonyms.length) {
-                  if (el.synonym != null)
+                  if (el.synonym != null) {
                     el.synonym.forEach(element => {
                       if (element.length) {
                         // eslint-disable-next-line
@@ -861,6 +861,7 @@ function initDictionaries() {
                         selectSyn.append(newOption).trigger('change')
                       }
                     })
+                  }
                 }
               }
             })
@@ -2035,19 +2036,21 @@ function loadPreview(info) {
   }
 
   const languageContainers = document.querySelectorAll('.preview-one-language')
-  const langLine = document.querySelector('.language-line')
+  const langLine = document.querySelector('.start-line')
   if (languageContainers) {
     const arrLang = Array.from(languageContainers)
     arrLang.forEach(el => {
       const arrChildren = Array.from(el.children)
       if (arrChildren.filter(e => e.classList.contains('d-none')).length > 2) {
         el.classList.add('d-none')
-        langLine.classList.add('d-none')
-      } else {
-        el.classList.remove('d-none')
-        langLine.classList.remove('d-none')
-      }
+      } else el.classList.remove('d-none')
     })
+    if (
+      arrLang.filter(el => el.classList.contains('d-none')).length >=
+      arrLang.length
+    ) {
+      langLine.classList.add('d-none')
+    } else langLine.classList.remove('d-none')
   }
   changeCollapsedContent()
 }
@@ -2110,10 +2113,10 @@ function changeVersionList(versions) {
         // eslint-disable-next-line
         new bootstrap.Tooltip(dateLabel, {
           title:
-            i18next.t('Verzija') +
-            `${el.version} <br>` +
+            i18next.t('Verzija:') +
+            ` ${el.version} <br>` +
             i18next.t('Avtor:') +
-            `${el.version_author}`
+            ` ${el.version_author}`
         })
         allDatesEl.append(dateRadio)
         allDatesEl.appendChild(dateLabel)
@@ -2133,9 +2136,9 @@ function setLatestVersion(data) {
   const tooltip = new bootstrap.Tooltip(latestVersionLabel, {
     title:
       i18next.t('Verzija:') +
-      `${data.version} <br>` +
+      ` ${data.version} <br>` +
       i18next.t('Avtor:') +
-      `${data.version_author}`,
+      ` ${data.version_author}`,
     customClass: 'dark-gray-tooltip',
     html: true,
     placement: 'bottom'
@@ -2822,6 +2825,12 @@ function deleteContentData(
     const linkText = linkRow.querySelector('.mc-field')
     linkType.value = 'related'
     linkText.value = ''
+  }
+  if (listForeignDefinitions) {
+    const foreignDefinitionsFields = document.querySelectorAll(
+      '.foreign-definition-el'
+    )
+    foreignDefinitionsFields.forEach(el => (el.value = ''))
   }
 }
 

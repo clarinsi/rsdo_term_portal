@@ -1,13 +1,60 @@
+const { randomBytes } = require('crypto')
+const { promisify } = require('util')
+const RandomBytesAsync = promisify(randomBytes)
 const db = require('./db')
 const bcrypt = require('bcrypt')
 const uid = require('uid-safe')
 const { deserialize } = require('./helpers/user')
+const {
+  ACTIVATION_TOKEN_VALID_DAYS,
+  CHANGE_EMAIL_TOKEN_VALID_DAYS
+} = require('../config/settings')
+
+const SALT_ROUNDS = 12
+const PASSWORD_RESET_VALID_INTERVAL = '1 day'
 
 const User = {}
 
+// Check if a user with provided email already exists.
+User.isEmailAlreadyTaken = async email => {
+  const { rows } = await db.query('SELECT 1 FROM "user" WHERE email = $1', [
+    email
+  ])
+
+  const isTaken = rows.length > 0
+
+  return isTaken
+}
+
 // Create new user in DB.
-User.create = async user => {
-  const SALT_ROUNDS = 12
+User.create = async (user, t) => {
+  const {
+    rows: [userWithSameEmail]
+  } = await db.query('SELECT status FROM "user" WHERE email = $1', [user.email])
+
+  if (userWithSameEmail && userWithSameEmail.status !== 'registered') {
+    const err = Error(t('Elektronski naslov uporablja že drug uporabnik.'))
+    err.status = 400
+    err.displayInProd = true
+
+    throw err
+  }
+
+  const {
+    rows: [isUsernameAlreadyTakenByOther]
+  } = await db.query(
+    'SELECT 1 FROM "user" WHERE username = $1 AND email <> $2',
+    [user.username, user.email]
+  )
+
+  if (isUsernameAlreadyTakenByOther) {
+    const err = Error(t('Izbrano uporabniško ime uporablja že drug uporabnik.'))
+    err.status = 400
+    err.displayInProd = true
+
+    throw err
+  }
+
   const bcryptHash = await bcrypt.hash(user.password, SALT_ROUNDS)
 
   const values = [
@@ -19,7 +66,19 @@ User.create = async user => {
   ]
   if (user.language) values.push(user.language)
 
-  const text = `INSERT INTO "user" (
+  let text
+
+  if (userWithSameEmail) {
+    text = `UPDATE "user" SET
+      username = $1,
+      first_name = $2,
+      last_name = $3,
+      bcrypt_hash = $5
+      ${user.language ? ', language = $6' : ''}
+    WHERE email = $4
+    RETURNING id`
+  } else {
+    text = `INSERT INTO "user" (
       username,
       first_name,
       last_name,
@@ -29,6 +88,7 @@ User.create = async user => {
     )
     VALUES (${db.genParamStr(values)})
     RETURNING id`
+  }
 
   const { rows } = await db.query(text, values)
 
@@ -45,34 +105,40 @@ User.saveActivationToken = async (userId, activationToken) => {
   )
 }
 
-// Fetch user from DB by (valid) activation token.
-User.fetchByActivationToken = async activationToken => {
-  const TOKEN_VALID_PERIOD = '1 week'
-  const text = `
-    SELECT u.id
-    FROM user_token_activation t
-    INNER JOIN "user" u ON u.id = t.user_id
-    WHERE
-      t.token = $1
-      AND AGE(NOW(), t.time_created) < INTERVAL '${TOKEN_VALID_PERIOD}'
-  `
-  const values = [activationToken]
+// Activate user account using the provided activation token.
+User.activateAccountWithToken = async (token, t) => {
+  let user
 
-  const { rows } = await db.query(text, values)
-  const user = rows[0]
+  await db.transaction(async dbClient => {
+    const { rows } = await dbClient.query(
+      `SELECT user_id FROM user_token_activation WHERE token = $1 AND NOW() - time_created < '${ACTIVATION_TOKEN_VALID_DAYS} days'`,
+      [token]
+    )
 
-  // TODO Perhaps suggest to the user to request another one and make a shortcut.
-  if (!user) throw Error('Povezava je neveljavna ali pa je že potekla')
+    if (rows.length === 0) {
+      const err = Error(
+        t('Povezava ni (več) veljavna. Prosimo, da se ponovno registrirate.')
+      )
+      err.status = 403
+      err.displayInProd = true
+
+      throw err
+    }
+
+    const userId = rows[0].user_id
+    ;({
+      rows: [user]
+    } = await dbClient.query(
+      `UPDATE "user" SET status = 'active', time_activated = NOW() WHERE id = $1 RETURNING id`,
+      [userId]
+    ))
+
+    await dbClient.query('DELETE FROM user_token_activation WHERE token = $1', [
+      token
+    ])
+  })
 
   return user
-}
-
-// Activate user account.
-User.activateAccount = async user => {
-  await db.query(
-    `UPDATE "user" SET status = 'active', time_activated = NOW() WHERE id = $1`,
-    [user.id]
-  )
 }
 
 // Generate a user remember me token.
@@ -96,6 +162,130 @@ User.clearRememberMeToken = async rememberMeToken => {
   ])
 }
 
+// Save a password reset token for a single user in DB.
+User.saveResetPasswordToken = async (userId, resetPasswordToken) => {
+  await db.query(
+    'INSERT INTO user_token_reset_password (token, user_id) VALUES ($1, $2)',
+    [resetPasswordToken, userId]
+  )
+}
+
+// Check existance and validity of password reset token in DB.
+User.isResetPasswordTokenValid = async token => {
+  const { rows } = await db.query(
+    `SELECT 1 exists FROM user_token_reset_password WHERE token = $1 AND NOW() - time_created < '${PASSWORD_RESET_VALID_INTERVAL}'`,
+    [token]
+  )
+  const isValid = rows.length > 0
+
+  return isValid
+}
+
+// Set new password for user using the provided reset password token.
+User.resetPasswordWithToken = async (token, password, t) => {
+  let user
+
+  await db.transaction(async dbClient => {
+    const { rows } = await dbClient.query(
+      `SELECT user_id FROM user_token_reset_password WHERE token = $1 AND NOW() - time_created < '${PASSWORD_RESET_VALID_INTERVAL}'`,
+      [token]
+    )
+
+    if (rows.length === 0) {
+      const err = Error(
+        t(
+          'Povezava ni (več) veljavna. Prosimo, da ponovno zahtevate ponastavitev gesla.'
+        )
+      )
+      err.status = 403
+      err.displayInProd = true
+
+      throw err
+    }
+
+    const bcryptHash = await bcrypt.hash(password, SALT_ROUNDS)
+    const userId = rows[0].user_id
+    ;({
+      rows: [user]
+    } = await dbClient.query(
+      'UPDATE "user" SET bcrypt_hash = $1 WHERE id = $2 RETURNING id, username, email',
+      [bcryptHash, userId]
+    ))
+
+    await dbClient.query(
+      'DELETE FROM user_token_reset_password WHERE token = $1',
+      [token]
+    )
+  })
+
+  return user
+}
+
+// Save change email token for a single user in DB.
+User.saveChangeEmailToken = async (userId, changeEmailToken, newEmail) => {
+  await db.query(
+    'INSERT INTO user_token_change_email (token, user_id, new_email) VALUES ($1, $2, $3)',
+    [changeEmailToken, userId, newEmail]
+  )
+}
+
+// Set new email for user using the provided change email token.
+User.changeEmailWithToken = async function (token, t) {
+  let user
+
+  await db.transaction(async dbClient => {
+    const { rows } = await dbClient.query(
+      `SELECT user_id, new_email FROM user_token_change_email WHERE token = $1 AND NOW() - time_created < '${CHANGE_EMAIL_TOKEN_VALID_DAYS} days'`,
+      [token]
+    )
+
+    if (rows.length === 0) {
+      const err = Error(
+        t('Povezava ni (več) veljavna. Elektronski naslov ni bil spremenjen.')
+      )
+      err.status = 403
+      err.displayInProd = true
+
+      throw err
+    }
+
+    const { user_id: userId, new_email: newEmail } = rows[0]
+    if (await this.isEmailAlreadyTaken(newEmail)) {
+      const err = Error(t('Elektronski naslov uporablja že drug uporabnik.'))
+      err.status = 403
+      err.displayInProd = true
+
+      throw err
+    }
+
+    ;({
+      rows: [user]
+    } = await dbClient.query(
+      'UPDATE "user" SET email = $1 WHERE id = $2 RETURNING id, username, email',
+      [newEmail, userId]
+    ))
+
+    await dbClient.query(
+      'DELETE FROM user_token_change_email WHERE token = $1',
+      [token]
+    )
+  })
+
+  return user
+}
+
+// Fetch user from DB by username or email.
+User.fetchByUsernameOrEmail = async usernameOrEmail => {
+  const {
+    rows: [user]
+  } = await db.query(
+    'SELECT id, username, email, status, bcrypt_hash FROM "user" WHERE username = $1 OR email = $1',
+    [usernameOrEmail]
+  )
+
+  return user
+}
+
 // Fetch user data that should be available on every request from DB by id.
 User.fetchDeserializedDataById = async userId => {
   const text = `
@@ -105,6 +295,7 @@ User.fetchDeserializedDataById = async userId => {
       u.first_name,
       u.last_name,
       u.email,
+      u.status,
       u.hits_per_page,
       u.language,
       ARRAY(
@@ -148,6 +339,7 @@ User.fetchAll = async (resultsPerPage, page) => {
         'pages_total', (
           SELECT CEIL(COUNT(*) / $1::float)
           FROM "user"
+          WHERE status <> 'closed'
         ),
         'results', ARRAY(
           SELECT jsonb_build_object(
@@ -157,6 +349,7 @@ User.fetchAll = async (resultsPerPage, page) => {
             'status', status
           )
           FROM "user"
+          WHERE status <> 'closed'
           ORDER BY username
           LIMIT $1
           OFFSET $2
@@ -281,8 +474,12 @@ User.updateUser = async (userId, payload) => {
   const { rows } = await db.query(previousStatusText, [userId])
   const previousStatus = rows[0].status
 
+  if (previousStatus === 'closed') throw Error()
+
   let statusValue
+  let setTimeActivated = false
   if (previousStatus === 'registered') {
+    setTimeActivated = !!payload.status
     statusValue = !payload.status ? 'registered' : 'active'
   } else statusValue = !payload.status ? 'inactive' : 'active'
 
@@ -293,6 +490,7 @@ User.updateUser = async (userId, payload) => {
       first_name = $3,
       last_name = $4,
       status = $5
+      ${setTimeActivated ? ', time_activated = NOW()' : ''}
     WHERE id = $1`
 
   const values = [
@@ -448,12 +646,9 @@ User.insertNewConsultantWithDomain = async (userId, domains) => {
 
 // Insert new consultant role with domain of
 User.insertNewConsultantWithDomainByUsername = async (username, domains) => {
-  const { rows } = await db.query(
-    'SELECT id FROM "user" WHERE username = $1 or email = $1',
-    [username]
-  )
+  const user = await User.fetchByUsernameOrEmail(username)
 
-  await User.insertNewConsultantWithDomain(rows[0].id, domains)
+  await User.insertNewConsultantWithDomain(user.id, domains)
 }
 
 // Remove consultant role
@@ -471,13 +666,15 @@ User.fetchAllowedHitsPerPage = async () => {
   ).rows.map(e => e.unnest)
 }
 
-User.updateFirstNameAndLastName = async (username, firstName, lastName) => {
-  return await db.query(
-    `UPDATE "user"
-      SET  first_name=$2, last_name=$3
-      WHERE username=$1;`,
-    [username, firstName, lastName]
+User.updateFirstNameAndLastName = async (userId, firstName, LastName) => {
+  const {
+    rows: [{ email }]
+  } = await db.query(
+    'UPDATE "user" SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING email',
+    [firstName, LastName, userId]
   )
+
+  return email
 }
 
 User.updateHitsPerPage = async (username, hitsPerPageAmount) => {
@@ -495,6 +692,85 @@ User.updateLanguage = async (userId, languageCode) => {
     languageCode,
     userId
   ])
+}
+
+// Change user's password.
+User.changePassword = async (userId, passwordOld, passwordNew, t) => {
+  await db.transaction(async dbClient => {
+    const {
+      rows: [{ bcrypt_hash: bcryptHashOld }]
+    } = await dbClient.query('SELECT bcrypt_hash FROM "user" WHERE id = $1', [
+      userId
+    ])
+
+    const isOldPasswordCorrect = await bcrypt.compare(
+      passwordOld,
+      bcryptHashOld
+    )
+
+    if (!isOldPasswordCorrect) {
+      const err = Error(t('Nepravilno staro geslo.'))
+      err.status = 403
+      err.displayInProd = true
+
+      throw err
+    }
+
+    const bcryptHashNew = await bcrypt.hash(passwordNew, SALT_ROUNDS)
+
+    await dbClient.query('UPDATE "user" SET bcrypt_hash = $1 WHERE id = $2', [
+      bcryptHashNew,
+      userId
+    ])
+  })
+}
+
+// Close user's account and anonymize any personal data.
+User.closeAccount = async userId => {
+  const maskString = '#####'
+  const randomString = (await RandomBytesAsync(10)).toString('hex')
+
+  const anonymizedUsername = randomString
+  const anonymizedFirstName = maskString
+  const anonymizedLastName = maskString
+  const anonymizedEmail = randomString
+
+  await db.transaction(async dbClient => {
+    await Promise.all([
+      dbClient.query(
+        `
+        UPDATE "user"
+        SET
+          username = $1,
+          first_name = $2,
+          last_name = $3,
+          email = $4,
+          status = 'closed',
+          time_closed = NOW()
+        WHERE id = $5`,
+        [
+          anonymizedUsername,
+          anonymizedFirstName,
+          anonymizedLastName,
+          anonymizedEmail,
+          userId
+        ]
+      ),
+      dbClient.query('DELETE FROM user_token_activation WHERE user_id = $1', [
+        userId
+      ]),
+      dbClient.query('DELETE FROM user_token_remember_me WHERE user_id = $1', [
+        userId
+      ]),
+      dbClient.query(
+        'DELETE FROM user_token_reset_password WHERE user_id = $1',
+        [userId]
+      ),
+      dbClient.query('DELETE FROM user_token_change_email WHERE user_id = $1', [
+        userId
+      ])
+    ])
+  })
 }
 
 module.exports = User

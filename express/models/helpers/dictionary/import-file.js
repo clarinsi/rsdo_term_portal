@@ -1,9 +1,9 @@
 const fs = require('fs')
 const xmlFlow = require('xml-flow')
-const xss = require('xss')
 const debug = require('debug')('termPortal:models/helpers/dictionary')
 const db = require('../../db')
 const { intoDbArray } = require('..')
+const { sanitizeField } = require('./index')
 
 const JOBS_MAX = 50
 const JOBS_MIN = 15
@@ -199,84 +199,18 @@ function handleEntryXml(
   }
 }
 
-const markupFilter = {
-  noMixed: new xss.FilterXSS({
-    whiteList: {},
-    stripIgnoreTag: true,
-    stripIgnoreTagBody: ['script', 'style']
-  }),
-
-  mixedBasic: new xss.FilterXSS({
-    whiteList: {
-      sup: [],
-      sub: []
-    },
-    stripIgnoreTag: true,
-    stripIgnoreTagBody: ['script', 'style']
-  }),
-
-  mixedExtended: new xss.FilterXSS({
-    whiteList: {
-      sup: [],
-      sub: [],
-      b: [],
-      i: [],
-      a: ['href']
-    },
-    stripIgnoreTag: true,
-    stripIgnoreTagBody: ['script', 'style'],
-    onTag: customTagHandler
-  }),
-
-  mixedOther: new xss.FilterXSS({
-    whiteList: {
-      sup: [],
-      sub: [],
-      b: [],
-      i: [],
-      a: ['href'],
-      br: []
-    },
-    stripIgnoreTag: true,
-    stripIgnoreTagBody: ['script', 'style'],
-    onTag: customTagHandler
-  })
-}
-
-function customTagHandler(tag, html, { isWhite, isClosing }) {
-  // Special treatment only for whitelisted opening anchor tags.
-  if (tag !== 'a' || !isWhite || isClosing) return
-
-  const matchUrl = html.match(/href="?(?<url>https?:\/\/.*?)"?[\s>]/)
-  const url = matchUrl ? xss.escapeAttrValue(matchUrl.groups.url) : undefined
-
-  return `<a href="${url || ''}" target="_blank">`
-}
-
 function toText(markupObj) {
-  return markupFilter.noMixed
-    .process(xmlFlow.toXml(markupObj))
-    .replace(/\s+/g, ' ')
-    .trim()
+  return sanitizeField.toText(xmlFlow.toXml(markupObj))
 }
 
 function toMixedBasic(markupObj) {
-  return markupFilter.mixedBasic
-    .process(xmlFlow.toXml(markupObj))
-    .replace(/\s+/g, ' ')
-    .trim()
+  return sanitizeField.toMixedBasic(xmlFlow.toXml(markupObj))
 }
 
 function toMixedExtended(markupObj) {
-  return markupFilter.mixedExtended
-    .process(xmlFlow.toXml(markupObj))
-    .replace(/\s+/g, ' ')
-    .trim()
+  return sanitizeField.toMixedExtended(xmlFlow.toXml(markupObj))
 }
 
 function toMixedOther(markupObj) {
-  return markupFilter.mixedOther
-    .process(xmlFlow.toXml(markupObj))
-    .replace(/\s+/g, ' ')
-    .trim()
+  return sanitizeField.toMixedOther(xmlFlow.toXml(markupObj))
 }

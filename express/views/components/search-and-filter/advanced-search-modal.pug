@@ -23,7 +23,7 @@
             //- input#src-lang-input.box-sizing-content.bg-transparent
             select#src-lang-select.select-src-lang-field(multiple="multiple")
               each language in sourceLanguages
-                option(value=language.id selected=language.selected) #{ language.nameSl }
+                option(value=language.id selected=language.selected)= language.name
             span.advanced-input-label
             //- span.advanced-input-label Jezik iskanja
           //- img#src-lang-img(src="/images/chevron-down-darker.svg" alt="")
@@ -35,7 +35,7 @@
             //- input#dest-lang-input.box-sizing-content.bg-transparent
             select#dest-lang-select.select-dest-lang-field(multiple="multiple")
               each language in targetLanguages
-                option(value=language.id selected=language.selected) #{ language.nameSl }
+                option(value=language.id selected=language.selected)= language.name
             span.advanced-input-label
             //- span.advanced-input-label Ciljni jezik
           //- img#dest-lang-img(src="/images/chevron-down-darker.svg" alt="")
@@ -62,7 +62,7 @@
             multiple="multiple"
           )
             each domain in allPrimaryDomains
-              option(value=domain.id selected=domain.selected) #{ domain.nameSl }
+              option(value=domain.id selected=domain.selected)= domain.name
           span.advanced-input-label
           //- span.advanced-input-label Področje
         //- img#area-img(src="/images/chevron-down-darker.svg" alt="")
@@ -78,7 +78,7 @@
             multiple="multiple"
           )
             each dictionary in allDictionaryNames
-              option(value=dictionary.id selected=dictionary.selected) #{ dictionary.nameSl }
+              option(value=dictionary.id selected=dictionary.selected)= dictionary.name
           span.advanced-input-label
           //- span.advanced-input-label Slovar
         //- img#dict-img(src="/images/chevron-down-darker.svg" alt="")
@@ -91,7 +91,7 @@
           //- input#source-input.box-sizing-content.bg-transparent
           select#src-select.select-source-field(multiple="multiple")
             each portal in portals
-              option(value=portal.code selected=portal.selected) #{ portal.name }
+              option(value=portal.code selected=portal.selected)= portal.name
           span.advanced-input-label
           //- span.advanced-input-label Vir
         //- img#source-img(src="/images/chevron-down-darker.svg" alt="")

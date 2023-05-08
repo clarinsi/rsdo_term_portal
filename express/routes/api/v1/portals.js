@@ -1,4 +1,5 @@
 const router = require('express-promise-router')()
+const user = require('../../../middleware/user')
 
 const {
   create,
@@ -9,6 +10,9 @@ const {
   listAllLinkedDicts,
   deleteLinkedDictionary
 } = require('../../../controllers/api/v1/portals')
+
+// All further routes are only available to portal admin.
+router.use(user.isAuthenticated, user.isPortalAdmin)
 
 // Create new portal connection
 router.post('/createPortal', create)

@@ -9,6 +9,7 @@ exports.deserialize = {
   extraction(extraction) {
     const deserializedExtraction = {
       id: extraction.id,
+      userId: extraction.user_id,
       name: extraction.name,
       status: extraction.status,
       corpusId: extraction.corpus_id,

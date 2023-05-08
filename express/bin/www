@@ -12,8 +12,6 @@ const cache = require('../models/cache')
 const searchEngine = require('../models/search-engine')
 const email = require('../models/email')
 const init = require('../config/init')
-const { seedDummyData } = require('../models/comment')
-// const { initDemoData } = require('../models/demo-paginacija')
 const app = require('../app')
 const debug = require('debug')('termPortal:server')
 const http = require('http')
@@ -42,12 +40,11 @@ const server = http.createServer(app)
     cache.waitForConnection(),
     searchEngine.waitForConnection(),
     email.waitForConnection(),
-    init()
+    init.fsStructure()
   ])
   await searchEngine.initEntryIndex()
   await searchEngine.initConsultancyEntryIndex()
-  seedDummyData()
-  // initDemoData()
+  await init.adminUser()
   server.listen(port)
 })()
 

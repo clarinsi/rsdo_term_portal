@@ -63,22 +63,36 @@ extraction.create = async (req, res) => {
   }
 
   // Redirect to extraction edit page.
-  res.redirect(`luscenje/${extractionId}`)
+  res.redirect(303, `luscenje/${extractionId}`)
+}
+
+extraction.validateOwnership = async (req, res, next) => {
+  const { id: extractionId } = req.params
+  if (!extractionId) return res.redirect(303, '/')
+
+  const extraction = await Extraction.fetch(extractionId)
+  if (extraction.userId !== req.user.id) return res.redirect(303, '/')
+
+  req.extractionData = extraction
+  next()
 }
 
 extraction.edit = async (req, res) => {
   const extractionId = req.params.id
-  const extraction = await Extraction.fetch(extractionId)
+  const extraction = req.extractionData
 
   if (extraction.ossParams) {
-    const [allPrimaryDomains, stopTermsFiles] = await Promise.all([
-      Dictionary.fetchAllPrimaryDomains(),
-      Extraction.fetchAllStopTermsFilesStats(extractionId)
-    ])
+    const [allPrimaryDomains, ossDocumentTypes, stopTermsFiles] =
+      await Promise.all([
+        Dictionary.fetchAllPrimaryDomains(req.determinedLanguage),
+        Extraction.fetchOssDocumentTypes(req.determinedLanguage),
+        Extraction.fetchAllStopTermsFilesStats(extractionId)
+      ])
     const { params } = extraction.ossParams
     const domainUdk = params?.domainUdk?.[0]
-    if (domainUdk)
+    if (domainUdk) {
       extraction.domainId = await Domain.fetchIdByUdkCode(domainUdk)
+    }
     extraction.documentType = intoDbArray(params.documentType, 'always')
     extraction.year = intoDbArray(params.year, 'always')
     extraction.keywords = intoDbArray(params.keywords, 'always')
@@ -88,6 +102,7 @@ extraction.edit = async (req, res) => {
       id: extractionId,
       extraction,
       allPrimaryDomains,
+      ossDocumentTypes,
       stopTermsFiles
     })
   } else {
@@ -110,7 +125,7 @@ extraction.updateOwn = async (req, res) => {
   await Extraction.update(extractionId, req.body.name)
 
   // Reload page.
-  res.redirect(`./${extractionId}`)
+  res.redirect(303, `./${extractionId}`)
 }
 
 extraction.docsEdit = async (req, res) => {

@@ -22,7 +22,7 @@ section.filter-modal-root
             span.d-flex.flex-grow-1.align-content-center
               a#ccf.clear-filter-modal-section(href="#")
                 img(src="/images/square-minus.svg" alt="")
-                span.ps-2 POČISTI FILTRE
+                span.ps-2= t('POČISTI FILTRE')
         .modal-body.pb-2
           ul#modal-list.nav-modal-section-content.mb-0.pb-0
             // Added dynamically...
@@ -31,8 +31,6 @@ section.filter-modal-root
             button.btn.btn-light.border.border-dark.close(
               type="button"
               data-bs-dismiss="modal"
-            )
-              | Zapri
+            )= t('Zapri')
           .justify-content-end
-            button#sf-modal-button.btn.btn-primary.use(type="button")
-              | Uporabi
+            button#sf-modal-button.btn.btn-primary.use(type="button")= t('Uporabi')

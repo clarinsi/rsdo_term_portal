@@ -66,7 +66,7 @@ mixin entryPreview
               each entry, index in entryData.foreign_entries
                 hr(class=index ? 'd-none' : '')
                 .preview-foreign-language
-                  span.smaller-black-info.text-break!= entry.name_sl
+                  span.smaller-black-info.text-break!= entry.name
                 if (structure.hasForeignLanguages && entry.term && entry.term.join(", ").length)
                   .preview-foreign-terms.mt-1.d-flex.align-items-start.row
                     .d-sm-block.col-sm-4.preview-column-width

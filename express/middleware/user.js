@@ -1,3 +1,5 @@
+const User = require('../models/user')
+
 const user = {}
 
 user.enhance = (req, res, next) => {
@@ -18,7 +20,16 @@ user.isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) return next()
 
   if (req.isAjax) return res.status(400).end()
-  res.redirect(req.baseUrl || '/')
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.isPortalAdmin = (req, res, next) => {
+  const isPortalAdmin = req.user.hasRole('portal admin')
+
+  if (isPortalAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(303, req.baseUrl || '/')
 }
 
 user.isDictionaryAdmin = (req, res, next) => {
@@ -28,17 +39,37 @@ user.isDictionaryAdmin = (req, res, next) => {
   if (isAdmin) return next()
 
   if (req.isAjax) return res.status(400).end()
-  res.redirect(req.baseUrl || '/')
+  res.redirect(303, req.baseUrl || '/')
 }
 
 user.isDictionaryEditor = (req, res, next) => {
-  const { dictionaryId } = req.params
+  const dictionaryId = req.params.dictionaryId || req.dictionaryId
   const isEditor = req.user.hasAnyDictionaryRole(dictionaryId)
 
   if (isEditor) return next()
 
   if (req.isAjax) return res.status(400).end()
-  res.redirect(req.baseUrl || '/')
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.canAdministrateDictionary = (req, res, next) => {
+  const dictionaryId = req.params.dictionaryId || req.dictionaryId
+  const isAdmin = req.user.hasDictionaryRole(dictionaryId, 'administration')
+  const isPortalAdmin = req.user.hasRole('portal admin')
+  const isDictionariesAdmin = req.user.hasRole('dictionaries admin')
+  if (isAdmin || isPortalAdmin || isDictionariesAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.canAdministrateDictionaries = (req, res, next) => {
+  const isPortalAdmin = req.user.hasRole('portal admin')
+  const isDictionariesAdmin = req.user.hasRole('dictionaries admin')
+  if (isPortalAdmin || isDictionariesAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(303, req.baseUrl || '/')
 }
 
 user.canContentEdit = (req, res, next) => {
@@ -49,7 +80,54 @@ user.canContentEdit = (req, res, next) => {
   if (isEditor || isPortalAdmin || isDictionariesAdmin) return next()
 
   if (req.isAjax) return res.status(400).end()
-  res.redirect(req.baseUrl || '/')
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.canAdministrateConsultancy = (req, res, next) => {
+  const isPortalAdmin = req.user.hasRole('portal admin')
+  const isConsultancyAdmin = req.user.hasRole('consultancy admin')
+  if (isPortalAdmin || isConsultancyAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.canConsult = (req, res, next) => {
+  const isConsultant = req.user.hasRole('consultant')
+  const isPortalAdmin = req.user.hasRole('portal admin')
+  const isConsultancyAdmin = req.user.hasRole('consultancy admin')
+  if (isConsultant || isPortalAdmin || isConsultancyAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.canConsultEntry = (req, res, next) => {
+  const id = req.params.id || req.entryId
+  const isConsultantForEntry = req.user.isEditorOfConsultancyEntry(id)
+  const isPortalAdmin = req.user.hasRole('portal admin')
+  const isConsultancyAdmin = req.user.hasRole('consultancy admin')
+  if (isConsultantForEntry || isPortalAdmin || isConsultancyAdmin) return next()
+
+  if (req.isAjax) return res.status(400).end()
+  res.redirect(303, req.baseUrl || '/')
+}
+
+user.logout = async (req, res, next) => {
+  const rememberMeToken = req.signedCookies.remember_me
+
+  if (rememberMeToken) {
+    res.clearCookie('remember_me')
+    await User.clearRememberMeToken(rememberMeToken)
+  }
+
+  req.session.language = req.user.language
+
+  req.logout()
+  // Manually clear session.passport due to bug in current passport version.
+  delete req.session.passport.user
+
+  next()
 }
 
 /**

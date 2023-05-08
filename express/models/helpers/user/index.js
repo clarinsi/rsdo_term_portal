@@ -6,6 +6,7 @@ exports.deserialize = {
       firstName: user.first_name,
       lastName: user.last_name,
       email: user.email,
+      status: user.status,
       hitsPerPage: user.hits_per_page,
       language: user.language,
       userRoles: user.user_roles,

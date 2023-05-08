@@ -1,7 +1,7 @@
 /* global $, axios, currentPagePath, initPagination,
  removeAllChildNodes, transferText, tooltipTriggerList,
   tooltipList, createTooltip, resetTooltipTriggerList,
-  transferTextExtended, i18next */
+  transferTextExtended, isI18nReady, i18next */
 
 // position correction functions
 
@@ -278,20 +278,22 @@ window.addEventListener('load', () => {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
-function handleProperTextDisplay() {
-  // const BROWSER_UNUSUAL_OFFSET = 17
-  if (/\/iskanje/.test(currentPagePath)) {
-    transferText('Iskanje po slovarjih', true, 'site-heading') //,
-    // BROWSER_UNUSUAL_OFFSET
-    // )
-  } else if (/\/termin/.test(currentPagePath)) {
-    transferText('', true, 'site-heading') // , BROWSER_UNUSUAL_OFFSET)
+isI18nReady.then(t => {
+  function handleProperTextDisplay() {
+    // const BROWSER_UNUSUAL_OFFSET = 17
+    if (/\/iskanje/.test(currentPagePath)) {
+      transferText(t('Iskanje po slovarjih'), true, 'site-heading') //,
+      // BROWSER_UNUSUAL_OFFSET
+      // )
+    } else if (/\/termin/.test(currentPagePath)) {
+      transferText('', true, 'site-heading') // , BROWSER_UNUSUAL_OFFSET)
+    }
   }
-}
 
-window.addEventListener('resize', () => {
+  window.addEventListener('resize', () => {
+    handleProperTextDisplay()
+    adjustOffsetBy()
+  })
+
   handleProperTextDisplay()
-  adjustOffsetBy()
 })
-
-handleProperTextDisplay()

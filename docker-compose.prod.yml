@@ -95,7 +95,7 @@ services:
       - "127.0.0.1:${OS_DASHBOARDS_LISTEN_PORT:?}:5601"
 
   concordancer:
-    # image: ghcr.io/clarinsi/rsdo-concordancer-api-term-portal:v1.0.3
+    # image: ghcr.io/clarinsi/rsdo-concordancer-api-term-portal:v1.0.4
     build:
       context: concordancer
       dockerfile: Dockerfile.prod
@@ -115,7 +115,7 @@ services:
 
   # Disabled by default. Enable if needed.
   concordancer-manager:
-    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.3
+    image: ghcr.io/clarinsi/rsdo-concordancer-systemmanager:v1.0.4
     profiles:
       - concordancer-manager
     depends_on:

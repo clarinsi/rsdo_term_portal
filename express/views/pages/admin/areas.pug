@@ -70,14 +70,14 @@ block body
       #input-row.row
         .col-sm-3
           .subject-name
-            label.input-name-txt= ('PODPODROČJE')
+            label.input-name-txt= t('PODPODROČJE')
           input#area-input.form-control(type="text")
         .col-sm-3
           .subject-name
-            label.input-name-txt= ('ANGLEŠKI PREVOD')
+            label.input-name-txt= t('ANGLEŠKI PREVOD')
           input#translation-input.form-control(type="text")
         .col.d-flex.align-items-end.mt-2
-          button#add-area.btn.btn-primary(type="submit" disabled)= ('Dodaj')
+          button#add-area.btn.btn-primary(type="submit" disabled)= t('Dodaj')
       include /common/footer
 
       include /utilities/modal-alert

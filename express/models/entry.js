@@ -1,7 +1,10 @@
 const db = require('./db')
 const { searchEngineClient, ENTRY_INDEX } = require('./search-engine')
 const { intoDbArray, getInstanceSetting, removeHtmlTags } = require('./helpers')
-const { prepareEntryForIndexing } = require('./helpers/dictionary')
+const {
+  prepareEntryForIndexing,
+  sanitizeField
+} = require('./helpers/dictionary')
 
 const Entry = {}
 
@@ -10,7 +13,7 @@ Entry.create = async (userId, dictionaryId, entry) => {
   const pickedLinks = intoDbArray(entry.links, 'always')
   const pickedType = intoDbArray(entry.type, 'always')
   const links = pickedLinks.map((link, index) => ({
-    link,
+    link: sanitizeField.toMixedBasic(link),
     type: pickedType[index]
   }))
   const foreign = intoDbArray(entry.foreign, 'always')
@@ -18,9 +21,13 @@ Entry.create = async (userId, dictionaryId, entry) => {
     if (row.term || row.definition || row.synonym) {
       agg.push({
         language: row.code,
-        terms: intoDbArray(row.term, 'undefined'),
-        definition: row.definition || null,
-        synonyms: intoDbArray(row.synonym, 'undefined')
+        terms: intoDbArray(row.term, 'undefined')?.map(term =>
+          sanitizeField.toMixedBasic(term)
+        ),
+        definition: sanitizeField.toMixedExtended(row.definition) || null,
+        synonyms: intoDbArray(row.synonym, 'undefined')?.map(synonym =>
+          sanitizeField.toMixedBasic(synonym)
+        )
       })
     }
     return agg
@@ -34,22 +41,26 @@ Entry.create = async (userId, dictionaryId, entry) => {
     dictionaryId,
     isValid,
     entry.status,
-    entry.term || null,
+    sanitizeField.toMixedBasic(entry.term) || null,
     userId,
     entry.homonymSort || null,
     entry.wordforms || null,
     entry.accent || null,
-    entry.pronunciation,
-    intoDbArray(entry.domainLabels, 'always'),
-    entry.label || null,
-    entry.definition || null,
-    intoDbArray(entry.synonyms),
+    entry.pronunciation || null,
+    intoDbArray(entry.domainLabels, 'always').map(label =>
+      sanitizeField.toText(label)
+    ),
+    sanitizeField.toMixedExtended(entry.label) || null,
+    sanitizeField.toMixedExtended(entry.definition) || null,
+    intoDbArray(entry.synonyms)?.map(synonym =>
+      sanitizeField.toMixedBasic(synonym)
+    ),
     links,
-    entry.other || null,
+    sanitizeField.toMixedOther(entry.other) || null,
     foreignLanguageContent,
-    intoDbArray(entry.image),
-    intoDbArray(entry.audio),
-    intoDbArray(entry.video)
+    intoDbArray(entry.image)?.map(image => sanitizeField.toText(image)),
+    intoDbArray(entry.audio)?.map(audio => sanitizeField.toText(audio)),
+    intoDbArray(entry.video)?.map(video => sanitizeField.toText(video))
   ]
   const text = `SELECT entry_new (${db.genParamStr(values)})`
 
@@ -59,71 +70,6 @@ Entry.create = async (userId, dictionaryId, entry) => {
 
   return entryId
 }
-
-// // Fetch all entry terms of a single dictionary from DB.
-// Entry.fetchAll = async dictionaryId => {
-//   const text = `
-//     SELECT
-//       e.id,
-//       e.is_valid as valid,
-//       e.is_published as published,
-//       e.term as term,
-//       MAX(ef.term) as fterm,
-//       CASE
-//         WHEN NOW() - e.time_most_recent_comment < INTERVAL '1 week' THEN 'T'
-//         WHEN NOW() - e.time_most_recent_comment < INTERVAL '1 month' THEN 'M'
-//         WHEN NOW() - e.time_most_recent_comment < INTERVAL '1 year' THEN 'L'
-//       ELSE ''
-//       END comment_age
-//     FROM entry e
-//     LEFT JOIN entry_foreign ef ON e.id = ef.entry_id
-//     WHERE dictionary_id = $1
-//     GROUP BY id, is_valid, is_published, e.term, comment_age
-//     ORDER BY e.term`
-//   const value = [dictionaryId]
-
-//   const { rows: fetchedTerms } = await db.query(text, value)
-//   return fetchedTerms
-// }
-
-// Metoda za poizvedbo demo podatkov za določeno stran.
-// Entry.fetchPaginated = async (resultsPerPage, page) => {
-//   const {
-//     rows: [{ result }]
-//   } = await db.query(
-//     `
-//       SELECT jsonb_build_object(
-//         'pages_total', (
-//           SELECT CEIL(COUNT(*) / $1::float)
-//           FROM demo_paginacija
-//         ),
-//         'results', ARRAY(
-//           SELECT jsonb_build_object(
-//             dictionary_id,
-//             term,
-//             is_published,
-//             is_terminology_reviewed,
-//             is_language_reviewed,
-//             status,
-//             label,
-//             definition,
-//             synonym,
-//             other,
-//             image,
-//             audio,
-//             video
-//           )
-//           FROM entry
-//           LIMIT $1
-//           OFFSET $2
-//         )
-//       ) result
-//     `,
-//     [resultsPerPage, resultsPerPage * (page - 1)]
-//   )
-
-//   return result
-// }
 
 // Fetch all data, related to single entry from DB.
 Entry.fetchFull = async entryId => {
@@ -565,7 +511,7 @@ Entry.update = async (userId, entry) => {
   const pickedLinks = intoDbArray(entry.links, 'always')
   const pickedType = intoDbArray(entry.type, 'always')
   const links = pickedLinks.map((link, index) => ({
-    link,
+    link: sanitizeField.toMixedBasic(link),
     type: pickedType[index]
   }))
   const foreign = intoDbArray(entry.foreign, 'always')
@@ -573,9 +519,13 @@ Entry.update = async (userId, entry) => {
     if (row.term || row.definition || row.synonym) {
       agg.push({
         language: row.code,
-        terms: intoDbArray(row.term, 'undefined'),
-        definition: row.definition || null,
-        synonyms: intoDbArray(row.synonym, 'undefined')
+        terms: intoDbArray(row.term, 'undefined')?.map(term =>
+          sanitizeField.toMixedBasic(term)
+        ),
+        definition: sanitizeField.toMixedExtended(row.definition) || null,
+        synonyms: intoDbArray(row.synonym, 'undefined')?.map(synonym =>
+          sanitizeField.toMixedBasic(synonym)
+        )
       })
     }
     return agg
@@ -591,19 +541,23 @@ Entry.update = async (userId, entry) => {
     !!entry.isTerminologyReviewed,
     !!entry.isLanguageReviewed,
     entry.status,
-    entry.term || null,
+    sanitizeField.toMixedBasic(entry.term) || null,
     userId,
     entry.homonymSort || null,
-    intoDbArray(entry.domainLabels, 'always'),
-    entry.label || null,
-    entry.definition || null,
-    intoDbArray(entry.synonyms),
+    intoDbArray(entry.domainLabels, 'always').map(label =>
+      sanitizeField.toText(label)
+    ),
+    sanitizeField.toMixedExtended(entry.label) || null,
+    sanitizeField.toMixedExtended(entry.definition) || null,
+    intoDbArray(entry.synonyms)?.map(synonym =>
+      sanitizeField.toMixedBasic(synonym)
+    ),
     links,
-    entry.other || null,
+    sanitizeField.toMixedOther(entry.other) || null,
     foreignLanguageContent,
-    intoDbArray(entry.image),
-    intoDbArray(entry.audio),
-    intoDbArray(entry.video)
+    intoDbArray(entry.image)?.map(image => sanitizeField.toText(image)),
+    intoDbArray(entry.audio)?.map(audio => sanitizeField.toText(audio)),
+    intoDbArray(entry.video)?.map(video => sanitizeField.toText(video))
   ]
   const text = `SELECT entry_update (${db.genParamStr(values)})`
 

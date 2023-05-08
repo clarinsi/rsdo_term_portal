@@ -58,18 +58,18 @@ mixin main-navigation-right(languageToolbarPresent=false, menuTextPresent=false,
             a.dropdown-item.ps-0.pb-2.navigation-text-color(
               href="/nastavitve-racuna"
             )
-              .row
-                .col-3
-                  img(src="/images/cog.svg" alt="")
-                .col-9
+              .d-flex.flex-row
+                .d-flex.flex-shrink-1.flex-grow-0
+                  img.pe-2(src="/images/cog.svg" alt="")
+                .d-flex.flex-grow-1
                   span.text-header-description-gray.d-block= t('Nastavitve')
           li.pb-0.mb-0.ps-3
             form(action="/users/logout" method="post")
-              button.profile-menu-button
-                .row
-                  .col-3
-                    img(src="/images/log-out.svg" alt="")
-                  .col-9
+              button.profile-menu-button.pb-2.pt-1
+                .d-flex.flex-row
+                  .d-flex.flex-shrink-1.flex-grow-0
+                    img.pe-2(src="/images/log-out.svg" alt="")
+                  .d-flex.flex-grow-1
                     span.text-header-description-gray.d-block= t('Odjava')
       else
         button#login-static-backdrop-button.col-sm.nav-entry.no-border.no-bg(

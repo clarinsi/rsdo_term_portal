@@ -16,7 +16,7 @@ CREATE TABLE extraction (
   time_finished TIMESTAMPTZ,
   CHECK (
     CASE
-      WHEN oss_params IS NULL AND status = 'finished' THEN corpus_id IS NOT NULL
+      WHEN oss_params IS NULL THEN TRUE
       ELSE corpus_id IS NULL
     END
   )

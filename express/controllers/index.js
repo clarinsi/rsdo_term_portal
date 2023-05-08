@@ -1,3 +1,4 @@
+const { promisify } = require('util')
 const Entry = require('../models/entry')
 const { getInstanceSetting } = require('../models/helpers')
 const Dictionary = require('../models/dictionary')
@@ -13,10 +14,12 @@ const {
   prepareSeachFilterData,
   prepareConsultancyEntries
 } = require('../models/helpers/search')
+const email = require('../models/email')
 const generateQuery = require('../models/helpers/search/generate-query')
 const { DEFAULT_HITS_PER_PAGE } = require('../config/settings')
 const SFDSuggestionImporter = require('./helpers/search-filter-data-suggestion-importer')
 const User = require('../models/user')
+const { capitalize } = require('../utils')
 
 // TODO Luka (note to self): Measure performance, consider caching.
 exports.index = async (req, res) => {
@@ -27,12 +30,10 @@ exports.index = async (req, res) => {
     targetLanguages,
     allDictionaryNames,
     portals
-  } = await SFDSuggestionImporter.initialize()
-
-  const englishLanguageEnabled = false // dummy variable for future edit
+  } = await SFDSuggestionImporter.initialize(req.determinedLanguage)
 
   const latestDicts = await Dictionary.fetchLatest3DictsByPublishDate(
-    englishLanguageEnabled
+    req.determinedLanguage
   )
 
   const portalName = await getInstanceSetting(`portal_name_${language}`)
@@ -58,7 +59,7 @@ exports.index = async (req, res) => {
 exports.search = async (req, res) => {
   const searchString = req.query.q?.trim()
 
-  if (!searchString) return res.redirect('/')
+  if (!searchString) return res.redirect(303, '/')
 
   const title = req.t('Iskanje')
 
@@ -68,7 +69,7 @@ exports.search = async (req, res) => {
     targetLanguages,
     allDictionaryNames,
     portals
-  } = await SFDSuggestionImporter.initialize()
+  } = await SFDSuggestionImporter.initialize(req.determinedLanguage)
 
   const filters = {
     sourceLanguages: intoDbArray(req.query.sl, 'always'),
@@ -131,7 +132,10 @@ exports.search = async (req, res) => {
   // Similar to search query without any extra filters, this is required for modal to diplay ALL res.
   // const allAggregation = await indexAllResultsNoFiltering(req, res)
 
-  const aggregation = await prepareAggregation(aggregationRaw)
+  const aggregation = await prepareAggregation(
+    aggregationRaw,
+    req.determinedLanguage
+  )
   const searchFilterData = prepareSeachFilterData(aggregation, filters)
 
   // TODO Luka (note to self): Consider reworking Miha's logic below. It's hacky and possibly error prone.
@@ -328,7 +332,7 @@ exports.entryDetails = async (req, res) => {
 
   // If external url, just redirect
   if (entry.external_url) {
-    return res.redirect(entry.external_url)
+    return res.redirect(303, entry.external_url)
   }
 
   // unnecessary legacy assigment, refactor when time is available
@@ -340,12 +344,15 @@ exports.entryDetails = async (req, res) => {
     targetLanguages,
     allDictionaryNames,
     portals
-  } = await SFDSuggestionImporter.initialize()
+  } = await SFDSuggestionImporter.initialize(req.determinedLanguage)
 
   const [dictStruct, dictionaryData, selectedDomainLabelsForEntry] =
     await Promise.all([
       Dictionary.fetchDictionaryWithEditStructure(entry.dictionary_id),
-      Dictionary.fetchDictionaryBasicInfo(entry.dictionary_id),
+      Dictionary.fetchDictionaryBasicInfo(
+        entry.dictionary_id,
+        req.determinedLanguage
+      ),
       Entry.fetchDomainLabels(termId)
     ])
 
@@ -399,7 +406,7 @@ exports.entryDetails = async (req, res) => {
     prevHref: '/iskanje',
     portalCode: dictionaryData[0].portalcode,
     portalName: dictionaryData[0].portalname,
-    dictName: structure.nameSl,
+    dictName: structure[`name${capitalize(req.determinedLanguage)}`],
     dictHref: `/slovarji/${structure.id}/o-slovarju?sentFromEntryId=${termId}`,
     fullAuthorName: reducedData.author ? reducedData.author.join(', ') : '',
     areas: dictionaryData[0].domain_primary,
@@ -438,11 +445,13 @@ exports.entryDetails = async (req, res) => {
     entry.foreignEntries[idx] = await 
   }) */
 
-  const langs = await Dictionary.fetchLanguages(entryData.dictionary_id)
+  const langs = await Dictionary.fetchLanguages(
+    entryData.dictionary_id,
+    req.determinedLanguage
+  )
   entryData.foreign_entries.forEach((val, idx) => {
     try {
-      entry.foreign_entries[idx].name_sl = langs[idx].nameSl
-      entry.foreign_entries[idx].name_en = langs[idx].nameEn
+      entry.foreign_entries[idx].name = langs[idx].name
     } catch (e) {}
   })
 
@@ -479,14 +488,42 @@ exports.changePassword = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
-  const { token } = req.query
+  if (req.user) return res.redirect(303, '/spremeni-geslo')
 
-  // console.log(token)
+  const { token } = req.query
+  if (!token) return res.redirect(303, '/')
+
+  const isTokenValid = await User.isResetPasswordTokenValid(token)
+
   res.render('pages/reset-password/reset-password', {
-    // title: 'Pozabljeno geslo'
-    isValidToken: token === '123',
+    title: 'Ponastavitev gesla',
+    isTokenValid,
     token
   })
+}
+
+exports.changeEmail = async (req, res) => {
+  const { token } = req.query
+  if (!token) return res.redirect(303, '/')
+
+  const user = await User.changeEmailWithToken(token, req.t)
+
+  const renderAsync = promisify(req.app.render.bind(req.app))
+  const emailHtml = await renderAsync(
+    `email/user-change-email-success_${req.language}`,
+    {
+      username: user.username
+    }
+  )
+  await email.send({
+    to: user.email,
+    subject: req.t('Sprememba elektronskega naslova - uspeh'),
+    html: emailHtml
+  })
+
+  req.flash('info', req.t('Uspešno ste spremenili svoj elektronski naslov.'))
+  if (req.user) return res.redirect(303, '/moj-racun')
+  res.redirect(303, '/')
 }
 
 exports.userSettings = async (req, res) => {
@@ -513,7 +550,7 @@ exports.changeUserLanguage = async (req, res) => {
     req.session.language = languageCode
   }
 
-  res.redirect('/')
+  res.redirect(303, '/')
 }
 
 function mergeDomains(

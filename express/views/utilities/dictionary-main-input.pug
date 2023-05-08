@@ -82,7 +82,7 @@ mixin dictionaryMainInput(data)
               //- TODO I18n 
               option(value="" hidden disabled selected)= t('Izberite področje')
               each domain in allPrimaryDomains
-                option(value=domain.id)= domain.nameSl
+                option(value=domain.id)= domain.name
             #invalid-section.invalid-feedback-selection.hidden-section.mt-3= t('Niste izbrali glavnega področja.')
           .col-sm.d-flex.align-items-center
             span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Področje.')
@@ -98,7 +98,7 @@ mixin dictionaryMainInput(data)
             )
               //- TODO I18n 
               each domain in allSecondaryDomains
-                option(value=domain.id)= domain.nameSl
+                option(value=domain.id)= domain[`name${capitalize(determinedLanguage)}`]
 
           .col-sm.d-flex.align-items-center
             span.d-md-inline.d-block.name-info-txt.ms-xxl-3.ms-md-3.mt-3.mt-sm-0= t('Vpišite podpodročje glavnega področja, ki ste ga izbrali. Če podpodročja ni med naborom, izberite polje Novo podpodročje.')

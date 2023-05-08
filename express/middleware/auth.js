@@ -21,6 +21,9 @@ passport.deserializeUser(async (id, done) => {
     const user = await User.fetchDeserializedDataById(id)
 
     // TODO Consider what to do if no user was found?
+
+    // TODO This is a current workaround until session invalidation is implemented.
+    if (user.status !== 'active') return done(null, false)
     done(null, user)
   } catch (error) {
     done(error)
@@ -32,11 +35,7 @@ passport.use(
     { passReqToCallback: true, usernameField: 'usernameOrEmail' },
     async (req, usernameOrEmail, password, done) => {
       try {
-        const { rows } = await db.query(
-          'SELECT id, status, bcrypt_hash FROM "user" WHERE username = $1 OR email = $1',
-          [usernameOrEmail]
-        )
-        const user = rows[0]
+        const user = await User.fetchByUsernameOrEmail(usernameOrEmail)
 
         if (!user) {
           return done(null, false, {

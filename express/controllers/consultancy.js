@@ -46,11 +46,15 @@ consultancy.search = async (req, res) => {
 consultancy.specificQuestion = async (req, res) => {
   const { id } = req.params
 
+  // TODO validation: is id of proper format and does a question with it actually exist.
+
   // TODO i18n TIME FORMAT
   const entry = await ConsultancyEntry.fetchByIdWithFormattedTime(id)
   // const author = await User.fetchUser(entry.authorId)
 
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains(
+    req.determinedLanguage
+  )
 
   entry.answerAuthors = entry.answerAuthors.filter(author => author !== '')
 
@@ -86,7 +90,9 @@ consultancy.specificQuestion = async (req, res) => {
 }
 
 consultancy.new = async (req, res) => {
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains(
+    req.determinedLanguage
+  )
 
   res.locals.isOwnConsultancyEnabled =
     (await getInstanceSetting('consultancy_type')) === 'own'
@@ -110,12 +116,9 @@ consultancyAdmin.new = async (req, res) => {
 }
 
 consultancyAdmin.users = async (req, res) => {
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
-
   const users = await User.fetchConsultants()
 
   res.render('pages/consultancy/admin/users', {
-    allPrimaryDomains,
     users,
     title: req.t('Svetovalci')
   })
@@ -175,11 +178,7 @@ consultancyAdmin.inProgress = async (req, res) => {
 }
 
 consultancyAdmin.statistics = async (req, res) => {
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
-
-  res.render('pages/consultancy/admin/statistics', {
-    allPrimaryDomains
-  })
+  res.render('pages/consultancy/admin/statistics')
 }
 
 consultancyAdmin.edit = async (req, res) => {
@@ -189,18 +188,11 @@ consultancyAdmin.edit = async (req, res) => {
   sentFrom[key] = true
 
   const moderator = await ConsultancyEntry.getModerator(id)
-  const editors = await ConsultancyEntry.getEditors(id)
-  if (
-    req.user.hasRole('consultancy admin') ||
-    req.user.hasRole('portal admin')
-  ) {
-    console.log('Editor guard omitted due to being administrator')
-  } else if (editors.filter(editors => editors.id === req.user.id) < 1) {
-    return res.send('You do not have permsisions to edit this answer')
-  }
   // TODO i18n TIME FORMAT
   const entry = await ConsultancyEntry.fetchByIdWithFormattedTime(id)
-  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+  const allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains(
+    req.determinedLanguage
+  )
   const author = await User.fetchUser(entry.authorId)
 
   const isPublished = entry.status === 'published'
@@ -318,7 +310,9 @@ async function consultancyRequest(
 ) {
   const searchString = req.query.q?.trim() ?? ''
 
-  let allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains()
+  let allPrimaryDomains = await Dictionary.fetchAllPrimaryDomains(
+    req.determinedLanguage
+  )
 
   /// filter selected domains for the prompt ///
   // Not duplicates of this code arise...

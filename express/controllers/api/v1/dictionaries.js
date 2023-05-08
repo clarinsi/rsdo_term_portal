@@ -1,4 +1,5 @@
 const { rm } = require('fs/promises')
+const user = require('../../../middleware/user')
 const Dictionary = require('../../../models/dictionary')
 const Entry = require('../../../models/entry')
 const Extraction = require('../../../models/extraction')
@@ -69,7 +70,11 @@ dictionary.deleteEntry = async (req, res) => {
   await Promise.all([
     Dictionary.updateMetadataAfterModifyingEntries(dictionaryId),
     deleteEntryFromIndex(entryId, true),
-    minEntriesRequirementCheckAndAct.onDelete(dictionaryId, req.app)
+    minEntriesRequirementCheckAndAct.onDelete(
+      dictionaryId,
+      req.app,
+      req.determinedLanguage
+    )
   ])
 
   res.end()
@@ -84,7 +89,11 @@ dictionary.deleteAllEntries = async (req, res) => {
   await Promise.all([
     Dictionary.updateMetadataAfterModifyingEntries(dictionaryId),
     deleteDictionaryEntriesFromIndex(dictionaryId),
-    minEntriesRequirementCheckAndAct.onDelete(dictionaryId, req.app)
+    minEntriesRequirementCheckAndAct.onDelete(
+      dictionaryId,
+      req.app,
+      req.determinedLanguage
+    )
   ])
 
   res.end()
@@ -124,12 +133,19 @@ dictionary.delete = async (req, res) => {
   res.end()
 }
 
-dictionary.updateDomainLabels = async (req, res) => {
-  const { dictionaryId, payload } = req.body.params
+dictionary.updateDomainLabels = [
+  (req, res, next) => {
+    req.dictionaryId = req.body.params.dictionaryId
+    next()
+  },
+  user.canAdministrateDictionary,
+  async (req, res) => {
+    const { dictionaryId, payload } = req.body.params
 
-  await Dictionary.updateDomainLabel(dictionaryId, payload)
-  res.end()
-}
+    await Dictionary.updateDomainLabel(dictionaryId, payload)
+    res.end()
+  }
+]
 
 dictionary.renovateSecondaryDomains = async (req, res) => {
   const data = req.body.params.payload
@@ -152,7 +168,11 @@ dictionary.listDictionaries = async (req, res) => {
   const page = +req.query.p > 0 ? +req.query.p : 1
 
   const { pages_total: numberOfAllPages, results } =
-    await Dictionary.fetchAllAdminDictionaries(resultsPerPage, page)
+    await Dictionary.fetchAllAdminDictionaries(
+      req.determinedLanguage,
+      resultsPerPage,
+      page
+    )
 
   res.send({ page, numberOfAllPages, results })
 }
@@ -222,15 +242,6 @@ dictionary.listSecondaryDomainData = async (req, res) => {
   })
 }
 
-dictionary.listSecondaryDomains = async (req, res) => {
-  const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
-  const page = +req.query.p > 0 ? +req.query.p : 1
-  const { pages_total: numberOfAllPages, results } =
-    await Dictionary.fetchAllSecondaryDomains(resultsPerPage, page)
-
-  res.send({ page, numberOfAllPages, results })
-}
-
 dictionary.showImportFromFileForm = async (req, res) => {
   const resultsPerPage = req.user?.hitsPerPage || DEFAULT_HITS_PER_PAGE
   const { dictionaryId } = req.params
@@ -252,7 +263,7 @@ dictionary.showExportToFileForm = async (req, res) => {
 }
 
 dictionary.importFromExtraction = async (req, res) => {
-  const { id: dictionaryId, extractionId } = req.params
+  const { dictionaryId, extractionId } = req.params
   const { from, to } = req.body
   const fromIndex = +from > 1 ? Math.floor(from) - 1 : 0
   const toIndex = Number.isInteger(+(to === '' ? undefined : to))
@@ -279,7 +290,7 @@ dictionary.importFromExtraction = async (req, res) => {
 }
 
 dictionary.exportBegin = async (req, res) => {
-  const dictionaryId = req.params.id
+  const { dictionaryId } = req.params
   const exportParams = {
     isValidFilter:
       req.body.isValidFilter === 'on' ? undefined : req.body.isValidFilter,

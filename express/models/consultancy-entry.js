@@ -55,19 +55,6 @@ class ConsultancyEntry {
     this.formattedTimePublished = formattedTimePublished
   }
 
-  // Fetch all consultancy entries from DB.
-  static async fetchAll() {
-    // TODO Luka: Miha, define specific fields instead of using *.
-    const { rows: fetchedConsEntries } = await db.query(`
-      SELECT *
-      FROM consultancy_entry
-      ORDER BY time_created DESC`)
-    const deserializedConsEntries = fetchedConsEntries.map(
-      consEntry => new this(consEntry)
-    )
-    return deserializedConsEntries
-  }
-
   // Fetch consultancy entry by ID
   // to_char(time_created,'HH24:MI:SS DD/MM/YYYY')
   // TODO i18n date format
@@ -160,24 +147,6 @@ class ConsultancyEntry {
     const { rows: users } = await db.query(query, [entryId])
     const emails = users.flat()
     return emails
-  }
-
-  // Fetch all consultancy entries filtered by status from DB.
-  static async fetchAllByStatus(status) {
-    // TODO Luka: Miha, define specific fields instead of using *.
-    const sqlQuery = `
-      SELECT *, to_char(time_created, 'FMDD. FMMM. YYYY') formatted_time_created
-      FROM consultancy_entry
-      WHERE status=$1
-      ORDER BY time_created DESC`
-
-    const values = [status]
-    const { rows: fetchedConsEntries } = await db.query(sqlQuery, values)
-
-    const deserializedConsEntries = fetchedConsEntries.map(
-      consEntry => new this(consEntry)
-    )
-    return deserializedConsEntries
   }
 
   // Fetch all consultancy entries filtered by status from DB.
@@ -311,12 +280,6 @@ class ConsultancyEntry {
     return deserializedConsEntries
   }
 
-  // Fetch all new consultancy entries from DB.
-  static async fetchAllNew() {
-    const newEntries = await this.fetchAllByStatus('new')
-    return newEntries
-  }
-
   static async fetchAllRejected() {
     const newEntries = await this.fetchAllByStatusWithAuthorData('rejected')
     return newEntries
@@ -436,20 +399,6 @@ class ConsultancyEntry {
 
     const { rows } = await db.query(sqlQuery, values)
     return rows[0]
-  }
-
-  static async getEditors(entryId) {
-    const sqlQuery = `
-    SELECT u.id, u.first_name, u.last_name
-    FROM "consultancy_entry" ce
-    INNER JOIN "consultancy_entry_consultant" cec ON ce.id = cec.entry_id
-    INNER JOIN "user" u ON u.id = cec.user_id
-    WHERE ce.id=$1`
-
-    const values = [entryId]
-
-    const { rows } = await db.query(sqlQuery, values)
-    return rows
   }
 
   static async getSharedAuthorsArray(entryId) {
